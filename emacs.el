@@ -6,6 +6,28 @@
 ;;
 ;; Emacs should be compiled from CVS in order to make it work correctly with
 ;; nXhtml and ruby mode. At least in debian based, emacs-snapshot is broken.
+;;
+;; cvs -d:pserver:anonymous@cvs.sv.gnu.org:/sources/emacs co emacs
+;; cd emacs
+;;
+;; Read the INSTALL file
+;;
+;; Verify you have Xfonts support if you want pretty fonts
+;;
+;; wajig install libxfont-dev libxfont1
+;;
+;; ./configure
+;;
+;; make
+;; sudo make install
+;;
+;; Set Monospace font
+;;
+;; echo "Emacs.font: Monospace-10" >> ~/.Xresources
+;; xrdb -merge ~/.Xresources
+;;
+;; /usr/local/bin/emacs
+;; /usr/local/bin/emacsclient
 
 ;;;;;;;;;;;;;;;;;;
 ;; EMACS SERVER ;;
@@ -191,7 +213,7 @@
 
 ;; yaml-mode
 ;; http://svn.clouder.jp/repos/public/yaml-mode/trunk/
-(load "yaml-mode")
+(autoload 'yaml-mode "yaml-mode" "Yaml editing mode")
 (add-to-list 'auto-mode-alist '("\\.yml$" . yaml-mode))
 (add-hook 'yaml-mode-hook
 	  '(lambda () (define-key yaml-mode-map "\C-m" 'newline-and-indent)))
@@ -214,7 +236,7 @@
 
 ;; textile-mode
 ;; http://dev.nozav.org/scripts/textile-mode.el
-(require 'textile-mode)
+(autoload 'textile-mode "textile-mode" "Mode for editing textile files")
 (add-to-list 'auto-mode-alist '("\\.textile\\'" . textile-mode))
 
 ;; pastie
@@ -241,7 +263,7 @@
 
 ;; smart-compile
 ;; http://homepage.mac.com/zenitani/comp-e.html
-(require 'smart-compile)
+(autoload 'smart-compile "smart-compile")
 (setq smart-compile-alist
       '(("/programming/guile/.*c$" .    "gcc -Wall %f `guile-config link` -o %n")
         ("\\.c\\'"              .       "gcc -Wall %f -lm -o %n")
