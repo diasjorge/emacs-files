@@ -104,8 +104,13 @@
 ;; disable tooltips
 (if (fboundp 'tooltip-mode) (tooltip-mode -1))
 
+;; don't show startup message
 (setq inhibit-startup-message t)
+
+;; don't bother about abbrev-file
 (quietly-read-abbrev-file)
+
+;; show line and column numbers
 (line-number-mode t)
 (column-number-mode t)
 
@@ -115,6 +120,14 @@
 
 ;; set default tramp mode
 (setq tramp-default-method "ssh")
+
+;; use regexp while searching
+(global-set-key (kbd "C-r") 'isearch-backward-regexp)
+(global-set-key (kbd "C-s") 'isearch-forward-regexp)
+
+;; enlarge and shrink windows (C-+/C-x -)
+(global-set-key (kbd "C-+") 'enlarge-window)
+(global-set-key (kbd "C-x -") 'shrink-window)
 
 ;; ido-mode
 (ido-mode t)
@@ -159,6 +172,7 @@
 (setq auto-mode-alist (append '(("\\.rb$" . ruby-mode)) auto-mode-alist))
 (setq interpreter-mode-alist (append '(("ruby" . ruby-mode)) interpreter-mode-alist))
 
+;; add file types to ruby-mode
 (add-to-list 'auto-mode-alist '("\.treetop$" . ruby-mode))
 (add-to-list 'auto-mode-alist '("Rakefile" . ruby-mode))
 (add-to-list 'auto-mode-alist '("\.rake$" . ruby-mode))
@@ -198,16 +212,6 @@
 (global-set-key (kbd "C-x C-M-f") 'find-file-in-project)
 (setq rinari-browse-url-func 'browse-url-generic)
 
-;; haml-mode
-;; http://github.com/nex3/haml
-(require 'haml-mode)
-(add-to-list 'auto-mode-alist '("\.haml$" . haml-mode))
-
-;; sass-mode
-;; http://github.com/nex3/haml
-(require 'sass-mode)
-(add-to-list 'auto-mode-alist '("\.sass$" . sass-mode))
-
 ;; use exuberant-ctags
 ;;
 ;; Generate file with:
@@ -237,6 +241,13 @@
         ;; (define-key map [tab] 'yas/expand)
         map))
 (mumamo-add-multi-keymap 'mumamo-multi-major-mode mumamo-map)
+
+;; haml-mode and & sass-mode
+;; http://github.com/nex3/haml/
+(require 'haml-mode)
+(require 'sass-mode)
+(add-to-list 'auto-mode-alist '("\.haml$" . haml-mode))
+(add-to-list 'auto-mode-alist '("\.sass$" . sass-mode))
 
 ;; js2-mode (javascript IDE)
 ;; http://code.google.com/p/js2-mode/
