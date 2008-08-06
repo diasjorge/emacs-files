@@ -134,6 +134,7 @@
 (add-to-list 'load-path "~/.emacs.d/elisp/rinari")
 (add-to-list 'load-path "~/.emacs.d/elisp/git-emacs")
 (add-to-list 'load-path "~/.emacs.d/elisp/haml-mode")
+(add-to-list 'load-path "~/.emacs.d/elisp/emacs-wget")
 
 ;; add more here as needed
 
@@ -278,6 +279,16 @@
 ;; lorem-ipsum
 ;; http://www.emacswiki.org/cgi-bin/wiki/lorem-ipsum.el
 (load "lorem-ipsum")
+
+;; emacs-wget
+;; http://pop-club.hp.infoseek.co.jp/emacs/emacs-wget/#download_en
+(autoload 'wget "wget" "wget interface for Emacs." t)
+(autoload 'wget-web-page "wget" "wget interface to download whole web page." t)
+(setq wget-download-directory-filter 'wget-download-dir-filter-regexp)
+(setq wget-download-directory
+      '(("\\.\\(jpe?g\\|png\\)$" . "~/Downloads/wget/pictures")
+	("\\.el$" . "~/.emacs.d/elisp")
+	("." . "~/Downloads/wget")))
 
 ;; keep scrolling in compilation result buffer
 (setq compilation-scroll-output t)
