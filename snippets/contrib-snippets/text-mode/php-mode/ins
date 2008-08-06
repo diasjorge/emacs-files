@@ -1,0 +1,3 @@
+#name : instance variable
+# --
+${1:private} $${2:variable_name}$0;

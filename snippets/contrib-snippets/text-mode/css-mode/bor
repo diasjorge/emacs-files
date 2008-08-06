@@ -1,0 +1,3 @@
+#name : border
+# --
+border: ${1:size}px ${2:color} ${3:type};

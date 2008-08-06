@@ -1,0 +1,3 @@
+#name : REFERENCES ...
+# --
+REFERENCES ${1:table}(${attribute})

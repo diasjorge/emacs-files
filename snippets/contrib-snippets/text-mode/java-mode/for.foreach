@@ -1,0 +1,6 @@
+#name : foreach
+# --
+for(${1:Type} ${2:variable} : ${3:collection})
+{
+  $0
+}

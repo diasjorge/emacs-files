@@ -1,0 +1,10 @@
+#name : table (small)
+# --
+<table>
+  <tr>
+    <th>$0</th>
+  </tr>
+  <tr>
+    <td></td>
+  </tr>
+</table>

@@ -1,0 +1,3 @@
+#name : attribute CHAR(...)
+# --
+${1:attribute} CHAR(${2:length})

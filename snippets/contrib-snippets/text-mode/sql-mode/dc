@@ -1,0 +1,3 @@
+#name : DEFAULT CHARSET ...
+# --
+DEFAULT CHARSET=${1:charset}

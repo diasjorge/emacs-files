@@ -1,0 +1,3 @@
+#name : CONSTRAINT ...
+# --
+CONSTRAINT ${1:table} CHECK (${2})

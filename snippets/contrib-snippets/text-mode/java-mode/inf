@@ -1,0 +1,6 @@
+#name : interface
+# --
+public interface ${1:interface_name}
+{
+  $0
+}

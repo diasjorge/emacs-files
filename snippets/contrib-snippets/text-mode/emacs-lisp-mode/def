@@ -1,0 +1,5 @@
+#name : function
+# --
+(defun ${1:function_name}()
+  $0
+)

@@ -1,0 +1,7 @@
+#name : begin / rescue (with variable)
+# --
+begin
+  $1
+rescue ${2:Exception} => ${3:variable}
+  $0
+end

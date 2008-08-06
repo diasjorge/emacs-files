@@ -1,0 +1,5 @@
+#name : let
+# --
+(let ((${1:variable})$2)
+  $0
+)

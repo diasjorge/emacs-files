@@ -1,0 +1,6 @@
+#name : id block
+# --
+#${1:block_name}
+{
+  $0
+}

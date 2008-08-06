@@ -1,0 +1,3 @@
+#name : render :action
+# --
+render :${0:action}

@@ -1,0 +1,3 @@
+#name : ORDER BY ... ASC
+# --
+ORDER BY ${1:attributes} ASC

@@ -1,0 +1,7 @@
+#name : if / elsif
+# --
+if ${1:condition}
+  $0
+elsif ${2:condition}
+  
+end

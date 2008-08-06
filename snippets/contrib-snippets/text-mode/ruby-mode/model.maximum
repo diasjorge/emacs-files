@@ -1,0 +1,3 @@
+#name : maximum
+# --
+${1:Model}.maximum(${2:attribute})

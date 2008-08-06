@@ -1,0 +1,3 @@
+#name : sum
+# --
+${1:Model}.sum(${2:attribute})

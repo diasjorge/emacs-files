@@ -1,0 +1,3 @@
+#name : attribute DATE(...)
+# --
+${1:attribute} DATE(${2:length})

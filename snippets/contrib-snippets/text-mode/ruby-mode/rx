@@ -1,0 +1,3 @@
+#name : render xml
+# --
+render :xml => 

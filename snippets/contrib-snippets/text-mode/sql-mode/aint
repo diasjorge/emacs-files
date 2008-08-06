@@ -1,0 +1,3 @@
+#name : attribute INT(...)
+# --
+${1:attribute} INT(${2:length})

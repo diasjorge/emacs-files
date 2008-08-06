@@ -1,0 +1,3 @@
+#name : HashMap
+# --
+Map<${1:Keytype}, ${2:Valuetype}> ${3:variable} = new HashMap<$1, $2>();

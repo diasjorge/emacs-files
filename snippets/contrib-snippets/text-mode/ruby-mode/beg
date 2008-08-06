@@ -1,0 +1,5 @@
+#name : comment
+# --
+=begin rdoc
+  $0
+=end

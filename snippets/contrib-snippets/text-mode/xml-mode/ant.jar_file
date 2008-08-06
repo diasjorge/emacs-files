@@ -1,0 +1,15 @@
+#name : jar
+# --
+<project default="${1:compile}">
+  <target name="$1">
+    <javac srcdir="${2:source_dir}" />
+  </target>
+
+  <target name="${3:jar}" depends="$1">
+    <jar destfile="${4:jar_file}" basedir="." includes="**/*.class">
+      <manifest>
+        <attribute name="Main-Class" value="${5:main_class_name}"/>
+      </manifest>
+    </jar>
+  </target>
+</project>

@@ -1,0 +1,3 @@
+#name : new O()
+# --
+new ${1:Type}($0)

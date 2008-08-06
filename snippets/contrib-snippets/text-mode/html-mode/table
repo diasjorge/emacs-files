@@ -1,0 +1,10 @@
+#name : table
+# --
+<table border="${1:0}" class="${2:class}" cellpadding="${3:0}" cellspacing="${4:0}">
+  <tr>
+    <th>$0</th>
+  </tr>
+  <tr>
+    <td></td>
+  </tr>
+</table>

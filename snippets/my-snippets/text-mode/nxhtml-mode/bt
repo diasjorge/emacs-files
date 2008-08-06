@@ -1,0 +1,3 @@
+#name : button_to
+# --
+<%= button_to ${1:name}, ${2:target} %>

@@ -1,0 +1,14 @@
+#name : table (large)
+# --
+<table border="${1:0}" class="${2:class}" cellpadding="${3:0}" cellspacing="${4:0}">
+  <thead>
+    <tr>
+      <th>$0</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td></td>
+    </tr>
+  </tbody>
+</table>

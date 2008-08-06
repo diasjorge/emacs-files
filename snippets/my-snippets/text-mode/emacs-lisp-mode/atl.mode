@@ -1,0 +1,3 @@
+#name : add-to-list auto-mode-alist
+# --
+(add-to-list 'auto-mode-alist '("${1:pattern}" . ${2:mode}))

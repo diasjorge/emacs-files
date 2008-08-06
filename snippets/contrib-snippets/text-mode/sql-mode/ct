@@ -1,0 +1,5 @@
+#name : CREATE TABLE ...
+# --
+CREATE TABLE IF NOT EXISTS ${1:table} (
+  ${2:attribute} ${3:type}(${4:length}
+)

@@ -1,0 +1,15 @@
+#name : class with constructor
+# --
+/**
+ * 
+ */
+public class ${1:`(file-name-sans-extension (buffer-name))`}
+{
+  /**
+   * 
+   */
+  public $1()
+  {
+    $0
+  }
+}

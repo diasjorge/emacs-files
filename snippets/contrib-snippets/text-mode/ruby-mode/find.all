@@ -1,0 +1,3 @@
+#name : all
+# --
+${1:Model}.find(:all$0)

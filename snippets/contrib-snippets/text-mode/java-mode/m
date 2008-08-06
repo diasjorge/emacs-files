@@ -1,0 +1,3 @@
+#name : method()
+# --
+${1:method}($2)

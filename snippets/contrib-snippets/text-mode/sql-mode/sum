@@ -1,0 +1,3 @@
+#name : SUM
+# --
+SUM(${1:attribute})

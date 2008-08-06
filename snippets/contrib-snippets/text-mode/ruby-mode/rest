@@ -1,0 +1,31 @@
+#name : restfull controller
+# --
+class ${1:class_name}Controller < ApplicationController
+  def index
+    $0
+  end
+
+  def show
+    
+  end
+
+  def new
+    
+  end
+
+  def edit
+    
+  end
+
+  def create
+    
+  end
+
+  def update
+    
+  end
+
+  def destroy
+    
+  end
+end

@@ -1,0 +1,3 @@
+#name : read_attribute
+# --
+read_attribute(:$1)

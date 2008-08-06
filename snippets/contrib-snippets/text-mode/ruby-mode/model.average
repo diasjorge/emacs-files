@@ -1,0 +1,3 @@
+#name : average
+# --
+${1:Model}.average(${2:attribute})

@@ -1,0 +1,5 @@
+#name : Constructor
+# --
+def initialize
+  $0
+end

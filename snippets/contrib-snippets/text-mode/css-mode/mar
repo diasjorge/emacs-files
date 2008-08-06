@@ -1,0 +1,3 @@
+#name : margin a
+# --
+margin: $1px;

@@ -1,0 +1,6 @@
+#name : function
+# --
+${1:public} function ${2:function_name}($3)
+{
+  $0
+}

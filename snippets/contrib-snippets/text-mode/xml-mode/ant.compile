@@ -1,0 +1,7 @@
+#name : compile
+# --
+<project default="${1:compile}">
+  <target name="$1">
+    <javac srcdir="${2:source_dir}" />
+  </target>
+</project>

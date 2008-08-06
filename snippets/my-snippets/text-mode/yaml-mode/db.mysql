@@ -1,0 +1,19 @@
+#name : database.yml for mysql
+# --
+---
+# This is a sample database file for the ActiveRecord and DataMapper ORMs
+:development: &defaults
+  :adapter: mysql
+  :database: ${1:merb_blog}_development
+  :username: ${2:root}
+  :password: ${3:root}
+  :encoding: utf8
+  :host: ${4:localhost}
+
+:test:
+  <<: *defaults
+  :database: ${1:merb_blog}_test
+
+:production:
+  <<: *defaults
+  :database: ${1:merb_blog}_production

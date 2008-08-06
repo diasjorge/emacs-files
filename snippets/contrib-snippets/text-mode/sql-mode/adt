@@ -1,0 +1,3 @@
+#name : attribute DATETIME(...)
+# --
+${1:attribute} DATETIME(${2:length})

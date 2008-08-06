@@ -1,0 +1,3 @@
+#name : INSERT INTO ...
+# --
+INSERT INTO ${1:table} (${2:attributes}) VALUES ${3:values}

@@ -1,0 +1,7 @@
+#name : hook
+# --
+(add-hook '${1:major-mode}-mode-hook
+  '(lambda()
+    $0
+  )
+)

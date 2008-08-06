@@ -1,0 +1,3 @@
+#name : insert variable
+# --
+(insert ${1:message})
