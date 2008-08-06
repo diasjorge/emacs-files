@@ -1,0 +1,31 @@
+Initialize and update submodules
+
+  git submodule init
+  git submodule update
+
+  cp -var emacs.el ~/.emacs
+  mkdir ~/.emacs.d/
+  cp -var elisp ~/.emacs.d/
+  cp -var snippets ~/.emacs.d/
+
+Install emacs from cvs
+
+  wajig install cvs libxfont-dev libxfont1 
+
+  mkdir -p ~/src/build
+  cd ~/src
+  cvs -d:pserver:anonymous@cvs.sv.gnu.org:/sources/emacs co emacs
+  cd build
+
+Read the INSTALL file
+
+  ../emacs/configure
+
+  make
+  sudo make install
+
+Set Monospace font
+
+  echo "Emacs.font: Monospace-10" >> ~/.Xresources
+  xrdb -merge ~/.Xresources
+
