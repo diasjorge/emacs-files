@@ -129,6 +129,7 @@
 (add-to-list 'load-path "~/.emacs.d/elisp")
 (add-to-list 'load-path "~/.emacs.d/elisp/color-theme")
 (add-to-list 'load-path "~/.emacs.d/elisp/ruby-mode")
+(add-to-list 'load-path "~/.emacs.d/elisp/ri-emacs")
 (add-to-list 'load-path "~/.emacs.d/elisp/yaml-mode")
 (add-to-list 'load-path "~/.emacs.d/elisp/rinari")
 (add-to-list 'load-path "~/.emacs.d/elisp/git-emacs")
@@ -155,6 +156,7 @@
 (setq auto-mode-alist (append '(("\\.rb$" . ruby-mode)) auto-mode-alist))
 (setq interpreter-mode-alist (append '(("ruby" . ruby-mode)) interpreter-mode-alist))
 
+(add-to-list 'auto-mode-alist '("\.treetop$" . ruby-mode))
 (add-to-list 'auto-mode-alist '("Rakefile" . ruby-mode))
 (add-to-list 'auto-mode-alist '("\.rake$" . ruby-mode))
 
@@ -165,6 +167,23 @@
 
 ;; ruby-electric
 (require 'ruby-electric)
+(add-hook 'ruby-mode-hook (lambda () (ruby-electric-mode t)))
+
+;; ri-ruby
+;; http://rubyforge.org/projects/ri-emacs/
+;;
+;; C-h r
+(setq ri-ruby-script "/home/jorge/.emacs.d/elisp/ri-emacs/ri-emacs.rb")
+(autoload 'ri "ri-ruby" nil t)
+(global-set-key (kbd "C-h r") 'ri)
+
+;; ruby-test  run test/specs for ruby projects
+;; http://www.emacswiki.org/cgi-bin/emacs/ruby-test.el
+;;
+;; C-x C-SPC => run this test/spec
+;; C-x t     => run tests/specs in this file
+;; C-c t     => toggle between specification and implementation
+(require 'ruby-test)
 
 ;; rdebug from ruby-debug-extras-0.10.1 (not working as desire)
 ;; http://groups.google.com/group/emacs-on-rails/browse_thread/thread/dfaa224905b51487
@@ -225,10 +244,10 @@
 (yas/initialize)
 (setq yas/text-popup-function
       'yas/dropdown-list-popup-for-template)
-(yas/load-directory "~/.emacs.d/snippets")
-(yas/load-directory "~/.emacs.d/contrib-snippets")
-(yas/load-directory "~/.emacs.d/yasnippets-rails/rails-snippets")
-(yas/load-directory "~/.emacs.d/my-snippets")
+(yas/load-directory "~/.emacs.d/snippets/defaults")
+(yas/load-directory "~/.emacs.d/snippets/contrib-snippets")
+(yas/load-directory "~/.emacs.d/snippets/yasnippets-rails/rails-snippets")
+(yas/load-directory "~/.emacs.d/snippets/my-snippets")
 
 ;; git-emacs
 ;; http://github.com/tsgates/git-emacs
