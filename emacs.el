@@ -133,6 +133,8 @@
 (add-to-list 'load-path "~/.emacs.d/elisp/yaml-mode")
 (add-to-list 'load-path "~/.emacs.d/elisp/rinari")
 (add-to-list 'load-path "~/.emacs.d/elisp/git-emacs")
+(add-to-list 'load-path "~/.emacs.d/elisp/haml-mode")
+
 ;; add more here as needed
 
 ;; color-theme
@@ -194,6 +196,16 @@
 (require 'rinari)
 (global-set-key (kbd "C-x C-M-f") 'find-file-in-project)
 (setq rinari-browse-url-func 'browse-url-generic)
+
+;; haml-mode
+;; http://github.com/nex3/haml
+(require 'haml-mode)
+(add-to-list 'auto-mode-alist '("\.haml$" . haml-mode))
+
+;; sass-mode
+;; http://github.com/nex3/haml
+(require 'sass-mode)
+(add-to-list 'auto-mode-alist '("\.sass$" . sass-mode))
 
 ;; use exuberant-ctags
 ;;
