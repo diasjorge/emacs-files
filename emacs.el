@@ -130,7 +130,9 @@
 (global-set-key (kbd "C-x -") 'shrink-window)
 
 ;; ido-mode
+(setq ido-use-filename-at-point t)
 (ido-mode t)
+(ido-everywhere t)
 (add-hook 'ido-setup-hook 'custom-ido-extra-keys)
 (defun custom-ido-extra-keys ()
   "Add my keybindings for ido."
@@ -148,26 +150,44 @@
 (add-to-list 'load-path "~/.emacs.d/elisp/git-emacs")
 (add-to-list 'load-path "~/.emacs.d/elisp/haml-mode")
 (add-to-list 'load-path "~/.emacs.d/elisp/emacs-wget")
-
 ;; add more here as needed
 
+;; emacs-wget
+;; http://pop-club.hp.infoseek.co.jp/emacs/emacs-wget/emacs-wget-0.5.0.tar.gz
+;; Download, uncompress and move to ~/.emacs.d/elisp/emacs-wget
+;; run make
+(autoload 'wget "wget" "wget interface for Emacs." t)
+(autoload 'wget-web-page "wget" "wget interface to download whole web page." t)
+(setq wget-download-directory-filter 'wget-download-dir-filter-regexp)
+(setq wget-download-directory
+      '(("\\.\\(jpe?g\\|png\\)$" . "~/Downloads/wget/pictures")
+	("\\.el$" . "~/.emacs.d/elisp")
+	("." . "~/Downloads/wget")))
+(global-set-key (kbd "C-c w") 'wget)
+
+;; icomplete
+;; preview command completion when writing in Minibuffer
+;; this is part of emacs
+(icomplete-mode 1)
+
+;; icomplete+
+;; Extensions to icomplete
+;; http://www.emacswiki.org/cgi-bin/wiki/download/icomplete+.el (wget)
+(eval-after-load "icomplete" '(progn (require 'icomplete+)))
+
 ;; color-theme
-;; http://download.gna.org/color-theme/
+;; http://download.gna.org/color-theme/color-theme-6.6.0.tar.gz (wget)
+;; uncompress and move to ~/.emacs.d/elisp/color-theme
 (load "color-theme")
 (color-theme-initialize)
-;; http://edward.oconnor.cx/config/elisp/color-theme-hober2.el
+;; http://edward.oconnor.cx/config/elisp/color-theme-hober2.el (wget)
 (load "color-theme-hober2")
 (color-theme-hober2)
 
 ;; ruby-mode
 ;; ruby-mode from ruby-lang svn
 ;;
-;; http://svn.ruby-lang.org/cgi-bin/viewvc.cgi/trunk/misc/
-;;
-;; inf-ruby.el       program to run ruby under emacs
-;; ruby-mode.el      ruby mode for emacs
-;; * rubydb3x.el       ruby debugger support ** Not used here see rdebug comments **
-;; ruby-electric.el  emacs minor mode providing electric commands
+;; svn co http://svn.ruby-lang.org/repos/ruby/trunk/misc/ ~/.emacs.d/elisp/ruby-mode
 (autoload 'ruby-mode "ruby-mode" "Mode for editing ruby source files" t)
 (setq auto-mode-alist (append '(("\\.rb$" . ruby-mode)) auto-mode-alist))
 (setq interpreter-mode-alist (append '(("ruby" . ruby-mode)) interpreter-mode-alist))
@@ -189,13 +209,17 @@
 ;; ri-ruby
 ;; http://rubyforge.org/projects/ri-emacs/
 ;;
+;; cd ~/.emacs.d/elisp
+;; cvs -d :pserver:anonymous@rubyforge.org:/var/cvs/ri-emacs login # Press ENTER for password
+;; cvs -d :pserver:anonymous@rubyforge.org:/var/cvs/ri-emacs checkout ri-emacs
+;;
 ;; C-h r
 (setq ri-ruby-script "/home/jorge/.emacs.d/elisp/ri-emacs/ri-emacs.rb")
 (autoload 'ri "ri-ruby" nil t)
 (global-set-key (kbd "C-h r") 'ri)
 
 ;; ruby-test  run test/specs for ruby projects
-;; http://www.emacswiki.org/cgi-bin/emacs/ruby-test.el
+;; http://www.emacswiki.org/cgi-bin/emacs/download/ruby-test.el (wget)
 ;;
 ;; C-x C-SPC => run this test/spec
 ;; C-x t     => run tests/specs in this file
@@ -203,7 +227,9 @@
 (require 'ruby-test)
 
 ;; rdebug from ruby-debug-extras-0.10.1 (not working as desire)
-;; http://groups.google.com/group/emacs-on-rails/browse_thread/thread/dfaa224905b51487
+;;
+;; Read http://groups.google.com/group/emacs-on-rails/browse_thread/thread/dfaa224905b51487
+;; http://rubyforge.iasi.roedu.net/files/ruby-debug/ruby-debug-extra-0.10.1.tar.gz (wget)
 (require 'rdebug)
 
 ;; rinari
@@ -283,23 +309,13 @@
 (add-to-list 'auto-mode-alist '("\\.textile\\'" . textile-mode))
 
 ;; pastie
-;; http://www.emacswiki.org/cgi-bin/wiki/pastie.el
+;; http://www.emacswiki.org/cgi-bin/wiki/download/pastie.el (wget)
 ;; (require 'pastie)
 (load "pastie")
 
 ;; lorem-ipsum
-;; http://www.emacswiki.org/cgi-bin/wiki/lorem-ipsum.el
+;; http://www.emacswiki.org/cgi-bin/wiki/download/lorem-ipsum.el (wget)
 (load "lorem-ipsum")
-
-;; emacs-wget
-;; http://pop-club.hp.infoseek.co.jp/emacs/emacs-wget/#download_en
-(autoload 'wget "wget" "wget interface for Emacs." t)
-(autoload 'wget-web-page "wget" "wget interface to download whole web page." t)
-(setq wget-download-directory-filter 'wget-download-dir-filter-regexp)
-(setq wget-download-directory
-      '(("\\.\\(jpe?g\\|png\\)$" . "~/Downloads/wget/pictures")
-	("\\.el$" . "~/.emacs.d/elisp")
-	("." . "~/Downloads/wget")))
 
 ;; keep scrolling in compilation result buffer
 (setq compilation-scroll-output t)
