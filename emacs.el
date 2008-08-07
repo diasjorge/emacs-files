@@ -178,10 +178,10 @@
 ;; color-theme
 ;; http://download.gna.org/color-theme/color-theme-6.6.0.tar.gz (wget)
 ;; uncompress and move to ~/.emacs.d/elisp/color-theme
-(load "color-theme")
+(require "color-theme")
 (color-theme-initialize)
 ;; http://edward.oconnor.cx/config/elisp/color-theme-hober2.el (wget)
-(load "color-theme-hober2")
+(require "color-theme-hober2")
 (color-theme-hober2)
 
 ;; ruby-mode
@@ -310,12 +310,11 @@
 
 ;; pastie
 ;; http://www.emacswiki.org/cgi-bin/wiki/download/pastie.el (wget)
-;; (require 'pastie)
-(load "pastie")
+(require 'pastie)
 
 ;; lorem-ipsum
 ;; http://www.emacswiki.org/cgi-bin/wiki/download/lorem-ipsum.el (wget)
-(load "lorem-ipsum")
+(require 'lorem-ipsum)
 
 ;; keep scrolling in compilation result buffer
 (setq compilation-scroll-output t)
