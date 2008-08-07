@@ -1,11 +1,11 @@
 ;;;
 ;;;  ruby-mode.el -
 ;;;
-;;;  $Author$
+;;;  $Author: knu $
 ;;;  created at: Fri Feb  4 14:49:13 JST 1994
 ;;;
 
-(defconst ruby-mode-revision "$Revision$"
+(defconst ruby-mode-revision "$Revision: 18413 $"
   "Ruby mode revision string.")
 
 (defconst ruby-mode-version
@@ -187,7 +187,7 @@ Also ignores spaces after parenthesis when 'space."
   (let ((index-alist '())
         name next pos decl sing)
     (goto-char beg)
-    (while (re-search-forward "^\\s *\\(\\(class\\>\\(\\s *<<\\)?\\|module\\>\\)\\s *\\([^\(<\n ]+\\)\\|\\(def\\|alias\\)\\>\\s *\\([^\(\n ]+\\)\\)" end t)
+    (while (re-search-forward "^\\s *\\(\\(class\\s +\\|\\(class\\s *<<\\s *\\)\\|module\\s +\\)\\([^\(<\n ]+\\)\\|\\(def\\|alias\\)\\s +\\([^\(\n ]+\\)\\)" end t)
       (setq sing (match-beginning 3))
       (setq decl (match-string 5))
       (setq next (match-end 0))
