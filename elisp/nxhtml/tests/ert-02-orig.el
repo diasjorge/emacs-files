@@ -1,8 +1,5 @@
 ;;; ert.el --- Emacs Lisp Regression Testing
 
-;; Modified by Lennart Borgman 2008-07-13 to make all global symbols
-;; use the "ert-" prefix.
-
 ;; Copyright (C) 2007, 2008 Christian M. Ohler
 
 ;; Author: Christian M. Ohler
@@ -51,7 +48,7 @@
 ;;
 ;;     ;; Define a test named `foo'.
 ;;     (ert-deftest foo ()
-;;       (ert-should (= (+ 1 2) 4)))
+;;       (should (= (+ 1 2) 4)))
 ;;
 ;;     ;; Run it.
 ;;     (ert-run-tests-interactively 'foo)
@@ -61,7 +58,7 @@
 ;;
 ;;     F foo
 ;;         (ert-test-failed
-;;          ((ert-should
+;;          ((should
 ;;            (=
 ;;             (+ 1 2)
 ;;             4))
@@ -70,7 +67,7 @@
 ;;           :value nil))
 ;;
 ;; This indicates that the test failed.  The `should' form that failed
-;; was (ert-should (= (+ 1 2) 4)), because its inner form, after
+;; was (should (= (+ 1 2) 4)), because its inner form, after
 ;; evaluation of its arguments, was the function call (= 3 4), which
 ;; returned nil.
 ;;
@@ -190,10 +187,8 @@
   (assert (ert-test-boundp symbol) t)
   (get symbol 'ert-test))
 
-(defun ert-set-test (symbol doc definition)
+(defun ert-set-test (symbol definition)
   "Make SYMBOL name the test DEFINITION, and return DEFINITION."
-  (when doc
-    (put symbol 'ert-test-documentation doc))
   (put symbol 'ert-test definition)
   definition)
 
@@ -213,7 +208,7 @@
   "The regexp the `find-function' mechanisms use for locating test definitions.")
 
 (eval-and-compile
-  (defun ert-parse-keys-and-body (docstr keys-and-body)
+  (defun ert-parse-keys-and-body (keys-and-body)
     "Split KEYS-AND-BODY into keyword-and-value pairs and the remaining body.
 
 KEYS-AND-BODY should have the form of a property list, with the
@@ -223,10 +218,6 @@ keyword.
 
 Returns a two-element list containing the keys-and-values plist
 and the body."
-    (unless (stringp docstr)
-      (when docstr
-        (setq keys-and-body (cons docstr keys-and-body))
-        (setq docstr nil)))
     (let ((extracted-key-accu '())
           (remaining keys-and-body))
       (while (and (consp remaining) (keywordp (first remaining)))
@@ -242,53 +233,23 @@ and the body."
       (list (loop for (key . value) in extracted-key-accu
                   collect key
                   collect value)
-            docstr
             remaining))))
 
-(defvar ert-error-on-test-redefinition nil)
-
 ;;;###autoload
-(defmacro* ert-deftest (name ()
-                             &optional docstr
-                             &body keys-and-body)
+(defmacro* ert-deftest (name () &body keys-and-body)
   "Define NAME (a symbol) as a test.
 
 \(fn NAME () [:documentation DOCSTRING] [:expected-result TYPE] BODY...)"
-  ;; The :documentation would be unreadable.  I have therefore added
-  ;; docstr that will look like documentation use to in Emacs.  Maybe
-  ;; add function ert-describe-test?
-  (declare (indent 2)
-           (debug (&define :name test name sexp
+  (declare (debug (&define :name test name sexp
                            [&optional [":documentation" stringp]]
                            [&optional [":expected-result" sexp]]
                            def-body)))
   (destructuring-bind ((&key (expected-result nil expected-result-supplied-p)
                              (documentation nil documentation-supplied-p))
-                       doc
                        body)
-      (ert-parse-keys-and-body docstr keys-and-body)
+      (ert-parse-keys-and-body keys-and-body)
     `(progn
-       ;; Guard against missing/badly named tests:
-       (when (and ert-error-on-test-redefinition
-                  (symbolp ',name)
-                  (get ',name 'ert-test))
-         (with-output-to-temp-buffer "*Ert Error*"
-           (with-current-buffer "*Ert Error*"
-             (insert "Test "
-                     (format "%s" ',name)
-                     " is already defined in "
-                     (format "%s" (find-definition-noselect ',name 'ert-deftest))
-                     "\n\n"
-                     "Tip: Use `ert-delete-all-tests' or `ert-delete-test' before redefining tests."
-                     )))
-         (if (y-or-n-p "Do you want to call ert-delete-all-tests and then continue? ")
-             ;; Fix-me: This does not work, why?
-             (ert-delete-all-tests)
-           (error "Test %s is already defined in %s"
-                  ',name
-                  (find-definition-noselect ',name 'ert-deftest))))
        (ert-set-test ',name
-                     nil ;;doc
                      (make-ert-test
                       :name ',name
                       :body (lambda () ,@body)
@@ -297,12 +258,10 @@ and the body."
                       ,@(when documentation-supplied-p
                           `(:documentation ,documentation))))
        ;; This hack allows `symbol-file' to associate `ert-deftest'
-       ;; forms with files, and therefore enables
-       ;; `find-function-do-it' to work with tests.  However, it leads
-       ;; to warnings in `unload-feature', which doesn't know how to
-       ;; undefine tests and has no mechanism for extension.
-       ;;
-       ;; Fix-me: Send bug report on unload-feature.
+       ;; forms with files, and therefore enables `find-function' to
+       ;; work with tests.  However, it leads to warnings in
+       ;; `unload-feature', which doesn't know how to undefine tests
+       ;; and has no mechanism for extension.
        (push '(ert-deftest . ,name) current-load-list)
        ',name)))
 
@@ -683,20 +642,20 @@ the particular variant of `should'."
                                              (apply -explainer- ,args))))))
                  ,value)))))))))
 
-(defmacro* ert-should (form &environment env)
+(defmacro* should (form &environment env)
   "Evaluate FORM.  If it returns nil, abort the current test as failed.
 
 Returns the value of FORM."
-  (ert-expand-should `(ert-should ,form) form env
+  (ert-expand-should `(should ,form) form env
                      (lambda (inner-form form-description-form)
                        `(unless ,inner-form
                           (ert-fail ,form-description-form)))))
 
-(defmacro* ert-should-not (form &environment env)
+(defmacro* should-not (form &environment env)
   "Evaluate FORM.  If it returns non-nil, abort the current test as failed.
 
 Returns nil."
-  (ert-expand-should `(ert-should-not ,form) form env
+  (ert-expand-should `(should-not ,form) form env
                      (lambda (inner-form form-description-form)
                        `(unless (not ,inner-form)
                           (ert-fail ,form-description-form)))))
@@ -736,7 +695,7 @@ TEST, and aborts the current test as failed if it doesn't."
 
 ;; FIXME: The expansion will evaluate the keyword args (if any) in
 ;; nonstandard order.
-(defmacro* ert-should-error (form &rest keys &key type exclude-subtypes test
+(defmacro* should-error (form &rest keys &key type exclude-subtypes test
                               &environment env)
   "Evaluate FORM.  Unless it signals an error, abort the current test as failed.
 
@@ -751,7 +710,7 @@ element of TYPE.  TEST should be a predicate."
   (unless type (setq type ''error))
   (unless test (setq test '(lambda (condition) t)))
   (ert-expand-should
-   `(ert-should-error ,form ,@keys)
+   `(should-error ,form ,@keys)
    form env
    (lambda (inner-form form-description-form)
      (let ((errorp (gensym "errorp"))
@@ -1416,7 +1375,7 @@ Returns the stats object."
         ("b" ert-results-pop-to-backtrace-for-test-at-point)
         ("p" ert-results-toggle-printer-limits-for-test-at-point)
         ("D" ert-delete-test)
-        ([?\t] forward-button)
+        ([tab] forward-button)
         ([backtab] backward-button)
         )
       do
@@ -1685,8 +1644,6 @@ This is an inverse of `add-to-list'."
 
 ;;; Self-tests.
 
-(ert-delete-all-tests)
-
 ;; Test that test bodies are actually run.
 (defvar ert-test-body-was-run)
 (ert-deftest ert-test-body-runs ()
@@ -1784,102 +1741,102 @@ This is an inverse of `add-to-list'."
 
 ;; Test that `should' works.
 (ert-deftest ert-test-should ()
-  (let ((test (make-ert-test :body (lambda () (ert-should nil)))))
+  (let ((test (make-ert-test :body (lambda () (should nil)))))
     (let ((result (let ((ert-debug-on-error nil))
                     (ert-run-test test))))
       (assert (typep result 'ert-test-failed) t)
       (assert (equal (ert-test-result-condition result)
-                     '(ert-test-failed ((ert-should nil) :form nil :value nil)))
+                     '(ert-test-failed ((should nil) :form nil :value nil)))
               t)))
-  (let ((test (make-ert-test :body (lambda () (ert-should t)))))
+  (let ((test (make-ert-test :body (lambda () (should t)))))
     (let ((result (ert-run-test test)))
       (assert (typep result 'ert-test-passed) t))))
 
 (ert-deftest ert-test-should-value ()
-  (ert-should (eql (ert-should 'foo) 'foo))
-  (ert-should (eql (ert-should 'bar) 'bar)))
+  (should (eql (should 'foo) 'foo))
+  (should (eql (should 'bar) 'bar)))
 
 (ert-deftest ert-test-should-not ()
-  (let ((test (make-ert-test :body (lambda () (ert-should-not t)))))
+  (let ((test (make-ert-test :body (lambda () (should-not t)))))
     (let ((result (let ((ert-debug-on-error nil))
                     (ert-run-test test))))
       (assert (typep result 'ert-test-failed) t)
       (assert (equal (ert-test-result-condition result)
-                     '(ert-test-failed ((ert-should-not t) :form t :value t)))
+                     '(ert-test-failed ((should-not t) :form t :value t)))
               t)))
-  (let ((test (make-ert-test :body (lambda () (ert-should-not nil)))))
+  (let ((test (make-ert-test :body (lambda () (should-not nil)))))
     (let ((result (ert-run-test test)))
       (assert (typep result 'ert-test-passed)))))
 
 
 (ert-deftest ert-test-should-error ()
   ;; No error.
-  (let ((test (make-ert-test :body (lambda () (ert-should-error (progn))))))
+  (let ((test (make-ert-test :body (lambda () (should-error (progn))))))
     (let ((result (let ((ert-debug-on-error nil))
                     (ert-run-test test))))
-      (ert-should (typep result 'ert-test-failed))
-      (ert-should (equal (ert-test-result-condition result)
+      (should (typep result 'ert-test-failed))
+      (should (equal (ert-test-result-condition result)
                      '(ert-test-failed
-                       ((ert-should-error (progn))
+                       ((should-error (progn))
                         :form (progn)
                         :value nil
                         :fail-reason "did not signal an error"))))))
   ;; A simple error.
-  (let ((test (make-ert-test :body (lambda () (ert-should-error (error "foo"))))))
+  (let ((test (make-ert-test :body (lambda () (should-error (error "foo"))))))
     (let ((result (ert-run-test test)))
-      (ert-should (typep result 'ert-test-passed))))
+      (should (typep result 'ert-test-passed))))
   ;; Error of unexpected type, no test.
   (let ((test (make-ert-test :body (lambda ()
-                                     (ert-should-error (error "foo")
+                                     (should-error (error "foo")
                                                    :type 'singularity-error)))))
     (let ((result (ert-run-test test)))
-      (ert-should (typep result 'ert-test-failed))
-      (ert-should (equal
+      (should (typep result 'ert-test-failed))
+      (should (equal
                (ert-test-result-condition result)
                '(ert-test-failed
-                 ((ert-should-error (error "foo") :type 'singularity-error)
+                 ((should-error (error "foo") :type 'singularity-error)
                   :form (error "foo")
                   :condition (error "foo")
                   :fail-reason
                   "the error signalled did not have the expected type"))))))
   ;; Error of the expected type, no test.
   (let ((test (make-ert-test :body (lambda ()
-                                     (ert-should-error (signal 'singularity-error
+                                     (should-error (signal 'singularity-error
                                                            nil)
                                                    :type 'singularity-error)))))
     (let ((result (ert-run-test test)))
-      (ert-should (typep result 'ert-test-passed))))
+      (should (typep result 'ert-test-passed))))
   ;; Error that fails the test, no type.
   (let ((test (make-ert-test :body (lambda ()
-                                     (ert-should-error
+                                     (should-error
                                       (error "foo")
                                       :test (lambda (error) nil))))))
     (let ((result (ert-run-test test)))
-      (ert-should (typep result 'ert-test-failed))
-      (ert-should (equal (ert-test-result-condition result)
+      (should (typep result 'ert-test-failed))
+      (should (equal (ert-test-result-condition result)
                      '(ert-test-failed
-                       ((ert-should-error (error "foo") :test (lambda (error) nil))
+                       ((should-error (error "foo") :test (lambda (error) nil))
                         :form (error "foo")
                         :condition (error "foo")
                         :fail-reason
                         "the error signalled did not pass the test"))))))
   ;; Error that passes the test, no type.
   (let ((test (make-ert-test :body (lambda ()
-                                     (ert-should-error (error "foo")
+                                     (should-error (error "foo")
                                                    :test (lambda (error) t))))))
     (let ((result (ert-run-test test)))
-      (ert-should (typep result 'ert-test-passed))))
+      (should (typep result 'ert-test-passed))))
   ;; Error that has the expected type but fails the test.
   (let ((test (make-ert-test :body (lambda ()
-                                     (ert-should-error
+                                     (should-error
                                       (signal 'singularity-error nil)
                                       :type 'singularity-error
                                       :test (lambda (error) nil))))))
     (let ((result (ert-run-test test)))
-      (ert-should (typep result 'ert-test-failed))
-      (ert-should (equal (ert-test-result-condition result)
+      (should (typep result 'ert-test-failed))
+      (should (equal (ert-test-result-condition result)
                      '(ert-test-failed
-                       ((ert-should-error (signal 'singularity-error nil)
+                       ((should-error (signal 'singularity-error nil)
                                       :type 'singularity-error
                                       :test (lambda (error) nil))
                         :form (signal singularity-error nil)
@@ -1888,32 +1845,32 @@ This is an inverse of `add-to-list'."
                         "the error signalled did not pass the test"))))))
   ;; Error that has the expected type and passes the test.
   (let ((test (make-ert-test :body (lambda ()
-                                     (ert-should-error
+                                     (should-error
                                       (signal 'singularity-error nil)
                                       :type 'singularity-error
                                       :test (lambda (error) t))))))
     (let ((result (ert-run-test test)))
-      (ert-should (typep result 'ert-test-passed))))
+      (should (typep result 'ert-test-passed))))
   )
 
 (ert-deftest ert-test-should-error-subtypes ()
   (let ((test (make-ert-test
                :body (lambda ()
-                       (ert-should-error (signal 'singularity-error nil)
+                       (should-error (signal 'singularity-error nil)
                                      :type 'singularity-error
                                      :exclude-subtypes t)))))
     (let ((result (ert-run-test test)))
-      (ert-should (typep result 'ert-test-passed))))
+      (should (typep result 'ert-test-passed))))
   (let ((test (make-ert-test
                :body (lambda ()
-                       (ert-should-error (signal 'arith-error nil)
+                       (should-error (signal 'arith-error nil)
                                      :type 'singularity-error)))))
     (let ((result (ert-run-test test)))
-      (ert-should (typep result 'ert-test-failed))
-      (ert-should (equal
+      (should (typep result 'ert-test-failed))
+      (should (equal
                (ert-test-result-condition result)
                '(ert-test-failed
-                 ((ert-should-error (signal 'arith-error nil)
+                 ((should-error (signal 'arith-error nil)
                                 :type 'singularity-error)
                   :form (signal arith-error nil)
                   :condition (arith-error)
@@ -1921,15 +1878,15 @@ This is an inverse of `add-to-list'."
                   "the error signalled did not have the expected type"))))))
   (let ((test (make-ert-test
                :body (lambda ()
-                       (ert-should-error (signal 'arith-error nil)
+                       (should-error (signal 'arith-error nil)
                                      :type 'singularity-error
                                      :exclude-subtypes t)))))
     (let ((result (ert-run-test test)))
-      (ert-should (typep result 'ert-test-failed))
-      (ert-should (equal
+      (should (typep result 'ert-test-failed))
+      (should (equal
                (ert-test-result-condition result)
                '(ert-test-failed
-                 ((ert-should-error (signal 'arith-error nil)
+                 ((should-error (signal 'arith-error nil)
                                 :type 'singularity-error
                                 :exclude-subtypes t)
                   :form (signal arith-error nil)
@@ -1938,15 +1895,15 @@ This is an inverse of `add-to-list'."
                   "the error signalled did not have the expected type"))))))
   (let ((test (make-ert-test
                :body (lambda ()
-                       (ert-should-error (signal 'singularity-error nil)
+                       (should-error (signal 'singularity-error nil)
                                      :type 'arith-error
                                      :exclude-subtypes t)))))
     (let ((result (ert-run-test test)))
-      (ert-should (typep result 'ert-test-failed))
-      (ert-should (equal
+      (should (typep result 'ert-test-failed))
+      (should (equal
                (ert-test-result-condition result)
                '(ert-test-failed
-                 ((ert-should-error (signal 'singularity-error nil)
+                 ((should-error (signal 'singularity-error nil)
                                 :type 'arith-error
                                 :exclude-subtypes t)
                   :form (signal singularity-error nil)
@@ -1961,20 +1918,20 @@ This is an inverse of `add-to-list'."
 
 (ert-deftest ert-test-should-failure-debugging ()
   (loop for (body expected-condition) in
-        `((,(lambda () (let ((x nil)) (ert-should x)))
-           (ert-test-failed ((ert-should x) :form x :value nil)))
-          (,(lambda () (let ((x t)) (ert-should-not x)))
-           (ert-test-failed ((ert-should-not x) :form x :value t)))
-          (,(lambda () (let ((x t)) (ert-should (not x))))
-           (ert-test-failed ((ert-should (not x)) :form (not t) :value nil)))
-          (,(lambda () (let ((x nil)) (ert-should-not (not x))))
-           (ert-test-failed ((ert-should-not (not x)) :form (not nil) :value t)))
-          (,(lambda () (let ((x t) (y nil)) (ert-should-not (ert-test-my-list x y))))
+        `((,(lambda () (let ((x nil)) (should x)))
+           (ert-test-failed ((should x) :form x :value nil)))
+          (,(lambda () (let ((x t)) (should-not x)))
+           (ert-test-failed ((should-not x) :form x :value t)))
+          (,(lambda () (let ((x t)) (should (not x))))
+           (ert-test-failed ((should (not x)) :form (not t) :value nil)))
+          (,(lambda () (let ((x nil)) (should-not (not x))))
+           (ert-test-failed ((should-not (not x)) :form (not nil) :value t)))
+          (,(lambda () (let ((x t) (y nil)) (should-not (ert-test-my-list x y))))
            (ert-test-failed
-            ((ert-should-not (ert-test-my-list x y))
+            ((should-not (ert-test-my-list x y))
              :form (list t nil)
              :value (t nil))))
-          (,(lambda () (let ((x t)) (ert-should (error "foo"))))
+          (,(lambda () (let ((x t)) (should (error "foo"))))
            (error "foo")))
         do
         (let ((test (make-ert-test :body body)))
@@ -1984,28 +1941,28 @@ This is an inverse of `add-to-list'."
                   (ert-run-test test))
                 (assert nil))
             ((error)
-             (ert-should (equal actual-condition expected-condition)))))))
+             (should (equal actual-condition expected-condition)))))))
 
 
 ;; Test `ert-select-tests'.
 (ert-deftest ert-test-select-regexp ()
-  (ert-should (equal (ert-select-tests "^ert-test-select-regexp$" t)
+  (should (equal (ert-select-tests "^ert-test-select-regexp$" t)
                  (list (ert-get-test 'ert-test-select-regexp)))))
 
 (ert-deftest ert-test-test-boundp ()
-  (ert-should (ert-test-boundp 'ert-test-test-boundp))
-  (ert-should-not (ert-test-boundp (make-symbol "ert-not-a-test"))))
+  (should (ert-test-boundp 'ert-test-test-boundp))
+  (should-not (ert-test-boundp (make-symbol "ert-not-a-test"))))
 
 (ert-deftest ert-test-select-member ()
-  (ert-should (equal (ert-select-tests '(member ert-test-select-member) t)
+  (should (equal (ert-select-tests '(member ert-test-select-member) t)
                  (list (ert-get-test 'ert-test-select-member)))))
 
 (ert-deftest ert-test-select-test ()
-  (ert-should (equal (ert-select-tests (ert-get-test 'ert-test-select-test) t)
+  (should (equal (ert-select-tests (ert-get-test 'ert-test-select-test) t)
                  (list (ert-get-test 'ert-test-select-test)))))
 
 (ert-deftest ert-test-select-symbol ()
-  (ert-should (equal (ert-select-tests 'ert-test-select-symbol t)
+  (should (equal (ert-select-tests 'ert-test-select-symbol t)
                  (list (ert-get-test 'ert-test-select-symbol)))))
 
 (ert-deftest ert-test-select-and ()
@@ -2015,69 +1972,60 @@ This is an inverse of `add-to-list'."
                :most-recent-result (make-ert-test-failed
                                     :condition nil
                                     :backtrace nil))))
-    (ert-should (equal (ert-select-tests `(and (member ,test) :failed) t)
+    (should (equal (ert-select-tests `(and (member ,test) :failed) t)
                    (list test)))))
 
 
 ;; Test utility functions.
 (ert-deftest ert-proper-list-p ()
-  (ert-should (ert-proper-list-p '()))
-  (ert-should (ert-proper-list-p '(1)))
-  (ert-should (ert-proper-list-p '(1 2)))
-  (ert-should (ert-proper-list-p '(1 2 3)))
-  (ert-should (ert-proper-list-p '(1 2 3 4)))
-  (ert-should (not (ert-proper-list-p 'a)))
-  (ert-should (not (ert-proper-list-p '(1 . a))))
-  (ert-should (not (ert-proper-list-p '(1 2 . a))))
-  (ert-should (not (ert-proper-list-p '(1 2 3 . a))))
-  (ert-should (not (ert-proper-list-p '(1 2 3 4 . a))))
+  (should (ert-proper-list-p '()))
+  (should (ert-proper-list-p '(1)))
+  (should (ert-proper-list-p '(1 2)))
+  (should (ert-proper-list-p '(1 2 3)))
+  (should (ert-proper-list-p '(1 2 3 4)))
+  (should (not (ert-proper-list-p 'a)))
+  (should (not (ert-proper-list-p '(1 . a))))
+  (should (not (ert-proper-list-p '(1 2 . a))))
+  (should (not (ert-proper-list-p '(1 2 3 . a))))
+  (should (not (ert-proper-list-p '(1 2 3 4 . a))))
   (let ((a (list 1)))
     (setf (cdr (last a)) a)
-    (ert-should (not (ert-proper-list-p a))))
+    (should (not (ert-proper-list-p a))))
   (let ((a (list 1 2)))
     (setf (cdr (last a)) a)
-    (ert-should (not (ert-proper-list-p a))))
+    (should (not (ert-proper-list-p a))))
   (let ((a (list 1 2 3)))
     (setf (cdr (last a)) a)
-    (ert-should (not (ert-proper-list-p a))))
+    (should (not (ert-proper-list-p a))))
   (let ((a (list 1 2 3 4)))
     (setf (cdr (last a)) a)
-    (ert-should (not (ert-proper-list-p a))))
+    (should (not (ert-proper-list-p a))))
   (let ((a (list 1 2)))
     (setf (cdr (last a)) (cdr a))
-    (ert-should (not (ert-proper-list-p a))))
+    (should (not (ert-proper-list-p a))))
   (let ((a (list 1 2 3)))
     (setf (cdr (last a)) (cdr a))
-    (ert-should (not (ert-proper-list-p a))))
+    (should (not (ert-proper-list-p a))))
   (let ((a (list 1 2 3 4)))
     (setf (cdr (last a)) (cdr a))
-    (ert-should (not (ert-proper-list-p a))))
+    (should (not (ert-proper-list-p a))))
   (let ((a (list 1 2 3)))
     (setf (cdr (last a)) (cddr a))
-    (ert-should (not (ert-proper-list-p a))))
+    (should (not (ert-proper-list-p a))))
   (let ((a (list 1 2 3 4)))
     (setf (cdr (last a)) (cddr a))
-    (ert-should (not (ert-proper-list-p a))))
+    (should (not (ert-proper-list-p a))))
   (let ((a (list 1 2 3 4)))
     (setf (cdr (last a)) (cdddr a))
-    (ert-should (not (ert-proper-list-p a)))))
+    (should (not (ert-proper-list-p a)))))
 
 (ert-deftest ert-parse-keys-and-body ()
-  (ert-should (equal (ert-parse-keys-and-body "doc" '(foo))
-                     '(nil "doc" (foo))))
-  (ert-should (equal (ert-parse-keys-and-body "doc" '(:bar foo))
-                     '((:bar foo) "doc" nil)))
-  (ert-should (equal (ert-parse-keys-and-body nil '(:bar foo))
-                     '((:bar foo) nil nil)))
-  (ert-should (equal (ert-parse-keys-and-body "doc" '(:bar foo))
-                     '((:bar foo) "doc" nil)))
-  (ert-should (equal (ert-parse-keys-and-body nil '(:bar foo a (b)))
-                     '((:bar foo) nil (a (b)))))
-  (ert-should (equal (ert-parse-keys-and-body nil '(:bar foo :a (b)))
-                     '((:bar foo :a (b)) nil nil)))
-  (ert-should (equal (ert-parse-keys-and-body nil '(bar foo :a (b)))
-                     '(nil nil (bar foo :a (b)))))
-  (ert-should-error (ert-parse-keys-and-body nil '(:bar foo :a))))
+  (should (equal (ert-parse-keys-and-body '(foo)) '(nil (foo))))
+  (should (equal (ert-parse-keys-and-body '(:bar foo)) '((:bar foo) nil)))
+  (should (equal (ert-parse-keys-and-body '(:bar foo a (b))) '((:bar foo) (a (b)))))
+  (should (equal (ert-parse-keys-and-body '(:bar foo :a (b))) '((:bar foo :a (b)) nil)))
+  (should (equal (ert-parse-keys-and-body '(bar foo :a (b))) '(nil (bar foo :a (b)))))
+  (should-error (ert-parse-keys-and-body '(:bar foo :a))))
 
 
 
@@ -2101,12 +2049,12 @@ This is an inverse of `add-to-list'."
                 (ert-run-tests-interactively
                  `(member ,passing-test ,failing-test) buffer-name
                  mock-message-fn)
-                (ert-should (equal messages `(,(concat
+                (should (equal messages `(,(concat
                                             "Ran 2 tests, 1 results were "
                                             "as expected, 1 unexpected"))))
                 (with-current-buffer buffer-name
                   (goto-char (point-min))
-                  (ert-should (equal
+                  (should (equal
                            (buffer-substring (point-min)
                                              (save-excursion
                                                (forward-line 5)
@@ -2121,13 +2069,13 @@ This is an inverse of `add-to-list'."
               (kill-buffer buffer-name))))))))
 
 (ert-deftest ert-test-special-operator-p ()
-  (ert-should (ert-special-operator-p 'if))
-  (ert-should-not (ert-special-operator-p 'car))
-  (ert-should-not (ert-special-operator-p 'ert-special-operator-p))
+  (should (ert-special-operator-p 'if))
+  (should-not (ert-special-operator-p 'car))
+  (should-not (ert-special-operator-p 'ert-special-operator-p))
   (let ((b (gensym)))
-    (ert-should-not (ert-special-operator-p b))
+    (should-not (ert-special-operator-p b))
     (fset b 'if)
-    (ert-should (ert-special-operator-p b))))
+    (should (ert-special-operator-p b))))
 
 ;; Run tests and make sure they actually ran.
 (let ((window-configuration (current-window-configuration)))

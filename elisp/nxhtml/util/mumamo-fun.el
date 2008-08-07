@@ -2,15 +2,16 @@
 ;;
 ;; Author: Lennart Borgman (lennart O borgman A gmail O com)
 ;; Created: 2008-03-09T01:35:21+0100 Sun
-;; Version: 0.5
-;; Last-Updated: 2008-03-09T03:09:31+0100 Sun
+;; Version: 0.51
+;; Last-Updated: 2008-08-04T17:54:29+0200 Mon
 ;; URL:
 ;; Keywords:
 ;; Compatibility:
 ;;
 ;; Features that might be required by this library:
 ;;
-;;   `cl', `mumamo', `sgml-mode'.
+;;   `backquote', `bytecomp', `cl', `flyspell', `ispell', `mumamo',
+;;   `sgml-mode'.
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
@@ -72,6 +73,7 @@ See `mumamo-chunk-style=' for an example of use."
               start
               end
               exc-mode
+              borders
               exc-start-prev
               exc-end-prev
               exc-start-next
@@ -118,7 +120,25 @@ See `mumamo-chunk-style=' for an example of use."
           (when end   (assert (<= pos end) t))
           (goto-char pos)
           ;;(list start end exc-mode t nil pos)))
-          (list start end exc-mode)))
+;;;           ;; fix-me: This is just an idea to fix the " problem
+;;;           (if exc-mode
+;;;               (progn
+;;;                 ;;(when start (setq start (1- start)))
+;;;                 ;;(when (< start 1) (setq start 1))
+;;;                 (when end   (setq end   (1+ end)))
+;;;                 (when (> end (buffer-size)) (setq end (buffer-size)))
+;;;                 (let* ((minb (when start (1+ start)))
+;;;                        (maxb (when end   (1- end))))
+;;;                   (setq borders (when (or minb maxb)
+;;;                                   (list minb maxb exc-mode)))))
+;;;             ;;(when start (setq start (1+ start)))
+;;;             ;;(when end   (setq end   (1- end)))
+;;;             (let* ((minb (when start (1+ start)))
+;;;                    (maxb (when end   (1- end))))
+;;;               (setq borders (when (or minb maxb)
+;;;                               (list minb maxb exc-mode)))))
+;;;           (setq borders nil)
+          (list start end exc-mode borders)))
     (error
      (mumamo-display-error 'mumamo-chunk-attr= "%s"
                            (error-message-string err)))))
@@ -126,7 +146,7 @@ See `mumamo-chunk-style=' for an example of use."
 ;;;; xml pi
 
 (defvar mumamo-xml-pi-mode-alist
-  '(("php"   . php-mode)
+  '(("php"    . php-mode)
     ("python" . python-mode))
   "Alist used by `mumamo-chunk-xml-pi' to get exception mode." )
 
@@ -137,21 +157,9 @@ See `mumamo-chunk-style=' for an example of use."
 (defun mumamo-search-bw-exc-start-xml-pi-1 (pos min lt-chars)
   "Helper for `mumamo-chunk-xml-pi'.
 POS is where to start search and MIN is where to stop.
+LT-CHARS is just <?.
 
-Actual use is in `mumamo-search-bw-exc-start-xml-pi' and
-`mumamo-search-bw-exc-start-xml-pi2'.  Those functions are
-identical except for the LT-CHARS argument.  The purpose for the
-second function was to be able to edit PHP code embedded in
-arguments which contains <?.  This string is illegal in XML when
-not used for XML instructions.  The parsing routines from
-`nxml-mode' gets very confused by that string.  The second
-routine used «? as a temporary replacement for <? during editing.
-
-However I did not managed to safely convert between <? and «?
-upon reading and saving files so I have withdrawed the visual
-support for this from nXhtml where I originally used it.  I keep
-the code in case I or someone else would like to work on it
-again.  The implementation is in nxthml-strval.el."
+Actual use is in `mumamo-search-bw-exc-start-xml-pi'."
   (let ((exc-start (mumamo-chunk-start-bw-str (+ pos 2) min lt-chars))
         spec
         exc-mode
@@ -169,7 +177,9 @@ again.  The implementation is in nxthml-strval.el."
         )
       (when hit
         (unless exc-mode
-          (setq exc-mode 'fundamental-mode))
+          ;;(setq exc-mode 'fundamental-mode)
+          ;; Fix-me: Better assume php-mode
+          (setq exc-mode 'php-mode))
         (when (<= exc-start pos)
           ;;(cons exc-start exc-mode)
           (list exc-start exc-mode nil)
@@ -237,9 +247,8 @@ POS is where to start search and MAX is where to stop."
   "Helper for `mumamo-chunk-xml-pi'.
 POS is where to start search and MAX is where to stop.
 
-Used in `mumamo-search-fw-exc-start-xml-pi' and
-`mumamo-search-fw-exc-start-xml-pi2'.  For an explanation of
-LT-CHARS see `mumamo-search-bw-exc-start-xml-pi-1'."
+Used in `mumamo-search-fw-exc-start-xml-pi'.  For an explanation
+of LT-CHARS see `mumamo-search-bw-exc-start-xml-pi-1'."
   (goto-char pos)
   (skip-chars-backward "a-zA-Z")
   ;;(let ((end-out (mumamo-chunk-start-fw-str (point) max lt-chars)))
@@ -269,13 +278,18 @@ POS is where to start search and MAX is where to stop."
   (let (start-border
         end-border
         (inc t)
-        (begin-mark "<?php")
-        (end-mark "?>"))
+        ;;(begin-mark "<?php")
+        (begin-mark "<?")
+        (end-mark "?>")
+        (here (point)))
     (if (and inc exc-mode)
         (progn
           (when start
-            (setq start-border
-                  (+ start (length begin-mark))))
+            ;;(setq start-border (+ start (length begin-mark)))
+            (goto-char (+ start (length begin-mark)))
+            (skip-chars-forward "=a-zA-Z")
+            (setq start-border (point))
+            )
           (when end
             (setq end-border
                   (- end (length end-mark)))))
@@ -285,8 +299,12 @@ POS is where to start search and MAX is where to stop."
               (setq start-border
                     (+ start (length end-mark))))
             (when end
-              (setq end-border
-                    (- end (length begin-mark)))))))
+              (setq end-border (- end (length begin-mark)))
+              ;;(goto-char end)
+              ;;(skip-chars-forward "=a-zA-Z")
+              ;;(setq end-border (point))
+              ))))
+    (goto-char here)
     (when (or start-border end-border)
       (list start-border end-border))))
 
@@ -301,36 +319,6 @@ See `mumamo-find-possible-chunk' for POS, MIN and MAX."
                               'mumamo-find-borders-xml-pi
                               ))
 
-;; (defun mumamo-search-bw-exc-start-xml-pi2 (pos min)
-;;   "Helper for `mumamo-chunk-xml-pi2'.
-;; POS is where to start search and MIN is where to stop."
-;;   (mumamo-search-bw-exc-start-xml-pi-1 pos min "«?"))
-
-;; (defun mumamo-search-bw-exc-end-xml-pi2 (pos min)
-;;   "Helper for `mumamo-chunk-xml-pi2'.
-;; POS is where to start search and MIN is where to stop."
-;;   (mumamo-chunk-end-bw-str pos min "?»"))
-
-;; (defun mumamo-search-fw-exc-end-xml-pi2 (pos max)
-;;   "Helper for `mumamo-chunk-xml-pi2'.
-;; POS is where to start search and MAX is where to stop."
-;;   (mumamo-chunk-end-fw-str pos max "?»"))
-
-;; (defun mumamo-search-fw-exc-start-xml-pi2 (pos max)
-;;   "Helper for `mumamo-chunk-xml-pi2'.
-;; POS is where to start search and MAX is where to stop."
-;;   (mumamo-search-fw-exc-start-xml-pi-1 pos max "«?"))
-
-;; (defun mumamo-chunk-xml-pi2(pos min max)
-;;   "Find faked process instruction, <? ... ?>.  Return range and wanted mode.
-;; See `mumamo-find-possible-chunk' for POS, MIN and MAX.
-
-;; See `mumamo-search-bw-exc-start-xml-pi-1' for the meaning of 'faked' here."
-;;   (mumamo-find-possible-chunk pos min max
-;;                               'mumamo-search-bw-exc-start-xml-pi2
-;;                               'mumamo-search-bw-exc-end-xml-pi2
-;;                               'mumamo-search-fw-exc-start-xml-pi2
-;;                               'mumamo-search-fw-exc-end-xml-pi2))
 
 ;;;; <style ...>
 
@@ -578,17 +566,17 @@ This covers inlined style and javascript and PHP."
 (defun mumamo-chunk-embperl-<- (pos min max)
   "Find [- ... -], return range and `perl-mode'.
 See `mumamo-find-possible-chunk' for POS, MIN and MAX."
-  (mumamo-quick-static-chunk pos min max "[-" "-]" nil 'perl-mode t))
+  (mumamo-quick-static-chunk pos min max "[-" "-]" t 'perl-mode t))
 
 (defun mumamo-chunk-embperl-<+ (pos min max)
   "Find [+ ... +], return range and `perl-mode'.
 See `mumamo-find-possible-chunk' for POS, MIN and MAX."
-  (mumamo-quick-static-chunk pos min max "[+" "+]" nil 'perl-mode nil))
+  (mumamo-quick-static-chunk pos min max "[+" "+]" t 'perl-mode nil))
 
 (defun mumamo-chunk-embperl-<! (pos min max)
   "Find [! ... !], return range and `perl-mode'.
 See `mumamo-find-possible-chunk' for POS, MIN and MAX."
-  (mumamo-quick-static-chunk pos min max "[!" "!]" nil 'perl-mode t))
+  (mumamo-quick-static-chunk pos min max "[!" "!]" t 'perl-mode t))
 
 (defun mumamo-chunk-embperl-<$ (pos min max)
   "Find [$ ... $], return range and `perl-mode'.
@@ -814,18 +802,49 @@ This also covers inlined style and javascript."
 (defun mumamo-chunk-genshi%(pos min max)
   "Find {% python ... %}.  Return range and `genshi-mode'.
 See `mumamo-find-possible-chunk' for POS, MIN and MAX."
-  (mumamo-quick-static-chunk pos min max "{% python" "%}" nil 'python-mode t))
+  (mumamo-quick-static-chunk pos min max "{% python" "%}" t 'python-mode t))
 
 ;; ${expr}
 (defun mumamo-chunk-genshi$(pos min max)
   "Find ${ ... }, return range and `python-mode'.
 See `mumamo-find-possible-chunk' for POS, MIN and MAX."
-  (mumamo-quick-static-chunk pos min max "${" "}" nil 'python-mode t))
+  (let ((chunk
+         (mumamo-quick-static-chunk pos min max "${" "}" t 'python-mode t)))
+    (when chunk
+      ;; Test for clash with %}
+      (let ((sub-mode (nth 2 chunk))
+            (start (nth 0 chunk)))
+        (if sub-mode
+            chunk
+          ;;(message "point.1=%s" (point))
+          (when (and start
+                     (eq ?% (char-before start)))
+            ;;(message "point.2=%s" (point))
+            ;;(message "clash with %%}, chunk=%s" chunk)
+            ;;(setq chunk nil)
+            (setcar chunk (1- start))
+            )
+          ;;(message "chunk.return=%s" chunk)
+          chunk)))))
 
+;; Fix-me: Because of the way chunks currently are searched for there
+;; is an error when a python chunk is used. This is because mumamo
+;; gets confused by the %} ending and the } ending.  This can be
+;; solved by running a separate phase to get the chunks first and
+;; during that phase match start and end of the chunk.
 ;;;###autoload
 (define-mumamo-multi-major-mode genshi-html-mumamo
   "Turn on multiple major modes for Genshi with main mode `html-mode'.
-This also covers inlined style and javascript."
+This also covers inlined style and javascript.
+
+Note: You will currently get fontification errors if you use
+python chunks
+
+  {% python ... %}
+
+The reason is that the chunk routines currently do not know when
+to just look for the } or %} endings.  However this should not
+affect your editing normally."
   ("Genshi HTML Family" html-mode
    (
     mumamo-chunk-genshi%
@@ -844,7 +863,7 @@ This also covers inlined style and javascript."
 (defun mumamo-chunk-mjt$(pos min max)
   "Find ${ ... }, return range and `javascript-mode'.
 See `mumamo-find-possible-chunk' for POS, MIN and MAX."
-  (mumamo-quick-static-chunk pos min max "${" "}" nil 'javascript-mode t))
+  (mumamo-quick-static-chunk pos min max "${" "}" t 'javascript-mode t))
 
 ;;;###autoload
 (define-mumamo-multi-major-mode mjt-html-mumamo
@@ -961,6 +980,10 @@ This also covers inlined style and javascript."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; eruby
 
+;; Fix-me: Maybe take care of <%= and <%- and -%>, but first ask the
+;; ruby people if this is worth doing.
+;;
+;; See also http://wiki.rubyonrails.org/rails/pages/UnderstandingViews
 (defun mumamo-chunk-eruby (pos min max)
   "Find <% ... %>.  Return range and 'ruby-mode.
 See `mumamo-find-possible-chunk' for POS, MIN and MAX."
@@ -1697,7 +1720,7 @@ This also covers inlined style and javascript."
 (defun mumamo-chunk-org-html (pos min max)
   "Find #+BEGIN_HTML ... #+END_HTML, return range and `html-mode'.
 See `mumamo-find-possible-chunk' for POS, MIN and MAX."
-  (mumamo-quick-static-chunk pos min max "#+BEGIN_HTML" "#+END_HTML" nil 'html-mode t))
+  (mumamo-quick-static-chunk pos min max "#+BEGIN_HTML" "#+END_HTML" t 'html-mode t))
 
 ;;;###autoload
 (define-mumamo-multi-major-mode org-mumamo

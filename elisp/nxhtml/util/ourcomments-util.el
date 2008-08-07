@@ -116,10 +116,12 @@ To create a menu item something similar to this can be used:
            (unless args
              (error "Keyword %s is missing an argument" keyword))
            (setq args (cdr args))
-           (cond ((not (memq keyword '(:type)))
-                  (setq var-decl (append var-decl (list keyword value))))
-                 (t
-                  (lwarn '(define-toggle) :error "Keyword %s can't be used here" keyword))))))
+           (cond
+            ((not (memq keyword '(:type)))
+             (setq var-decl (append var-decl (list keyword value))))
+            (t
+             (lwarn '(define-toggle) :error "Keyword %s can't be used here"
+                    keyword))))))
      (when (assoc :type var-decl) (error ":type is set.  Should not happen!"))
      (setq var-decl (append var-decl (list :type '(quote boolean))))
      var-decl)
@@ -175,7 +177,9 @@ To create a menu item something similar to this can be used:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; Minor modes
 
-;; (defmacro define-globalized-minor-mode-with-on-off (global-mode mode turn-on turn-off &rest keys)
+;; (defmacro define-globalized-minor-mode-with-on-off (global-mode mode
+;;                                                     turn-on turn-off
+;;                                                     &rest keys)
 ;;   "Make a global mode GLOBAL-MODE corresponding to buffer-local minor MODE.
 ;; This is a special variant of `define-globalized-minor-mode' for
 ;; mumamo.  It let bounds the variable GLOBAL-MODE-checking before
@@ -210,7 +214,8 @@ To create a menu item something similar to this can be used:
 ;;          (MODE-check-buffers
 ;;           (intern (concat global-mode-name "-check-buffers")))
 ;;          (MODE-cmhh (intern (concat global-mode-name "-cmhh")))
-;;          (MODE-major-mode (intern (concat (symbol-name mode) "-major-mode")))
+;;          (MODE-major-mode (intern (concat (symbol-name mode)
+;;                                           "-major-mode")))
 ;;          (MODE-checking (intern (concat global-mode-name "-checking")))
 ;;          keyw)
 
@@ -441,7 +446,7 @@ first tried."
         (cons (list property description)
               describe-symbol-alist)))
 
-;;(describe-symbol-add-known 'variable-documentation "Documentation for variable")
+;;(describe-symbol-add-known 'variable-documentation "Doc for variable")
 
 (defun describe-symbol(symbol)
   "Show information about SYMBOL.
@@ -481,7 +486,8 @@ function."
                   (desc (nth 1 rec)))
               (when (plist-member pl prop)
                 (unless any-known (setq any-known t))
-                (insert "The following keys in the property list are known:\n\n")
+                (insert
+                 "The following keys in the property list are known:\n\n")
                 (insert (format "* %s: %s\n" prop desc))
                 )))
           (unless any-known
@@ -518,14 +524,13 @@ function."
   (when (memq ido-mode '(both buffer))
     (let ((the-ido-minor-map (cdr ido-minor-mode-map-entry)))
       (define-key the-ido-minor-map [(control tab)] 'ido-switch-buffer))
-    (define-key ido-buffer-completion-map [(control tab)]       'ido-next-match)
-    (define-key ido-buffer-completion-map [(control shift tab)] 'ido-prev-match)
-    (define-key ido-buffer-completion-map [(control backtab)]   'ido-prev-match)
-    (define-key ido-buffer-completion-map [(shift return)]   'ourcomments-ido-buffer-other-window)
-    (define-key ido-buffer-completion-map [(control return)] 'ourcomments-ido-buffer-other-frame)
-    (define-key ido-buffer-completion-map [(meta return)]    'ourcomments-ido-buffer-raise-frame)
-    )
-  )
+    (let ((map ido-buffer-completion-map))
+      (define-key map [(control tab)]       'ido-next-match)
+      (define-key map [(control shift tab)] 'ido-prev-match)
+      (define-key map [(control backtab)]   'ido-prev-match)
+      (define-key map [(shift return)]   'ourcomments-ido-buffer-other-window)
+      (define-key map [(control return)] 'ourcomments-ido-buffer-other-frame)
+      (define-key map [(meta return)]   'ourcomments-ido-buffer-raise-frame))))
 
 ;;(add-hook 'ido-setup-hook 'ourcomments-ido-mode-advice)
 ;;(remove-hook 'ido-setup-hook 'ourcomments-ido-mode-advice)
@@ -602,46 +607,27 @@ of those in for example common web browsers."
   "Start a new Emacs."
   (interactive)
   (recentf-save-list)
-  ;;(call-process (concat exec-directory "emacs") nil 0 nil "--disable-font-backend")
   (call-process (concat exec-directory "emacs") nil 0 nil)
   (message "Started 'emacs' - it will be ready soon ..."))
 
 (defun emacs-buffer-file()
-  "Start a new Emacs showing current buffer file."
+  "Start a new Emacs showing current buffer file.
+If there is no buffer file start with `dired'."
   (interactive)
   (recentf-save-list)
   (let ((file (buffer-file-name)))
-    (unless file (error "No buffer file name"))
-    ;;(call-process (concat exec-directory "emacs") nil 0 nil "--disable-font-backend" file)
-    (call-process (concat exec-directory "emacs") nil 0 nil file)
-    (message "Started 'emacs buffer-file-name' - it will be ready soon ...")))
+    ;;(unless file (error "No buffer file name"))
+    (if file
+        (progn
+          (call-process (concat exec-directory "emacs") nil 0 nil file)
+          (message "Started 'emacs buffer-file-name' - it will be ready soon ..."))
+      (call-process (concat exec-directory "emacs") nil 0 nil "--eval"
+                    (format "(dired \"%s\")" default-directory)))))
 
 (defun emacs--debug-init()
   (interactive)
-  ;;(call-process (concat exec-directory "emacs") nil 0 nil "--disable-font-backend" "--debug-init")
-  (call-process (concat exec-directory "emacs") nil 0 nil)
+  (call-process (concat exec-directory "emacs") nil 0 nil "--debug-init")
   (message "Started 'emacs --debug-init' - it will be ready soon ..."))
-
-;; (defun emacs--disable-font-backend ()
-;;   "Start new Emacs with font backend disabled.
-;; Stop server in this instant and start it in the new Emacs instead."
-;;   (interactive)
-;;   (server-mode -1)
-;;   (recentf-save-list)
-;;   (save-some-buffers)
-;;   (sleep-for 3)
-;;   (message
-;;    (concat "Restarting with\n"
-;; 	   "  emacs --disable-font-backend -l auto-server\n"
-;; 	   "... killing this Emacs in 5 seconds"))
-;;   (sleep-for 5)
-;;   (if (and (fboundp 'emacsw32-is-patched)
-;;            (emacsw32-is-patched))
-;;       (progn
-;;         (setenv "EMACSCLIENT_STARTING_SERVER" "yes")
-;;         (call-process (concat exec-directory "emacs") nil 0 nil "--disable-font-backend" "-l" "auto-server"))
-;;     (call-process (concat exec-directory "emacs") nil 0 nil "--disable-font-backend"))
-;;   (kill-emacs))
 
 (defun emacs-Q()
   "Start new Emacs without any customization whatsoever."
@@ -649,6 +635,17 @@ of those in for example common web browsers."
   (call-process (concat exec-directory "emacs") nil 0 nil "-Q")
   (message "Started 'emacs -Q' - it will be ready soon ..."))
 
+(defun emacs-Q-nxhtml()
+  "Start new Emacs with -Q and load nXhtml."
+  (interactive)
+  (let ((autostart (expand-file-name "../../EmacsW32/nxhtml/autostart.el"
+                                     exec-directory)))
+    (call-process (concat exec-directory "emacs") nil 0 nil "-Q"
+                  "--debug-init"
+                  "--load" autostart
+                  )
+    (message "Started 'emacs -Q --load \"%s\"' - it will be ready soon ..."
+             autostart)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; Info

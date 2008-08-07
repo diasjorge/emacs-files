@@ -101,8 +101,11 @@ When this mode is on the following keys are defined:
       (remove-text-properties (point-min) (point-max) '(face nil syntax-table nil)))
     (let* ((mumamo-current-chunk-family mumamo-test-current-chunk-family)
            (here (point))
-           (chunk (mumamo-create-chunk-at here))
-           (chunk2 (mumamo-get-chunk-at here)))
+           chunk
+           chunk2)
+      (mumamo-save-buffer-state nil
+        (setq chunk (mumamo-create-chunk-at here)))
+      (setq chunk2 (mumamo-get-chunk-at here))
       (message "mumamo-test-create-chunk-at-point.chunk 1=%s" chunk)
       ;;(lwarn 'test-create-chunk-at :warning "chunk=%s, chunk2=%s" chunk chunk2)
       (assert (eq chunk chunk2))
@@ -111,11 +114,14 @@ When this mode is on the following keys are defined:
       (let ((start (overlay-start chunk))
             (end   (overlay-end chunk)))
         ;;(setq syntax-ppss-last (cons 319 (parse-partial-sexp 1 1)))
-        (mumamo-fontify-region-1 start end nil))
+        (message "mumamo-test-create-chunk-at-point.chunk 2a=%s" chunk)
+        (mumamo-save-buffer-state nil
+          (mumamo-fontify-region-1 start end nil)))
       (message "mumamo-test-create-chunk-at-point.chunk 3=%s" chunk)
       (unless mumamo-test-mode (mumamo-test-mode 1))
       (message "mumamo-test-create-chunk-at-point.chunk 4=%s" chunk)
-      chunk)))
+      chunk
+      (mumamo-get-chunk-at here))))
 
 (defun mumamo-test-create-chunks-at-all-points ()
   (interactive)

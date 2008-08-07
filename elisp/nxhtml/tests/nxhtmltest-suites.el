@@ -146,7 +146,7 @@
   (nxhtmltest-fontify-default-way 2)
   (ert-should
    (eq (get-text-property (point) 'face)
-       'font-lock-variable-name-face)))
+       'font-lock-function-name-face)))
 
 (ert-deftest nxhtml-ert-nxhtml-changes-jump-back-7033-2 ()
   "this is a docstring.
@@ -154,9 +154,9 @@ wonder how that works now ..."
   (nxhtmltest-with-persistent-buffer "../../nxhtml/doc/nxhtml-changes.html"
     (nxhtml-ert-nxhtml-changes-jump-back-2 7033)))
 
-(ert-deftest nxhtml-ert-nxhtml-changes-jump-back-10549-2 ()
+(ert-deftest nxhtml-ert-nxhtml-changes-jump-back-10547-2 ()
   (nxhtmltest-with-persistent-buffer "../../nxhtml/doc/nxhtml-changes.html"
-    (nxhtml-ert-nxhtml-changes-jump-back-2 10549)))
+    (nxhtml-ert-nxhtml-changes-jump-back-2 10547)))
 
 (ert-deftest nxhtml-ert-nxhtml-changes-jump-2 ()
   (nxhtmltest-with-persistent-buffer "../../nxhtml/doc/nxhtml-changes.html"
@@ -168,6 +168,24 @@ wonder how that works now ..."
     (ert-should
      (eq (get-text-property (point) 'face)
          'font-lock-variable-name-face))))
+
+;;; Indentation tests
+
+(ert-deftest nxhtml-ert-php-indent-bug-1 ()
+  "Test indentation in php only file.
+The indentation on line 7 should be 0."
+  (nxhtmltest-with-persistent-buffer "only-php.php"
+    (nxhtml-mumamo)
+    ;; No fontification needed for indentation.
+    (goto-line 7)
+    (indent-for-tab-command)
+    (ert-should
+     (= 0
+        (current-indentation)))))
+
+
+;;; End of test definitions
+
 
 (defun nxhtmltest-run-ert ()
   "Run test with ert library."

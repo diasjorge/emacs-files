@@ -115,6 +115,25 @@
   (require 'as-external)
   )
 
+;; (setq magic-mode-alist nil)
+(defcustom nxhtml-magic-mode-alist
+  '(
+    ("\\(?:.\\|\n\\)\\{,200\\}xmlns:py=\"http://genshi.edgewall.org/\""
+     . genshi-nxhtml-mumamo)
+    )
+  "List to add to `magic-mode-alist'.
+Works similar to `nxhtml-auto-mode-alist'.  Note that
+`magic-mode-alist' is the first thing tried when choosing a major
+mode."
+  :type '(repeat (cons :tag "Enter file name pattern and major mode"
+                       (regexp :tag "Regexp for file name")
+                       (major-mode-function :tag "Major mode")))
+  :set (lambda (sym val)
+         (set-default sym val)
+         (dolist (v val)
+           (add-to-list 'magic-mode-alist v)))
+  :group 'nxhtml)
+
 (defcustom nxhtml-auto-mode-alist
   '(
     ("\\.x?html?\\'"  . nxhtml-mumamo)
@@ -129,7 +148,7 @@
     ("\\.phps\\'"     . smarty-nxhtml-mumamo)
     ("\\.epl\\'"      . embperl-nxhtml-mumamo)
     ("\.lzx\\'"       . laszlo-nxml-mumamo)
-
+    ("\.ghtml\\'"     . genshi-nxhtml-mumamo)
     ("\\.js\\'"       . javascript-mode)
     ("\\.css\\'"      . css-mode)
     )

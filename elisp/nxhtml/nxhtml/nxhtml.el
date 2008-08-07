@@ -5,7 +5,7 @@
 
 ;; Author:  Lennart Borgman <lennart DOT borgman DOT 073 AT student DOT lu DOT se>
 ;; Created: 2005-08-05
-(defconst nxhtml:version "1.35") ;;Version:
+(defconst nxhtml:version "1.36") ;;Version:
 ;; Last-Updated: 2008-08-01T20:04:10+0200 Fri
 ;; Keywords: languages
 ;;
@@ -2463,15 +2463,25 @@ This mode may be turned on automatically in two ways:
         (if nxhtml-current-validation-header
             (progn
               (nxhtml-apply-validation-header)
+              (add-hook 'change-major-mode-hook 'nxhtml-vhm-change-major nil t)
               (when (featurep 'mumamo)
                 (add-hook 'mumamo-change-major-mode-hook 'nxhtml-vhm-mumamo-change-major nil t)
                 (add-hook 'mumamo-after-change-major-mode-hook 'nxhtml-vhm-mumamo-after-change-major nil t)))
           (run-with-idle-timer 0 nil 'nxhtml-validation-header-empty)))
     (rngalt-set-validation-header nil)
     (setq nxhtml-current-validation-header nil)
+    (remove-hook 'after-change-major-mode-hook 'nxhtml-vhm-after-change-major t)
     (when (featurep 'mumamo)
       (remove-hook 'mumamo-change-major-mode-hook 'nxhtml-vhm-mumamo-change-major t)
       (remove-hook 'mumamo-after-change-major-mode-hook 'nxhtml-vhm-mumamo-after-change-major t))))
+
+(defun nxhtml-vhm-change-major ()
+  "Turn off `nxhtml-validation-header-mode' after change major."
+  (message "nxhtml-vhm-change-major here")
+  (unless mumamo-multi-major-mode
+    (setq nxhtml-current-validation-header nil))
+  (run-with-idle-timer 0 nil 'nxhtml-validation-header-empty))
+(put 'nxhtml-vhm-change-mode 'permanent-local-hook t)
 
 (defun nxhtml-recheck-validation-header ()
   "Just turn off and on again `nxhtml-validation-header-mode'.

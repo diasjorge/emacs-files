@@ -649,16 +649,19 @@ By default the link moved to will be active, see
         )
     ;;(message "mlinks-mode nil")
     (mlinks-stop-hilighter)
+    (mlinks-stop-marking-links)
     ;;(remove-hook 'after-change-major-mode-hook 'mlinks-after-change-major-mode)
     (mlinks-remove-overlays)))
 (put 'mlinks-mode 'permanent-local t)
 
 (defun mlinks-turn-on-in-buffer ()
-  (let ((hion (when (mlinks-get-boolean 'hion) t)))
+  (let ((hion (unless (and (boundp 'mumamo-set-major-running)
+                           mumamo-set-major-running)
+                (when (mlinks-get-boolean 'hion) t))))
     ;;(message "mtoinb: buffer=%s, hion=%s, mlinks-mode=%s" (current-buffer) hion mlinks-mode)
-    (if hion
-        (mlinks-mode 1)
-      (mlinks-mode 0))))
+    (when hion
+      (mlinks-mode 1)
+      )))
 
 (define-globalized-minor-mode mlinks-global-mode mlinks-mode
   mlinks-turn-on-in-buffer
@@ -767,11 +770,14 @@ Any command cancels this state."
 (make-variable-buffer-local 'mlinks-link-update-pos-max)
 (put 'mlinks-link-update-pos-max 'permanent-local t)
 
+(defun mlinks-stop-marking-links ()
+  (when (timerp mlinks-mark-links-timer)
+    (cancel-timer mlinks-mark-links-timer)))
+
 (defun mlinks-start-marking-links ()
   (when (mlinks-want-marked-links)
     ;;(message "start-marking-links, buffer=%s" (current-buffer))
-    (when (timerp mlinks-mark-links-timer)
-      (cancel-timer mlinks-mark-links-timer))
+    (mlinks-stop-marking-links)
     (setq mlinks-link-update-pos-min nil)
     (setq mlinks-link-update-pos-max nil)
     (setq mlinks-mark-links-timer (run-with-idle-timer 0 nil 'mlinks-mark-next-link (current-buffer))))

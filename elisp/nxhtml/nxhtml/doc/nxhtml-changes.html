@@ -260,6 +260,7 @@
           <a href="#v1.33">v1.33</a>
           <a href="#v1.34">v1.34</a>
           <a href="#v1.35">v1.35</a>
+          <a href="#v1.36">v1.36</a>
         </div>
 
         <dl>
@@ -1736,6 +1737,58 @@
             <ul>
               <li>
                 Fixed a small bug in sex-mode.el.
+              </li>
+            </ul>
+          </dd>
+          <dt id="v1.36">1.36</dt>
+          <dd id="v1.36-dd">
+            <ul>
+              <li>
+                Added the function <i>emacs-Q-nxhtml</i> for easier
+                testing. It does the equivalent of <i>emacs -Q --load
+                PATH-TO/nxhtml/autostart.el</i>.
+              </li>
+              <li>
+                MuMaMo:
+                <ul>
+                  <li>
+                    Forgot to return php-mode in php short tags. Fixed.
+                  </li>
+                  <li>
+                    Borders where not correctly calculated with php short tags. Fixed.
+                  </li>
+                  <li>
+                    Subchunks not parseable by nxml-mode where marked as parseable. Fixed.
+                  </li>
+                  <li>
+                    Debug messages from mumamo where not silenced.
+                  </li>
+                  <li>
+                    Forgot font-lock-syntactic-keywords. This showed up in
+                    bad fontification for strings sometimes. Fixed.
+                  </li>
+                  <li>
+                    To fontify keywords font-lock-syntactically-fontified
+                    must be set in each chunk. Fixed.
+                  </li>
+                  <li>
+                    Find a way to at least temporarily work around the
+                    problem with the last &quote; char in
+                    syntax=&quote;...&quote; that could be seen in
+                    large XHTML files, for example this file.  The
+                    drawback with the work around is that it bypasses
+                    the cache for syntax-ppss, but this happens only
+                    in multi major mode buffers and I notice no
+                    performance problems here.
+                  </li>
+                  <li>
+                    Fixed a number of problems with the defadvice for the syntax functions.
+                    (I am afraid there are more left.)
+                  </li>
+                  <li>
+                    Took a new grab on the indentation problems.
+                  </li>
+                </ul>
               </li>
             </ul>
           </dd>
