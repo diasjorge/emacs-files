@@ -12,9 +12,11 @@
 ;;
 ;; Read the INSTALL file
 ;;
-;; Verify you have Xfonts support if you want pretty fonts
+;; Verify you have Xfonts support if you want pretty fonts and other
+;; dependencies: txinfo, libgif-dev, libxpm-dev (Images), libgpmg1-dev
+;; (Mouse Support)
 ;;
-;; wajig install libxfont-dev libxfont1
+;; wajig install libxfont-dev libxfont1 txinfo libgif-dev libxpm-dev libgpmg1-dev
 ;;
 ;; ./configure
 ;;
@@ -49,9 +51,6 @@
 
 ;; Type y/n instead of yes/no
 (fset 'yes-or-no-p 'y-or-n-p)
-
-;; Set column with to 80
-(setq fill-column 80)
 
 ;; C-v & M-v return to original position
 (setq scroll-preserve-screen-position 1)
@@ -129,6 +128,8 @@
 (global-set-key (kbd "C-+") 'enlarge-window)
 (global-set-key (kbd "C-x -") 'shrink-window)
 
+(global-set-key (kbd "C-c b") 'browse-url)
+
 ;; ido-mode
 (setq ido-use-filename-at-point t)
 (ido-mode t)
@@ -178,10 +179,10 @@
 ;; color-theme
 ;; http://download.gna.org/color-theme/color-theme-6.6.0.tar.gz (wget)
 ;; uncompress and move to ~/.emacs.d/elisp/color-theme
-(require "color-theme")
+(require 'color-theme)
 (color-theme-initialize)
 ;; http://edward.oconnor.cx/config/elisp/color-theme-hober2.el (wget)
-(require "color-theme-hober2")
+(require 'color-theme-hober2)
 (color-theme-hober2)
 
 ;; ruby-mode
@@ -193,7 +194,7 @@
 (setq interpreter-mode-alist (append '(("ruby" . ruby-mode)) interpreter-mode-alist))
 
 ;; add file types to ruby-mode
-(add-to-list 'auto-mode-alist '("\.treetop$" . ruby-mode))
+;; (add-to-list 'auto-mode-alist '("\.treetop$" . ruby-mode))
 (add-to-list 'auto-mode-alist '("Rakefile" . ruby-mode))
 (add-to-list 'auto-mode-alist '("\.rake$" . ruby-mode))
 
@@ -305,7 +306,7 @@
 
 ;; textile-mode
 ;; http://dev.nozav.org/scripts/textile-mode.el
-(autoload 'textile-mode "textile-mode" "Mode for editing textile files")
+(require 'textile-mode)
 (add-to-list 'auto-mode-alist '("\\.textile\\'" . textile-mode))
 
 ;; pastie
@@ -315,6 +316,10 @@
 ;; lorem-ipsum
 ;; http://www.emacswiki.org/cgi-bin/wiki/download/lorem-ipsum.el (wget)
 (require 'lorem-ipsum)
+
+;; tree-top
+;; http://github.com/hornbeck/public_emacs/tree/master/treetop.el
+(require 'treetop-mode)
 
 ;; keep scrolling in compilation result buffer
 (setq compilation-scroll-output t)
@@ -339,6 +344,7 @@
         ("\\.java$"             .       "javac %f")
 	("_spec\\.rb$"          .       "spec %f")
 	("\\.rb$"               .       "ruby %f")
+	("\\.pl$"               .       "perl %f")
         (emacs-lisp-mode        .       (emacs-lisp-byte-compile))
         (html-mode              .       (browse-url-of-buffer))
         (html-helper-mode       .       (browse-url-of-buffer))
@@ -354,3 +360,6 @@
 
 (setq custom-file "~/.emacs.d/customizations.el")
 (load custom-file 'noerror)
+
+;; Set column width to 80
+(setq fill-column 80)
