@@ -2,14 +2,14 @@
 # --
 ---
 # This is a sample database file for the ActiveRecord and DataMapper ORMs
-:development: &defaults
-  :adapter: sqlite3
-  :database: db/development.sqlite3
+development: &defaults
+  adapter: sqlite3
+  database: db/development.sqlite3
 
-:test:
+test:
   <<: *defaults
-  :database: db/test.sqlite3
+  database: db/test.sqlite3
 
-:production:
+production:
   <<: *defaults
-  :database: db/production.sqlite3
+  database: db/production.sqlite3
