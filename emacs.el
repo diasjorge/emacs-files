@@ -321,6 +321,21 @@
 ;; http://github.com/hornbeck/public_emacs/tree/master/treetop.el
 (require 'treetop-mode)
 
+;; po-mode
+;; Part of the gettext package, you can grab it at http://gnuftp.spegulo.be/gettext/
+;;
+;; po-mode+
+;; Adds some extensions to po-mode
+;; http://www.emacswiki.org/cgi-bin/wiki/po-mode+.el/download/po-mode+.el (wget)
+(autoload 'po-mode "po-mode+"
+  "Major mode for translators to edit PO files" t)
+(setq auto-mode-alist (cons '("\\.po\\'\\|\\.po\\." . po-mode)
+			    auto-mode-alist))
+
+;; (autoload 'po-find-file-coding-system "po-compat")
+;; (modify-coding-system-alist 'file "\\.po\\'\\|\\.po\\."
+;; 			    'po-find-file-coding-system)
+
 ;; keep scrolling in compilation result buffer
 (setq compilation-scroll-output t)
 
