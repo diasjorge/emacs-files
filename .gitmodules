@@ -4,3 +4,6 @@
 [submodule "snippets/yasnippets-rails"]
 	path = snippets/yasnippets-rails
 	url = git://github.com/eschulte/yasnippets-rails.git
+[submodule "elisp/rinari"]
+	path = elisp/rinari
+	url = git://github.com/technomancy/rinari.git
