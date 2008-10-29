@@ -151,6 +151,7 @@
 (add-to-list 'load-path "~/.emacs.d/elisp/git-emacs")
 (add-to-list 'load-path "~/.emacs.d/elisp/haml-mode")
 (add-to-list 'load-path "~/.emacs.d/elisp/emacs-wget")
+(add-to-list 'load-path "~/.emacs.d/elisp/erlang")
 ;; add more here as needed
 
 ;; emacs-wget
@@ -369,6 +370,11 @@
         (muse-mode              .       (call-interactively 'muse-project-publish))))
 (global-set-key (kbd "<f9>") 'smart-compile)
 
+;; erlang-mode
+(setq erlang-root-dir "/usr/lib/erlang")
+(setq exec-path (cons "/usr/lib/erlang/bin" exec-path))
+(require 'erlang-start)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; CUSTOMIZATIONS FILE ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -378,3 +384,11 @@
 
 ;; Set column width to 80
 (setq fill-column 80)
+
+;; My functions
+(defun my-generate-rails-tags()
+  (interactive)
+  (shell-command
+   (format "find %s | egrep \"rb$\" | xargs ctags-exuberant -a -e -f %s/TAGS "
+	   (rinari-root)(rinari-root)))
+  (visit-tags-table (concat (rinari-root) "/TAGS")))
