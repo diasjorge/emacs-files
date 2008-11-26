@@ -7,3 +7,6 @@
 [submodule "elisp/rinari"]
 	path = elisp/rinari
 	url = git://github.com/eschulte/rinari.git
+[submodule "elisp/gist"]
+	path = elisp/gist
+	url = git://github.com/defunkt/gist.el.git

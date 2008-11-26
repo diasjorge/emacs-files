@@ -152,6 +152,7 @@
 (add-to-list 'load-path "~/.emacs.d/elisp/haml-mode")
 (add-to-list 'load-path "~/.emacs.d/elisp/emacs-wget")
 (add-to-list 'load-path "~/.emacs.d/elisp/erlang")
+(add-to-list 'load-path "~/.emacs.d/elisp/gist")
 ;; add more here as needed
 
 ;; emacs-wget
@@ -374,6 +375,9 @@
 (setq erlang-root-dir "/usr/lib/erlang")
 (setq exec-path (cons "/usr/lib/erlang/bin" exec-path))
 (require 'erlang-start)
+
+;; gist-support
+(require 'gist)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; CUSTOMIZATIONS FILE ;;
