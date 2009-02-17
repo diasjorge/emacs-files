@@ -1,5 +1,3 @@
-Initialize and update submodules
-
   git submodule init
   git submodule update
 
@@ -10,7 +8,8 @@ Initialize and update submodules
 
 Install emacs from cvs
 
-  wajig install cvs libxfont-dev libxfont1 
+  wajig install cvs libxfont-dev libxfont1 texinfo build-essential libxpm-dev libjpeg-dev libpng-dev libgif-dev libtiff4-dev libgpmg1-dev 
+libdbus-1-dev libxft2-dev librsvg2-dev
 
   mkdir -p ~/src/build
   cd ~/src
