@@ -132,6 +132,7 @@
 
 ;; ido-mode
 (setq ido-use-filename-at-point t)
+(setq ido-enable-flex-matching t) 
 (ido-mode t)
 (ido-everywhere t)
 (add-hook 'ido-setup-hook 'custom-ido-extra-keys)
