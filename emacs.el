@@ -380,6 +380,9 @@
 ;; gist-support
 (require 'gist)
 
+;; autotest support
+(require 'autotest)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; CUSTOMIZATIONS FILE ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;
