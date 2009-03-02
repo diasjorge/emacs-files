@@ -380,6 +380,9 @@
 ;; gist-support
 (require 'gist)
 
+;; unit-test
+(require 'unit-test)
+
 ;; autotest support
 (require 'autotest)
 
