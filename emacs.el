@@ -380,11 +380,12 @@
 ;; gist-support
 (require 'gist)
 
-;; unit-test
-(require 'unit-test)
-
 ;; autotest support
+(setq autotest-use-ui t)
 (require 'autotest)
+
+;; delete trailing whitespace before save
+(add-hook 'before-save-hook 'delete-trailing-whitespace)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; CUSTOMIZATIONS FILE ;;
@@ -392,6 +393,7 @@
 
 (setq custom-file "~/.emacs.d/customizations.el")
 (load custom-file 'noerror)
+(setq ansi-color-for-comint-mode t)
 
 ;; Set column width to 80
 (setq fill-column 80)
