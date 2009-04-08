@@ -1,8 +1,8 @@
 ;;
 ;; .emacs --- My personal Emacs startup script
-;; 
-;; Made By Jorge Calás Lozano.
-;; Email   <calas@qvitta.net>
+;;
+;; Original By Jorge Calás Lozano.
+;; Modified By Jorge Dias
 ;;
 ;; Emacs should be compiled from CVS in order to make it work correctly with
 ;; nXhtml and ruby mode. At least in debian based, emacs-snapshot is broken.
@@ -248,6 +248,11 @@
 ;;   ctags-exuberant -a -e -f TAGS --tag-relative -R app lib vendor
 (setq rinari-tags-file-name "TAGS")
 
+;; js2-mode (javascript IDE)
+;; http://code.google.com/p/js2-mode/
+(autoload 'js2-mode "js2" nil t)
+(add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
+
 ;; nXhtml
 ;; http://ourcomments.org/Emacs/nXhtml/doc/nxhtml.html
 (load "~/.emacs.d/elisp/nxhtml/autostart.el")
@@ -278,11 +283,6 @@
 (require 'sass-mode)
 (add-to-list 'auto-mode-alist '("\.haml$" . haml-mode))
 (add-to-list 'auto-mode-alist '("\.sass$" . sass-mode))
-
-;; js2-mode (javascript IDE)
-;; http://code.google.com/p/js2-mode/
-(autoload 'js2-mode "js2" nil t)
-(add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
 
 ;; yaml-mode
 ;; http://svn.clouder.jp/repos/public/yaml-mode/trunk/
