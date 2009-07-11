@@ -383,9 +383,6 @@
 (setq autotest-use-ui t)
 (require 'autotest)
 
-;; delete trailing whitespace before save
-(add-hook 'before-save-hook 'delete-trailing-whitespace)
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; CUSTOMIZATIONS FILE ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -397,13 +394,37 @@
 ;; Set column width to 80
 (setq fill-column 80)
 
+;; delete trailing whitespace before save
+(add-hook 'before-save-hook 'delete-trailing-whitespace)
+
 ;; My functions
-(defun my-generate-rails-tags()
+(defun rinari-merb-generate-tags()
   (interactive)
-  (shell-command
-   (format "find %s | egrep \"rb$\" | xargs ctags-exuberant -a -e -f %s/TAGS "
-	   (rinari-root)(rinari-root)))
-  (visit-tags-table (concat (rinari-root) "/TAGS")))
+  (let ((my-tags-file (concat (rinari-merb-root) "TAGS"))
+	(root (rinari-merb-root)))
+    (message "Regenerating TAGS file: %s" my-tags-file)
+    (if (file-exists-p my-tags-file)
+	(delete-file my-tags-file))
+    (shell-command
+     (format "find %s -regex \".+rb$\" | xargs ctags-exuberant -a -e -f %s"
+	     root my-tags-file))
+    (if (get-file-buffer my-tags-file)
+	 (kill-buffer (get-file-buffer my-tags-file)))
+    (visit-tags-table my-tags-file)))
+
+(defun rinari-generate-tags()
+  (interactive)
+  (let ((my-tags-file (concat (rinari-root) "TAGS"))
+	(root (rinari-root)))
+    (message "Regenerating TAGS file: %s" my-tags-file)
+    (if (file-exists-p my-tags-file)
+	(delete-file my-tags-file))
+    (shell-command
+     (format "find %s -regex \".+rb$\" | xargs ctags-exuberant -a -e -f %s"
+	     root my-tags-file))
+    (if (get-file-buffer my-tags-file)
+	 (kill-buffer (get-file-buffer my-tags-file)))
+    (visit-tags-table my-tags-file)))
 
 (defun haml-convert-rhtml-file (rhtmlFile hamlFile)
   "Convierte un fichero rhtml en un haml y abre un nuevo buffer"
