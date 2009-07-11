@@ -1,16 +1,16 @@
 ;;; tabkey2.el --- Use second tab key pressed for what you want
 ;;
 ;; Author: Lennart Borgman (lennart O borgman A gmail O com)
-;; Created: 2008-03-15T14:40:28+0100 Sat
-(defconst tabkey2:version "1.31")
-;; Last-Updated: 2008-07-21T22:24:55+0200 Mon
+;; Created: 2008-03-15
+(defconst tabkey2:version "1.39")
+;; Last-Updated: 2009-06-02 Tue
 ;; URL: http://www.emacswiki.org/cgi-bin/wiki/tabkey2.el
 ;; Keywords:
 ;; Compatibility:
 ;;
 ;; Features that might be required by this library:
 ;;
-;;   `appmenu', `cl'.
+  ;; `appmenu', `cl'.
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
@@ -36,7 +36,7 @@
 ;; See `tabkey2-mode' for more information.
 ;;
 ;;
-;; This is a generalization of an idea Sebastien Rocca Serra once
+;; This is a generalized of an idea Sebastien Rocca Serra once
 ;; presented on Emacs Wiki and called "Smart Tab".  (It seems like
 ;; many others have also been using Tab for completion in one way or
 ;; another for years.)
@@ -190,8 +190,45 @@
 ;;   (Thanks Eric.)
 ;;
 ;; Version 1.31:
-;; - Added yasnippet and pabbrev completion functions. (Thanks Eric.)
-;; - Reorded completion functions.
+;; - Add yasnippet and pabbrev completion functions. (Thanks Eric.)
+;; - Reorder completion functions.
+;;
+;; Version 1.32:
+;; - Add support for pcomplete.
+;; - Inform about other key bindings in completion functions list.
+;; - Remove no longer used "preferred" from completion functions list.
+;;
+;; Version 1.33:
+;; -- Automatically select next function on completion failure.
+;; -- Add completion functions reset functions.
+;;
+;; Version 1.34:
+;; - Set this-command on call-interactively.
+;; - Avoid setting last-command.
+;;
+;; Version 1.35:
+;; - Do not complete in or nearby mumamo chunk borders.
+;; - Finish completion mode unless last command was a tabkey2 command.
+;; - Finish when there are no more active completion functions.
+;;
+;; Version 1.36:
+;; - Actually check if completion function is a defined command.
+;; - Integrate better with YASnippet.
+;; - Give YASnippet higher priority since that seems what is wanted.
+;;
+;; Version 1.37:
+;; - Fix bug revealed by 1.36 changes.
+;;
+;; Version 1.38:
+;; - Fix typo in completion function list.
+;; - Fix corresponding part of check if function is active.
+;;
+;; Version 1.39:
+;; - Try first [tab] and then [?\t] when looking for command.
+;;
+;; Fix-me: maybe add \\_>> option to behave like smart-tab. But this
+;; will only works for modes that does not do completion of empty
+;; words (like in smart-tab).
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
@@ -222,8 +259,7 @@
 ;;; Code:
 
 (eval-when-compile (require 'cl))
-;;(require 'popcmp nil t)
-(require 'appmenu nil t)
+(eval-when-compile (require 'appmenu nil t))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; Custom
@@ -235,7 +271,12 @@
 
 (defface tabkey2-highlight-line
   '((t :inherit highlight))
-  "Face for marker on current line."
+  "Face for marker on line when default function is active."
+  :group 'tabkey2)
+
+(defface tabkey2-highlight-line2
+  '((t :inherit isearch-fail))
+  "Face for marker on line when non-default function is active."
   :group 'tabkey2)
 
 (defface tabkey2-highlight-message
@@ -301,12 +342,21 @@ If value is a number then delay message that number of seconds."
              (appmenu-remove 'tabkey2))))
   :group 'tabkey2)
 
+(defun yas/expandable-at-point ()
+  "Return non-nil if a snippet can be expanded here."
+  (when (fboundp 'yas/template-condition-predicate)
+    (yas/template-condition-predicate
+     yas/buffer-local-condition)))
+
 (defcustom tabkey2-completion-functions
   '(
     ;; Temporary things
     ("Spell check word" flyspell-correct-word-before-point)
+    ;; Snippets
+    ("Yasnippet" yas/expand (yas/expandable-at-point))
     ;; Main mode related, often used
     ("Semantic Smart Completion" senator-complete-symbol senator-minor-mode)
+    ("Programmable completion" pcomplete)
     ("nXML completion" nxml-complete)
     ("Complete Emacs symbol" lisp-complete-symbol)
     ("Widget complete" widget-complete)
@@ -316,41 +366,43 @@ If value is a number then delay message that number of seconds."
     ;; General word completion
     ("Predictive word" complete-word-at-point predictive-mode)
     ("Predictive abbreviations" pabbrev-expand-maybe)
-    ("Dynamic word expansion" dabbrev-expand)
+    ("Dynamic word expansion" dabbrev-expand nil (setq dabbrev--last-abbrev-location nil))
     ("Ispell complete word" ispell-complete-word)
-    ;; Snippets
-    ("Yasnippet" yas/expand)
     ;; The catch all
     ("Anything" anything (commandp 'anything))
     )
   "List of completion functions.
 The first 'active' entry in this list is normally used during the
 'Tab completion state' by `tabkey2-complete'.  An entry in the
-list should have either of these forms
+list should have either of this forms
 
-  \(DESCRIPTION FUNCTION)
-  \(DESCRIPTION FUNCTION EXPRESSION)
+  \(TITLE COMPLETION-FUNCTION ACTIVE-FORM RESET-FORM)
 
-The entry is considered active if:
+TITLE to show in menus etc.
 
--  The symbol FUNCTION is bound to a function
+COMPLETION-FUNCTION is the completion function symbol.
 
-and
+The entry is considered active if the symbol COMPLETION-FUNCTION
+is bound to a command and
 
-- this function has a key binding at point,
+  - This function has a key binding at point.
 
-  or
+or
 
-  the elisp expression EXPRESSION evaluates to non-nil.
-  If it is a single symbol then its variable value is used,
-  otherwise the elisp form is evaled.
+  - The elisp expression ACTIVE-FORM evaluates to non-nil.  If it
+  is a single symbol then its variable value is used, otherwise
+  the elisp form is evaled.
+
+RESET-FORM is used to reset the completion function before
+calling it.
 
 When choosing with `tabkey2-cycle-completion-functions'
 only the currently active entry in this list are shown."
   :type '(repeat (list string (choice (command :tag "Currently known command")
                                       (symbol  :tag "Command not known yet"))
                        (choice (const :tag "Active only if it has a key binding at point" nil)
-                               (sexp :tag "Elisp, if evals to non-nil then active"))))
+                               (sexp :tag "Elisp, if evals to non-nil then active"))
+                       (sexp :tag "Elisp, reset completion function")))
   :group 'tabkey2)
 
 ;; Use emulation mode map for first Tab key
@@ -364,7 +416,7 @@ bound are in `tabkey2-first-key' and `tabkey2-alternate-key'.")
 ;; (setq tabkey2-keymap-overlay nil)
 (defconst tabkey2-completion-state-emul-map
   (let ((map (make-sparse-keymap)))
-    (define-key map [(control ?c) tab]    'tabkey2-make-current-sticky)
+    (define-key map [(control ?c) tab]    'tabkey2-make-current-default)
 
     ;;(define-key map tabkey2-alternate-key 'tabkey2-cycle-completion-functions)
     (define-key map [backtab]             'tabkey2-cycle-completion-functions)
@@ -404,8 +456,11 @@ bound are in `tabkey2-first-key' and `tabkey2-alternate-key'.")
   "First key, first time indents, more invocations completes.
 This key is always bound to `tabkey2-first'."
   :set (lambda (sym val)
-         (tabkey2-bind-keys val (when (boundp 'tabkey2-alternate-key) tabkey2-alternate-key))
-         (set-default sym val))
+         (set-default sym val)
+         (tabkey2-bind-keys
+          val
+          (when (boundp 'tabkey2-alternate-key)
+            tabkey2-alternate-key)))
   :type 'key-sequence
   :group 'tabkey2)
 
@@ -413,8 +468,8 @@ This key is always bound to `tabkey2-first'."
   "Alternate key, bound to cycle and show completion functions.
 This key is always bound to `tabkey2-cycle-completion-functions'."
   :set (lambda (sym val)
-         (tabkey2-bind-keys (when (boundp 'tabkey2-first-key) tabkey2-first-key) val)
-         (set-default sym val))
+         (set-default sym val)
+         (tabkey2-bind-keys (when (boundp 'tabkey2-first-key) tabkey2-first-key) val))
   :type 'key-sequence
   :group 'tabkey2)
 
@@ -426,6 +481,7 @@ This key is always bound to `tabkey2-cycle-completion-functions'."
     makefile-mode
     org-mode
     Custom-mode
+    custom-mode ;; For Emacs 22
     ;; other
     cmd-mode
     )
@@ -454,10 +510,10 @@ Therefore `tabkey2-first' just calls the function on Tab."
 ;;   :type 'boolean
 ;;   :group 'tabkey2)
 
-(defvar tabkey2-preferred nil
-  "Preferred function for second tab key press.")
-(make-variable-buffer-local 'tabkey2-preferred)
-(put 'tabkey2-preferred 'permanent-local t)
+;; (defvar tabkey2-preferred nil
+;;   "Preferred function for second tab key press.")
+;; (make-variable-buffer-local 'tabkey2-preferred)
+;; (put 'tabkey2-preferred 'permanent-local t)
 
 (defvar tabkey2-fallback nil
   "Fallback function for second tab key press.")
@@ -473,6 +529,12 @@ Therefore `tabkey2-first' just calls the function on Tab."
 (defvar tabkey2-keymap-overlay nil
   "Hold the keymap for tab key 2.")
 
+(defvar tabkey2-current-tab-info nil
+  "Saved information message for Tab completion state.")
+(defvar tabkey2-current-tab-function nil
+  "Tab completion state current completion function.")
+(make-variable-buffer-local 'tabkey2-current-tab-function)
+
 (defun tabkey2-completion-state-p ()
   "Return t if Tab completion state should continue.
 Otherwise return nil."
@@ -482,13 +544,18 @@ Otherwise return nil."
            (end   (overlay-end   tabkey2-keymap-overlay))
            (chars (append (buffer-substring-no-properties start end) nil)))
       (and (not (memq ?\n chars))
+           (not (eq ?\  (car (last chars))))
+           (not (eq ?\  last-input-event))
            (<= start (point))
-           (<= (point) end)))))
-
-(defvar tabkey2-current-tab-info nil
-  "Saved information message for Tab completion state.")
-(defvar tabkey2-current-tab-function nil
-  "Tab completion state current completion function.")
+           (<= (point) end)
+           tabkey2-current-tab-function
+           (or (memq this-original-command '(tabkey2-first tabkey2-complete))
+               (let* ((last-name (symbol-name this-original-command))
+                      (name-prefix "tabkey2-")
+                      (prefix-len (length name-prefix)))
+                 (and (> (length last-name) prefix-len)
+                      (string= name-prefix (substring last-name 0 prefix-len)))))
+           ))))
 
 (defun tabkey2-read-only-p ()
   "Return non-nil if buffer seems to be read-only at point."
@@ -498,6 +565,12 @@ Otherwise return nil."
         (memq remap '(Custom-no-edit)))))
 
 ;;;; Minor mode active after first tab
+
+(defun tabkey2-get-highlight-face ()
+  (if (eq tabkey2-current-tab-function
+          (tabkey2-first-active-from-completion-functions))
+      'tabkey2-highlight-line
+    'tabkey2-highlight-line2))
 
 (defun tabkey2-move-overlays ()
   "Move overlays that mark the state and carries the state keymap."
@@ -517,7 +590,10 @@ Otherwise return nil."
     (overlay-put tabkey2-overlay 'priority 1000)
     (if tabkey2-show-mark-on-active-line
         (progn
-          (overlay-put tabkey2-overlay 'face 'tabkey2-highlight-line)
+          (overlay-put tabkey2-overlay 'face
+                       ;;'tabkey2-highlight-line
+                       (tabkey2-get-highlight-face)
+                       )
           (overlay-put tabkey2-overlay 'help-echo
                        "This highlight shows that Tab completion state is on"))
       (overlay-put tabkey2-overlay 'face nil)
@@ -546,20 +622,22 @@ Return t if CHK is a symbol with non-nil value or a form that
 evals to non-nil.
 
 Otherwise return t if FUN has a key binding at point."
-  (or (if (symbolp chk)
-          (when (boundp chk) (symbol-value chk))
-        (eval chk))
-      (let* ((emulation-mode-map-alists
-              ;; Remove keymaps from tabkey2 in this copy:
-              (delq 'tabkey2--emul-keymap-alist
-                    (copy-sequence emulation-mode-map-alists)))
-             (keys (tabkey2-symbol-keys fun))
-             kb-bound)
-        (dolist (key keys)
-          (unless (memq (car (append key nil))
-                        '(menu-bar))
-            (setq kb-bound t)))
-        kb-bound)))
+  (when (and (fboundp fun)
+             (commandp fun))
+    (or (if (symbolp chk)
+            (when (boundp chk) (symbol-value chk))
+          (eval chk))
+        (let* ((emulation-mode-map-alists
+                ;; Remove keymaps from tabkey2 in this copy:
+                (delq 'tabkey2--emul-keymap-alist
+                      (copy-sequence emulation-mode-map-alists)))
+               (keys (tabkey2-symbol-keys fun))
+               kb-bound)
+          (dolist (key keys)
+            (unless (memq (car (append key nil))
+                          '(menu-bar))
+              (setq kb-bound t)))
+          kb-bound))))
 
 (defun tabkey2-is-active-p (fun)
   "Return FUN is active.
@@ -570,6 +648,10 @@ check and return the value from `tabkey2-is-active'."
                  (when (eq fun (nth 1 rec))
                    (throw 'chk (nth 2 rec)))))))
     (tabkey2-is-active fun chk)))
+
+(defvar tabkey2-chosen-completion-function nil)
+(make-variable-buffer-local 'tabkey2-chosen-completion-function)
+(put 'tabkey2-chosen-completion-function 'permanent-local t)
 
 (defun tabkey2-first-active-from-completion-functions ()
   "Return first active completion function.
@@ -589,9 +671,11 @@ See `tabkey2-first' for the list considered."
                  (tabkey2-is-active-p
                   tabkey2-chosen-completion-function))
         tabkey2-chosen-completion-function)
-      tabkey2-preferred
+      ;;tabkey2-preferred
       (tabkey2-first-active-from-completion-functions)
       tabkey2-fallback))
+
+(defvar tabkey2-overlay-message nil)
 
 (defvar tabkey2-completion-state-mode nil)
 ;;(make-variable-buffer-local 'tabkey2-completion-state-mode)
@@ -637,6 +721,7 @@ See `tabkey2-first' for more information."
           (add-hook 'pre-command-hook 'tabkey2-pre-command)
           (add-hook 'post-command-hook 'tabkey2-post-command))
       ;;(set-keymap-parent emul-map nil)
+      (setq tabkey2-current-tab-function nil)
       (when (and old-wincfg
                  tabkey2-keymap-overlay
                  (eq (overlay-get tabkey2-keymap-overlay 'window) (selected-window))
@@ -692,6 +777,7 @@ This is run in `post-command-hook' after each command."
         ;; Delayd messages
         (if (not (tabkey2-completion-state-p))
             (tabkey2-completion-state-mode -1)
+          ;;(message "tabkey2-current-tab-function=%s" tabkey2-current-tab-function)
           (tabkey2-move-overlays)))
     (error (message "tabkey2 post: %s" (error-message-string err)))))
 
@@ -709,8 +795,7 @@ This is run in `post-command-hook' after each command."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; Message functions
 
-;; Fix-me: is something like this included in Emacs now? reveal.el
-;; gets it wrong.
+;; Fix-me: Included in Emacs 23.
 (unless (fboundp 'invisible-p)
   (defun invisible-p (pos)
     "Return non-nil if the character after POS is currently invisible."
@@ -726,8 +811,6 @@ This is run in `post-command-hook' after each command."
                   (throw 'invis t))))
           (or (memq prop buffer-invisibility-spec)
               (assq prop buffer-invisibility-spec)))))))
-
-(defvar tabkey2-overlay-message nil)
 
 ;; (defun test-scroll ()
 ;;   (interactive)
@@ -915,12 +998,8 @@ Consider only those in `tabkey2-completion-functions'."
                     (when (tabkey2-is-active fun chk) rec)))
                 tabkey2-completion-functions)))
 
-(defvar tabkey2-chosen-completion-function nil)
-(make-variable-buffer-local 'tabkey2-chosen-completion-function)
-(put 'tabkey2-chosen-completion-function 'permanent-local t)
-
-(defun tabkey2-make-current-sticky ()
-  "Make current Tab completion function sticky.
+(defun tabkey2-make-current-default ()
+  "Make current Tab completion function default.
 Set the current Tab completion function at point as default for
 the current buffer."
   (interactive)
@@ -941,6 +1020,23 @@ the current buffer."
       (tabkey2-message nil "%s%s" tabkey2-current-tab-info
                        (if set-it " - Done" "")))))
 
+(defun tabkey2-activate-next-completion-function (wrap)
+  (let* ((active (mapcar (lambda (rec)
+                           (nth 1 rec))
+                         (tabkey2-get-active-completion-functions)))
+         (first (car active))
+         next)
+    ;;(message "is-shown=%s current=%s active=%s overlay=%s" tabkey2-message-is-shown tabkey2-current-tab-function active tabkey2-overlay)
+    (when tabkey2-current-tab-function
+      (while (and active (not next))
+        (when (eq (car active) tabkey2-current-tab-function)
+          (setq next (cadr active)))
+        (setq active (cdr active))))
+    (unless next
+      (when wrap (setq next first)))
+    ;;(if (eq first next)
+    (tabkey2-make-message-and-set-fun next)))
+
 (defun tabkey2-cycle-completion-functions (prefix)
   "Cycle through cnd display ompletion functions.
 If 'Tab completion state' is not on then turn it on.
@@ -955,24 +1051,9 @@ If PREFIX is given just show what this command will do."
           ;; fix-me
           (message "(TabKey2) %s: show/cycle completion function"
                    last-input-event)
-        (let* ((active (mapcar (lambda (rec)
-                                 (nth 1 rec))
-                               (tabkey2-get-active-completion-functions)))
-               (first (car active))
-               next)
-          ;;(message "is-shown=%s current=%s active=%s overlay=%s" tabkey2-message-is-shown tabkey2-current-tab-function active tabkey2-overlay)
-          (when (or tabkey2-message-is-shown
-                    ;;(tabkey2-message-is-shown)
-                    )
+        (when tabkey2-message-is-shown
             ;; Message is shown currently so change
-            (when tabkey2-current-tab-function
-              (while (and active (not next))
-                (when (eq (car active) tabkey2-current-tab-function)
-                  (setq next (cadr active)))
-                (setq active (cdr active))))
-            (unless next (setq next first))
-            ;;(message "next=%s" next)
-            (tabkey2-make-message-and-set-fun next)))
+            (tabkey2-activate-next-completion-function 'wrap))
         (tabkey2-show-current-message)))))
 
 
@@ -1080,7 +1161,10 @@ nothing else is bound to Tab there."
                              (equal [backtab] (this-command-keys-vector))
                              )
                       (let ((emulation-mode-map-alists emma-without-tabkey2))
-                        (key-binding [?\t] t))))
+                        ;; Fix-me: Is this the way to pick up "tab keys"?
+                        (or (key-binding [tab] t)
+                            (key-binding [?\t] t))
+                        )))
            (to-do-2 (unless (or
                              ;;(memq what '(complete))
                              (memq what '(indent))
@@ -1095,23 +1179,48 @@ nothing else is bound to Tab there."
                      last-input-event to-do-1
                      (if to-do-2 to-do-2 "(same)")))
         (when to-do-1
-          (let ((last-command to-do-1)
-                mumamo-multi-major-mode)
-            (call-interactively to-do-1)))
+          (let (mumamo-multi-major-mode)
+              (tabkey2-call-interactively to-do-1)))
         (unless (tabkey2-read-only-p)
           (when to-do-2
             (tabkey2-completion-state-mode 1)))))))
 
+(defun tabkey2-call-interactively (function)
+  "Like `call-interactively, but handle `this-command'."
+  (setq this-command function)
+  (call-interactively function))
+
+(defcustom tabkey2-choose-next-on-error t
+  "Choose next completion function on error."
+  :type 'boolean
+  :group 'tabkey2)
 
 (defun tabkey2-complete (prefix)
   "Call current completion function.
 If used with a PREFIX argument then just show what Tab will do."
   (interactive "P")
-  (if prefix
-      (message "(TabKey2) %s: %s"
-               last-input-event tabkey2-current-tab-function)
-    (call-interactively tabkey2-current-tab-function)))
+  (if (and (boundp 'mumamo-multi-major-mode)
+           mumamo-multi-major-mode
+           (not (mumamo-syntax-maybe-completable (point))))
+      (message "Please move out of chunk border before trying to complete.")
+    (if prefix
+        (message "(TabKey2) %s: %s"
+                 last-input-event tabkey2-current-tab-function)
+      (let ((here (point))
+            (res (if tabkey2-choose-next-on-error
+                     (condition-case err
+                         (tabkey2-call-interactively tabkey2-current-tab-function)
+                       (error (message "%s" (error-message-string err))
+                              nil))
+                   (tabkey2-call-interactively tabkey2-current-tab-function))))
+        (when (and (not res) (= here (point)))
+          (tabkey2-activate-next-completion-function nil)
+          ;;(message "complete.tabkey2-current-tab-function=%s" tabkey2-current-tab-function)
+          (if tabkey2-current-tab-function
+              (tabkey2-show-current-message)
+            (message "No more active completion functions in this buffer")))))))
 
+;;;###autoload
 (define-minor-mode tabkey2-mode
   "More fun with Tab key number two (completion etc).
 This global minor mode by default binds Tab in a way that let you
@@ -1129,6 +1238,10 @@ as well do completion.
 
 So you kind of do Tab-Tab for first completion \(and then just
 Tab for further completions as long as point is not moved).
+
+And there is even kind of Tab-Tab-Tab completion: If completion
+fails the next completion function will be the one you try with
+next Tab. \(You get some notification of this, of course.)
 
 See `tabkey2-first' for more information about usage.
 
@@ -1239,29 +1352,43 @@ again.")
 
 
 
-(defun tabkey2-get-key-binding (fun)
+(defun tabkey2-get-key-binding (fun t2)
   "Get key binding for FUN during 'Tab completion state'."
   (let* ((remapped (command-remapping fun))
          (key (where-is-internal fun
-                                 tabkey2-completion-state-emul-map
+                                 (when t2 tabkey2-completion-state-emul-map)
                                  t
                                  nil
                                  remapped)))
     key))
 
+;; (defun tabkey2-reset-completion-function (comp-fun)
+;;   "Reset states for functions in `tabkey2-completion-functions'."
+;; ;; Fix-me: remove hard-coding
+;;   (setq dabbrev--last-abbrev-location nil))
+
 (defun tabkey2-make-message-and-set-fun (comp-fun)
   "Set current completion function to COMP-FUN.
 Build message but don't show it."
-  (setq tabkey2-current-tab-function comp-fun)
+  ;;(tabkey2-reset-completion-functions)
   (let* ((chs-fun 'tabkey2-cycle-completion-functions)
-         (key (tabkey2-get-key-binding chs-fun))
-         (active-funs (tabkey2-get-active-completion-functions))
-         what)
+         (key (tabkey2-get-key-binding chs-fun t))
+         ;;(def-fun (tabkey2-get-default-completion-fun))
+         what
+         (comp-fun-key (tabkey2-get-key-binding comp-fun nil))
+         reset)
+    (setq tabkey2-current-tab-function comp-fun)
     (dolist (rec tabkey2-completion-functions)
       (let ((fun (nth 1 rec))
-            (txt (nth 0 rec)))
-        (when (eq fun comp-fun) (setq what txt))))
+            (txt (nth 0 rec))
+            (res (nth 3 rec)))
+        (when (eq fun comp-fun)
+          (eval res)
+          (setq what txt))))
     (let ((info (concat (format "Tab: %s" what)
+                        (if comp-fun-key
+                            (format " (%s)" (key-description comp-fun-key))
+                          "")
                         (if (cdr (tabkey2-get-active-completion-functions))
                             (format ", other %s, help F1"
                                     (key-description key))
@@ -1276,9 +1403,10 @@ BUF: buffer"
   (if bnd
       (if (with-current-buffer buf (tabkey2-read-only-p))
           (propertize "active, but read-only" 'face '( :foreground "red"))
-        (propertize "active" 'face '( :foreground "green")))
-    (if (fboundp fun)
-        (propertize "not active" 'face '( :foreground "red"))
+        (propertize "active" 'face '( :foreground "green3")))
+    (if (and (fboundp fun)
+             (commandp fun))
+        (propertize "not active" 'face '( :foreground "red2"))
       (propertize "not defined" 'face '( :foreground "gray")))))
 
 (defun tabkey2-show-completion-functions ()
@@ -1287,7 +1415,7 @@ BUF: buffer"
   (let ((orig-buf (current-buffer))
         (orig-mn  mode-name)
         (active-mark (concat " "
-                             (propertize " <= "
+                             (propertize "<= default"
                                          'face '( :background "yellow"))))
         (act-found nil)
         (chosen-fun tabkey2-chosen-completion-function)
@@ -1307,42 +1435,52 @@ BUF: buffer"
                         " 'Tab completion' in buffer\n'"
                 (buffer-name orig-buf)
                 "' at point with mode " orig-mn " are shown below.\n"
-                "The first active function is used.\n\n"))
+                "The first active function is used by default.\n\n"))
         (if (not chosen)
-            (insert "  None is chosen")
+            (insert "  No completion function is set as default.")
           (let* ((txt (nth 0 chosen))
                  (fun (nth 1 chosen))
                  (chk (nth 2 chosen))
                  (bnd (with-current-buffer orig-buf
                         (tabkey2-is-active fun chk)))
                  (act (tabkey2-get-active-string bnd fun orig-buf)))
-            (insert (format "  Chosen currently is %s (%s): %s"
+            (insert (format "  Default is set to\n    %s (%s): %s"
                             txt fun act))
             (when bnd (insert active-mark) (setq act-found t))))
         (insert "\n\n")
-        (if (not tabkey2-preferred)
-            (insert "  None is preferred")
-          (let* ((txt (nth 0 tabkey2-preferred))
-                 (fun (nth 1 tabkey2-preferred))
-                 (chk (nth 2 chosen))
-                 (bnd (with-current-buffer orig-buf
-                        (tabkey2-is-active fun chk)))
-                 (act (tabkey2-get-active-string bnd fun orig-buf)))
-            (insert (format "  Preferred is %s (`%s')': %s"
-                            txt fun act))
-            (when bnd (insert active-mark) (setq act-found t))))
-        (insert "\n\n")
+;;;         (if (not tabkey2-preferred)
+;;;             (insert "  None is preferred")
+;;;           (let* ((txt (nth 0 tabkey2-preferred))
+;;;                  (fun (nth 1 tabkey2-preferred))
+;;;                  (chk (nth 2 chosen))
+;;;                  (bnd (with-current-buffer orig-buf
+;;;                         (tabkey2-is-active fun chk)))
+;;;                  (act (tabkey2-get-active-string bnd fun orig-buf)))
+;;;             (insert (format "  Preferred is %s (`%s')': %s"
+;;;                             txt fun act))
+;;;             (when bnd (insert active-mark) (setq act-found t))))
+;;;         (insert "\n\n")
         (dolist (comp-fun tabkey2-completion-functions)
           (let* ((txt (nth 0 comp-fun))
                  (fun (nth 1 comp-fun))
                  (chk (nth 2 comp-fun))
                  (bnd (with-current-buffer orig-buf
                         (tabkey2-is-active fun chk)))
-                 (act (tabkey2-get-active-string bnd fun orig-buf)))
+                 (act (tabkey2-get-active-string bnd fun orig-buf))
+                 (keys (where-is-internal fun)))
+            (if (not keys)
+                (setq keys "")
+              (setq keys (mapconcat 'key-description keys ", "))
+              (when (and (< 9 (length keys))
+                         (string= "<menu-bar>" (substring keys 0 10)))
+                (setq keys "Menu"))
+              (setq keys (propertize keys 'face 'highlight))
+              (setq keys (concat ", " keys))
+              )
             (insert
              (format
-              "  %s (`%s'): %s"
-              txt fun act))
+              "  %s (`%s'%s): %s"
+              txt fun keys act))
             (when (and (not act-found) bnd)
               (insert active-mark) (setq act-found t))
             (insert "\n")))
@@ -1360,7 +1498,12 @@ BUF: buffer"
             (when (and (not act-found) bnd)
               (insert active-mark)
               (setq act-found t))))
-        (insert "\n\nSee function `tabkey2-mode' for more information.")
+        (insert "\n\nYou an ")
+        (insert-text-button "customize this list"
+                            'action (lambda (button)
+                                      (customize-option
+                                       'tabkey2-completion-functions)))
+        (insert ".\nSee function `tabkey2-mode' for more information.")
         (print-help-return-message)))))
 
 (defvar tabkey2-completing-read 'completing-read)

@@ -10,7 +10,7 @@
 ;;         <lennart dot borgman dot 073 dot student dot lu dot se>
 ;; Original X-URL: http://www.emacswiki.org/elisp/tidy.el
 ;; Last-Updated: 2008-03-09T13:10:06+0100 Sun
-(defconst tidy-xhtml:version "2.24")
+(defconst tidy-xhtml:version "2.25")
 ;; Keywords: languages
 
 ;; This file is NOT part of GNU Emacs.
@@ -192,9 +192,11 @@
 ;;;;; Forward references (stuff which must come first)
 
 (eval-when-compile (require 'cl))
+(eval-when-compile (require 'ediff))
+(eval-when-compile (require 'mumamo nil t))
 (eval-when-compile
   (add-to-list 'load-path default-directory))
-(require 'html-site)
+(eval-when-compile (require 'html-site))
 (require 'easymenu) ;; This makes menus so much easier!
 (require 'compile)  ;; To make the error buffer more sexy
 (require 'cus-edit) ;; Just for face custom-button
@@ -1523,7 +1525,7 @@ POSITION are not used in this case. "
           ["Tidy Directory Tree" tidy-tree
            :active (tidy-exe-found)]
 
-          ["Tidy Local Web Site" tidy-tree
+          ["Tidy Site" tidy-tree
            :active (and (featurep 'html-site)
                         (tidy-exe-found))]
 
@@ -1898,8 +1900,7 @@ POSITION are not used in this case. "
                                                :style 'toggle
                                                :selected '(if tidy-menu-lock t nil)
                                                ))
-                                 (list (list "-------")
-                                       )
+                                 (list (list "-------"))
 
                                  (list (append (list "Fix Markup")
                                                markup-menu-bool
@@ -1923,22 +1924,35 @@ POSITION are not used in this case. "
                                  (list tidy-output-encoding-menu)
                                  (list tidy-newline-menu)
                                  ))
-                   '(["Describe Options" tidy-describe-options t])))
+                   '(["Describe Options" tidy-describe-options t])
+                   (list (list "-------"))
+                   '(["Tidy Home Page"
+                      (lambda ()
+                        "Open Tidy home page in your web browser."
+                        (interactive)
+                        (browse-url "http://tidy.sourceforge.net/"))
+                      t])
+                   ))
   )
 )
 
 (defvar tidy-menu-symbol nil)
+;;(tidy-build-menu (&optional map)
+;;;###autoload
 (defun tidy-build-menu (&optional map)
   "Set up the tidy menu in MAP.
 Used to set up a Tidy menu in your favourite mode."
   (interactive) ;; for debugging
-  (unless tidy-config-file-parsed
-    (tidy-parse-config-file)
-    (setq tidy-config-file-parsed t))
-  ;;(or map (setq map (current-local-map)))
-  (easy-menu-remove tidy-menu)
-  (easy-menu-define tidy-menu-symbol map "Menu for Tidy" tidy-menu)
-  (easy-menu-add tidy-menu map))
+  (unless tidy-menu-symbol
+    (unless tidy-config-file-parsed
+      (tidy-parse-config-file)
+      (setq tidy-config-file-parsed t))
+    ;;(or map (setq map (current-local-map)))
+    (easy-menu-remove tidy-menu)
+    (easy-menu-define tidy-menu-symbol map "Menu for Tidy" tidy-menu)
+    (setq tidy-menu-symbol (delete "Tidy" tidy-menu-symbol))
+    (easy-menu-add tidy-menu map))
+  t)
 
 ;;;;; Option description support
 
@@ -2265,6 +2279,7 @@ of the buffer still a hopefully suitable header is added before
 calling tidy."
 ;; Fix-me: copy back parts outside visible region
   (interactive)
+  (message "starting tidy-buffer")
   (let* ((is-narrowed (buffer-narrowed-p))
          (validation-header (when (boundp 'rngalt-validation-header)
                               (let ((header (nth 2 rngalt-validation-header)))
@@ -2451,7 +2466,7 @@ calling tidy."
       (set (make-local-variable 'widget-link-prefix) "")
       (set (make-local-variable 'widget-link-suffix) "")
       (widget-create 'push-button
-                     :tag " Show Original "
+                     :tag " Show Source "
                      :keymap (make-sparse-keymap)
                      :arg-orig orig-buffer
                      :action (lambda (widget &optional event)
@@ -2476,7 +2491,7 @@ calling tidy."
 
       (insert " ")
       (widget-create 'push-button
-                     :tag " Copy Tidied "
+                     :tag " Use Tidied "
                      :keymap (make-sparse-keymap)
                      :arg-tidy output-buffer
                      :arg-orig orig-buffer
@@ -2496,12 +2511,16 @@ calling tidy."
                                            (buffer-substring-no-properties (point-min) (point-max)))))
                                       )
                                  (tidy-check-is-tidied orig-buf tidy-buf)
+                                 (kill-buffer (current-buffer))
+                                 (kill-buffer tidy-buf)
                                  (if (string= orig-buf-str tidy-buf-str)
                                      (message "Original buffer's and tidied buffer's contents are equal")
                                    (with-current-buffer orig-buf
                                      (erase-buffer)
                                      (insert tidy-buf-str)
                                      (goto-char (point-min))
+                                     (delete-window (selected-window))
+                                     (switch-to-buffer orig-buf)
                                      (message "Copied to %s" orig-buf))))))
       (insert " ")
       (widget-create 'push-button
@@ -2876,8 +2895,8 @@ called."
   (interactive)
   (wab-fb t))
 
-(define-derived-mode wab-compilation-mode compilation-mode "WAB Compilation"
-  nil
+(define-compilation-mode wab-compilation-mode "WAB Compilation"
+  "Mode for tidy control buffer."
   )
 (define-key wab-compilation-mode-map [tab]         'wab-forward)
 (define-key wab-compilation-mode-map [(shift tab)] 'wab-backward)

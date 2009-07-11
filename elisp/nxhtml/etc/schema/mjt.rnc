@@ -1,4 +1,4 @@
-include "../../../../emacs/etc/schema/xhtml.rnc"
+include "xhtml-loader.rnc"
 
 MjtAll.attrib =
   attribute mjt.def { Text.datatype }?,

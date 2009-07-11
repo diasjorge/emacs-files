@@ -76,6 +76,8 @@ div#useit { text-decoration: none; }
 
 #quicklnk a {
     color: #cd3700;
+    font-weight: bold;
+    font-size: 1.2em;
 }
 #quicklnk a:hover {
     background-color: yellow;
@@ -102,13 +104,13 @@ div#useit { text-decoration: none; }
       <div id="lftcol">
         <!-- Table of contents BEGIN -->
         <!-- Table of contents min=2 max=3 -->
-        <div id="PAGETOC">
-          <span class="tochead"> On THIS Page: </span>
+        <table id="PAGETOC"><tr><td>
+          <span class="tochead">On THIS Page:</span>
           <ul>
             <li><a href="#summary">Introduction to nXhtml</a></li>
             <li class="liul"><ul>
               <li><a href="#featsum">Features</a></li>
-              <li id="quicklnk"><a href="#qg">The Quick Guide</a></li>
+              <li><a href="#qg">The Quick Guide</a></li>
               <li><a href="#toolset">What you may use more</a></li>
             </ul></li>
             <li><a href="#completion">Completion</a></li>
@@ -132,8 +134,9 @@ div#useit { text-decoration: none; }
             </ul></li>
             <li><a href="#file-assoc">File Associations within Emacs</a></li>
             <li><a href="#bloggin">Not for Me, I Am Only Blogging</a></li>
+            <li><a href="#bloggin">And Other Goodies...</a></li>
           </ul>
-        </div>
+        </td></tr></table>
         <!-- END of Table of contents -->
       </div>
 
@@ -151,7 +154,10 @@ div#useit { text-decoration: none; }
             <a id="download" href="http://ourcomments.org/cgi-bin/emacsw32-dl-latest.pl">Download nXhtml</a>
           </dt>
           <dt>
-            <a href="https://launchpad.net/nxhtml">Bazaar repository</a>
+            <a href="https://launchpad.net/nxhtml" title="Bazaar repository">nXhtml at Launchpad</a>
+          </dt>
+          <dt>
+            <a href="http://ourcomments.org/Emacs/nXhtml/tut/tutorials.html" title="Tutorials">Tutorials</a>
           </dt>
         </dl>
       </div>
@@ -172,7 +178,7 @@ div#useit { text-decoration: none; }
           </p>
         </blockquote>
         <p>
-          You may find it less perfect, but I was glad for the enthusiasm that Drew showed.
+          And that was before I fixed all the bugs ...
         </p>
 
         <h3 id="featsum">Features</h3>
@@ -259,7 +265,9 @@ div#useit { text-decoration: none; }
 
         <h3 id="qg">The Quick Guide</h3>
         <p>
-          Short notes to get you started using nXhtml.
+          Below are some short notes to get you started using nXhtml.
+          (Maybe you should start by taking a look at the
+          <a href="http://ourcomments.org/Emacs/nXhtml/tut/tutorials.html" title="Tutorials">Tutorials</a>?)
         </p>
         <dl>
           <dt>GNU Emacs 22 or later</dt>
@@ -285,11 +293,15 @@ div#useit { text-decoration: none; }
               <li>
                 If you downloaded the zip file with nXhtml then unzip it anywhere and
                 then follow the instructions in
-                <em>nxml/readme.txt</em>.
+                <em>nxhtml/readme.txt</em>.
               </li>
             </ul>
             <p>
               After this files with extensions for example .html will open in nxhtml-mode.
+            </p>
+            <p>
+              To make nXhtml run faster you can also byte compile the files.
+              You do that with <i>M-x nxhtmlmaint-start-byte-compilation</i>.
             </p>
           </dd>
 
@@ -309,20 +321,20 @@ div#useit { text-decoration: none; }
             </p>
           </dd>
 
-          <dt id="turn-on-some">Turn on Some Things</dt>
-          <dd>
-            <p>
-              There is a good chance that you want to turn on some
-              things that makes nXhtml work more automatic. They are
-              in the <a href="#nxhtml-menu">nXhtml menu</a> for
-              turning them on temporarily.  Later, when you have
-              tested, you may want to turn them on permanently, which
-              you can do from the menus by choosing <em>nXhtml -
-              nXhtml Help and Setup - Quick Customize nXhtml</em>.
-            </p>
-          </dd>
+          <!-- <dt id="turn-on-some">Turn on Some Things</dt> -->
+          <!-- <dd> -->
+          <!--   <p> -->
+          <!--     There is a good chance that you want to turn on some -->
+          <!--     things that makes nXhtml work more automatic. They are -->
+          <!--     in the <a href="#nxhtml-menu">nXhtml menu</a> for -->
+          <!--     turning them on temporarily.  Later, when you have -->
+          <!--     tested, you may want to turn them on permanently, which -->
+          <!--     you can do from the menus by choosing <em>nXhtml - -->
+          <!--     nXhtml Help and Setup - Quick Customize nXhtml</em>. -->
+          <!--   </p> -->
+          <!-- </dd> -->
 
-          <dt>XHTML Completion</dt>
+          <dt>XHTML Completion and Validation</dt>
           <dd>
             <p>
               nXhtml knows a good deal about XHTML tags and attributes when you are using <em>nxhtml-mode</em>.
@@ -403,6 +415,32 @@ div#useit { text-decoration: none; }
               If you want to upload your XHTML files, image files etc
               you can do that from within Emacs.  There are entries
               for this in the <a href="#nxhtml-menu">nXhtml menu</a>.
+            </p>
+          </dd>
+          <dt>Keyboard shortcuts (aka keybindings in Emacs)</dt>
+          <dd>
+            <p>
+              When you start to use a new program you often wonder
+              about which keybindings there are to use.  If you have
+              not used Emacs before you may feel quite lost because
+              you have looked in all documentation and you have not
+              seen any list of keybindings.
+            </p>
+            <p>
+              Well, that is how it often is in Emacs. Get use to it ...
+            </p>
+            <p>
+              But do not panic. Because there is help, probably even
+              better than you are used to - in Emacs dynamic help
+              system. A help system that change if you for example add
+              a keybinding yourself.  Try the command <i>C-h b</i> (or <i>F1
+              b</i>). This list all the keybindings (in their priority
+              order) that are active where you are in Emacs.
+            </p>
+            <p>
+              You can also try <i>C-h m</i> which gives information about
+              minor modes and the current major mode. There is
+              sometimes information about the keybindings there too.
             </p>
           </dd>
           <dt>Some More You Can Do ...</dt>
@@ -906,6 +944,14 @@ div#useit { text-decoration: none; }
 
 <!--         <img alt="Edit part of an XHTML file" src="img/edit-part.png" width="448" height="390" /> -->
 
+        <h2 id="bloggin">And Other Goodies...</h2>
+        <p>
+          There are a lot of other things in the package too, please
+          see the nXhtml menu in Emacs.  You can for example find a
+          n-back-game (if you do not know what it is now, do not
+          worry, just try it and you will learn - and understand why I
+          put it there).
+        </p>
       </div>
 
       <hr align="left" class="footer" />

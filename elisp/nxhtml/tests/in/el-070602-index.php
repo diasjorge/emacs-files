@@ -1,12 +1,12 @@
 <?php
-/* We must use this header to be correct and for the css validator to
-   find our stylesheet without us having to provide a fully qualified
-   path (address) to it. */
+  /* We must use this header to be correct and for the css validator to
+     find our stylesheet without us having to provide a fully qualified
+     path (address) to it. */
 header("Content-type:application/xhtml+xml; charset=utf-8");
 echo '<'.'?xml version="1.0" encoding="utf-8"?'.'>';
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
   <head>
     <title>Lab 2 - Layout Control - Task 1 - XHTML/CSS version</title>
@@ -24,19 +24,19 @@ echo '<'.'?xml version="1.0" encoding="utf-8"?'.'>';
       </div>
       <div id="main">
         <?php
-          if (isset($_GET['page'])) {
-            $thepage = $_GET['page'];
-
-            if ($thepage != 'a' && $thepage != 'b') {
-              print('You hacker you!');
-            }
-            else {
-              require('main-div-'.$thepage.'.html');
-            }
-          }
-          else {
-            require('main-div-a.html');
-          }
+  if (isset($_GET['page'])) {
+    $thepage = $_GET['page'];
+    
+    if ($thepage != 'a' && $thepage != 'b') {
+      print('You hacker you!');
+    }
+    else {
+      require('main-div-'.$thepage.'.html');
+    }
+  }
+  else {
+    require('main-div-a.html');
+  }
         ?>
       </div>
       <div id="footer">

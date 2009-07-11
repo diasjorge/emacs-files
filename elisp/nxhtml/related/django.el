@@ -2,8 +2,8 @@
 ;;
 ;; Author: Lennart Borgman (lennart O borgman A gmail O com)
 ;; Created: Sun Nov 18 18:29:41 2007
-;; Version: 0.2
-;; Last-Updated: Tue Nov 20 00:40:56 2007 (3600 +0100)
+;; Version: 0.3
+;; Last-Updated: 2008-08-08T13:22:19+0200 Fri
 ;; URL:
 ;; Keywords:
 ;; Compatibility:
@@ -16,14 +16,7 @@
 ;;
 ;;; Commentary:
 ;;
-;; Simple highlighting for Django, mostly for use with
-;; `mumamo-mode'. To use it with mumamo you can either give your files
-;; the extension .djhtml - which should make mumamo-mode choose
-;; "Django nXhtml Family" - or use
-;;
-;;   M-x mumamo-set-chunk-family
-;;
-;; to set the chunk family.
+;; Simple highlighting for Django for use with mumamo.
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
@@ -51,12 +44,10 @@
 ;;
 ;;; Code:
 
+;; Maybe there are something to get here?
+;; http://github.com/cosmin/emacs-utils/tree/85cc1d2bd447cb9b2fc98e27b5f8780453e5b978/django-html-mode.el
 (defconst django-font-lock-keywords
   (list
-   (cons (rx "{% comment %}" (submatch (0+ anything)) "{% endcomment %}") (list 1 font-lock-comment-face))
-   '("{%\\|\\%}\\|{{\\|}}\\|{#\\|#}" . font-lock-preprocessor-face)
-   '("{# ?\\(.*?\\) ?#}" . (1 font-lock-comment-face))
-   '("{{ ?\\([^|]*?\\)\\(|.*?\\)? ?}}" . (1 font-lock-variable-name-face))
    (cons (rx
           word-start
           (or "as" "in"
@@ -68,7 +59,33 @@
                    "spaceless" "ssi" "templatetag" "url" "widthratio"
                    "with")))
           word-end)
-         font-lock-builtin-face)
+         font-lock-keyword-face)
+   )
+   "Minimal highlighting expressions for Django mode")
+
+;;;###autoload
+(define-derived-mode django-mode nil "Django"
+  "Simple Django mode for use with mumamo.
+This mode only provides syntax highlighting."
+  (setq font-lock-defaults '(django-font-lock-keywords)))
+
+;;; Comments mode
+(defconst django-comment-font-lock-keywords
+  (list
+   (cons "\\(.*\\)" (list 1 font-lock-comment-face))
+   ))
+
+(defvar django-comment-font-lock-defaults
+  '(django-comment-font-lock-keywords t t))
+
+(define-derived-mode django-comment-mode nil "Django comment"
+  "For django comment blocks."
+  (set (make-local-variable 'font-lock-defaults) django-comment-font-lock-defaults))
+
+;;; Variables mode
+
+(defconst django-variable-font-lock-keywords
+  (list
    ;; Built in filters:
    (cons (rx
           "|"
@@ -102,16 +119,26 @@
                "unordered_list"
                "upper" "urlencode" "urlize" "urlizetrunc"
                "wordcount" "wordwrap" "yesno")))
+         (list 1 font-lock-builtin-face))
+   (cons (rx
+          "|"
+          (submatch
+           (0+ (any "a-z"))))
          (list 1 font-lock-function-name-face))
-   )
-   "Minimal highlighting expressions for Django mode")
+   (cons "\\([^|]*\\)" (list 1 font-lock-variable-name-face))
+   ))
 
-(define-derived-mode django-mode nil "Django"
-  "Simple Django mode for use with `mumamo-mode'.
-This mode only provides syntax highlighting."
-  ;;(set (make-local-variable 'comment-start) "{#")
-  ;;(set (make-local-variable 'comment-end)   "#}")
-  (setq font-lock-defaults '(django-font-lock-keywords)))
+(defvar django-variable-font-lock-defaults
+  '(django-variable-font-lock-keywords
+    t t
+    ;; This still gives teh syntax symbol to |, why?
+    ((?| . ". "))
+    ))
+
+(define-derived-mode django-variable-mode nil "Django variable"
+  "For django comment blocks."
+  ;;(modify-syntax-entry ?| ?.)
+  (set (make-local-variable 'font-lock-defaults) django-variable-font-lock-defaults))
 
 (provide 'django)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

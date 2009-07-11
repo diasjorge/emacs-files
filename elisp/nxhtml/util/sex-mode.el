@@ -2,8 +2,8 @@
 ;;
 ;; Author: Lennart Borgman (lennart O borgman A gmail O com)
 ;; Created: 2008-06-01T18:41:50+0200 Sun
-;; Version: 0.71
-;; Last-Updated: 2008-08-01T20:03:51+0200 Fri
+(defconst sex-mode:version "0.71")
+;; Last-Updated: 2009-01-06 Tue
 ;; URL:
 ;; Keywords:
 ;; Compatibility:
@@ -73,11 +73,15 @@
 ;;; Code:
 
 ;;(org-open-file "c:/EmacsW32/nxhtml/nxhtml/doc/nxhtml-changes.html")
+(eval-when-compile (require 'cl))
+(eval-when-compile (require 'org))
+(eval-when-compile (require 'mailcap))
 
 (defcustom sex-file-apps
   '(
     ("html" . emacs)
     ("pdf"  . default)
+    ("wnk"  . default)
     )
   "Application for opening a file.
 See `sex-get-file-open-cmd'."
@@ -150,7 +154,7 @@ If no entry was found return `emacs' for opening inside Emacs."
     (when (eq cmd 'mailcap)
       (require 'mailcap)
       (mailcap-parse-mailcaps)
-      (let* ((mime-type (mailcap-extension-to-mime (or ext "")))
+      (let* ((mime-type (mailcap-extension-to-mime (or key "")))
 	     (command (mailcap-mime-info mime-type)))
 	(if (stringp command)
 	    (setq cmd command)
@@ -159,7 +163,8 @@ If no entry was found return `emacs' for opening inside Emacs."
     cmd))
 
 (defgroup sex nil
-  "Customization group for `sex-mode'.")
+  "Customization group for `sex-mode'."
+  :group 'external)
 
 ;;(setq sex-handle-urls t)
 (defcustom sex-handle-urls nil
@@ -247,7 +252,7 @@ file to system again."
       (if success
           (progn
             (insert success-header)
-            (sex-setup-restore-window-config)
+            (sex-setup-restore-window-config window-config)
             (message "%s" msg))
         (insert (propertize "Error: " 'face 'font-lock-warning-face)
                 fail-header msg
@@ -296,7 +301,7 @@ file to system again."
 ;; anyway do that.)
 (put 'sex-file-handler 'operations '(insert-file-contents))
 
-(defun sex-setup-restore-window-config ()
+(defun sex-setup-restore-window-config (window-config)
   (when (not (eq sex-keep-dummy-buffer 'visible))
     (run-with-idle-timer 0 nil
                          'sex-restore-window-config
@@ -357,6 +362,7 @@ informational message."
 (defvar sex-old-url-insert-file-contents nil)
 (defvar sex-old-url-handler-mode nil)
 
+;;;###autoload
 (define-minor-mode sex-mode
   "Open certain files in external programs.
 See `sex-get-file-open-cmd' for how to determine which files to
@@ -415,12 +421,14 @@ handled is governed by `sex-keep-dummy-buffer'."
             ;;(message "after url-handler-mode 1")
             )))
     ;; Remove from the lists:
-    (let ((handler-list (copy-list file-name-handler-alist)))
+    ;;(let ((handler-list (copy-list file-name-handler-alist)))
+    (let ((handler-list (copy-sequence file-name-handler-alist)))
       (dolist (handler handler-list)
         (when (eq 'sex-file-handler (cdr handler))
           (setq file-name-handler-alist
                 (delete handler file-name-handler-alist)))))
-    (let ((mode-alist (copy-list auto-mode-alist)))
+    ;;(let ((mode-alist (copy-list auto-mode-alist)))
+    (let ((mode-alist (copy-sequence auto-mode-alist)))
       (dolist (auto-mode mode-alist)
         (when (eq 'sex-file-mode (cdr auto-mode))
           (setq auto-mode-alist

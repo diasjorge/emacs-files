@@ -72,16 +72,26 @@
           ))
         (reverse (cdr cmd-list))))))
 
-(defvar gimp-remote-command (gimp-get-remote-command))
+(defvar gimp-remote-command nil)
 
 ;; (gimp-get-gimp-exe)
 (defun gimp-get-gimp-exe ()
+  (unless gimp-remote-command
+    (setq gimp-remote-command (gimp-get-remote-command)))
   (if gimp-remote-command
       (let* ((command-list gimp-remote-command)
              (dir (file-name-directory (nth 0 command-list)))
              (exe (nth 1 command-list)))
-        (expand-file-name exe dir))
+        (if exe
+            ;; GIMP 2.0 - 2.5
+            (expand-file-name exe dir)
+          ;; GIMP 2.6
+          (nth 0 command-list)))
     "gimp.exe"))
+
+(defgroup gimp nil
+  "Customization group for GIMP."
+  :group 'nxhtml)
 
 (defcustom gimp-exe (gimp-get-gimp-exe)
   "Gimp executable file."
@@ -106,24 +116,53 @@ Example:
   :type '(list (file :must-match t) string)
   :group 'gimp)
 
+;;;###autoload
 (defun gimp-edit-file (image-file)
   "Edit IMAGE-FILE with GIMP."
-  (interactive "fImage to edit in GIMP: ")
+  (interactive (list (or (get-char-property (point) 'image-file)
+                         (read-file-name "Image to edit in GIMP: "))))
   (apply 'call-process (car gimp-remote-command-list)
          nil
          0
          nil
          (reverse (cons image-file (reverse (cdr gimp-remote-command-list)))))
-  (let ((msg " Asked GIMP to open %s "))
+  (let ((msg " Asked GIMP to open %s - you may have to switch to GIMP"))
     (put-text-property 0 (length msg) 'face 'highlight msg)
-    (message msg image-file)))
+    (message msg (file-name-nondirectory image-file))))
 
+;;;###autoload
 (defun gimp-edit-buffer ()
   "Edit image file in current buffer with GIMP."
   (interactive)
   (unless (buffer-file-name)
-    (error "Can't edit in GIMP because this buffer does not have a file name."))
+    (error
+     "Can't edit in GIMP because this buffer does not have a file name."))
   (gimp-edit-file (buffer-file-name)))
+
+;;;###autoload
+(defun gimp-can-edit (file-name)
+  (and file-name
+       (member (downcase (file-name-extension file-name))
+               '("png" "gif" "jpg" "jpeg"))))
+
+(defcustom gimp-point-key-bindings '(([(control ?c) ?&] gimp-edit-file))
+  "Key bindings suggested for image links etc."
+  :type '(repeat (list key-sequence function))
+  :group 'gimp)
+
+(defun gimp-add-point-bindings (map)
+  "Add `gimp-point-key-bindings' to point keymap MAP.
+Set it up like this:
+
+  (eval-after-load 'gimp
+    '(gimp-add-point-bindings MY-MAP))
+
+There must also be a character property `image-file' at point for this
+to work."
+  (dolist (binding gimp-point-key-bindings)
+    (let ((key (nth 0 binding))
+          (fun (nth 1 binding)))
+      (define-key map key fun))))
 
 (provide 'gimp)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

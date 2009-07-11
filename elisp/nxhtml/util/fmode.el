@@ -1,5 +1,6 @@
 ;;; fmode.el --- Changing default major modes for files
 
+;; This library is depreceated. Use majmodpri.el instead.
 
 ;; Copyright (C) 2005, 2006, 2007 by Lennart Borgman
 

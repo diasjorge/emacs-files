@@ -52,10 +52,13 @@
 
 ;; TODO: maybe use browse-url-filename-alist
 
+(eval-when-compile (require 'ourcomments-util))
 (eval-when-compile (require 'cl))
-(eval-when-compile (load-library "cl-macs"))
-(defvar html-site-list) ;; Silence compiler
-(defvar html-site-current) ;; Silence compiler
+(eval-when-compile (require 'dired))
+(eval-when-compile (require 'ffip))
+(eval-when-compile (require 'grep))
+;;(defvar html-site-list) ;; Silence compiler
+;;(defvar html-site-current) ;; Silence compiler
 
 (defun html-site-looks-like-local-url (file)
   "Return t if this looks like a local file something url."
@@ -105,27 +108,33 @@
       (when file-is-dir
         (string= true-d true-f)))))
 
+(defun html-site-lwarn (warn-type level format-string &rest args)
+  (apply 'message (concat "%s:" format-string) warn-type args)
+  (apply 'lwarn warn-type level args))
+
 (defun html-site-chk-wtocdir (out-dir site-dir)
   (or
    (unless (file-name-absolute-p out-dir)
-     (lwarn '(html-site) :error "Output directory is not absolute: %s" out-dir))
+     (html-site-lwarn '(html-site) :error "Output directory is not absolute: %s" out-dir))
    (if (file-exists-p out-dir)
        (unless (file-directory-p out-dir)
-         (lwarn '(html-site) :error "File %s for output exists but is not a directory" out-dir))
+         (html-site-lwarn '(html-site) :error "File %s for output exists but is not a directory" out-dir))
      (unless (string= out-dir (file-name-as-directory out-dir))
-       (lwarn '(html-site) :error "File name could not be a directory: %s" out-dir)))
+       (html-site-lwarn '(html-site) :error "File name could not be a directory: %s" out-dir)))
    (when (html-site-dir-contains out-dir site-dir)
-     (lwarn '(html-site) :error "Ouput directory for pages with TOC must not contain site dir."))
+     (html-site-lwarn '(html-site) :error "Ouput directory for pages with TOC must not contain site dir."))
    (when (html-site-dir-contains site-dir out-dir)
-     (lwarn '(html-site) :error "Site dir must not contain ouput directory for pages with TOC."))))
+     (html-site-lwarn '(html-site) :error "Site dir must not contain ouput directory for pages with TOC."))))
 
 
+;;;###autoload
 (defun html-site-buffer-or-dired-file-name ()
   "Return buffer file name or file pointed to in dired."
   (if (derived-mode-p 'dired-mode)
       (dired-get-file-for-visit)
     buffer-file-name))
 
+;;;###autoload
 (defun html-site-set-site (name)
   (interactive
    (let ((site-names)
@@ -166,10 +175,55 @@
     (setq html-site-current name)
     (customize-save-variable 'html-site-current html-site-current)))
 
+;;;###autoload
 (defun html-site-dired-current ()
   "Open `dired' in current site top directory."
   (interactive)
   (dired (html-site-current-site-dir)))
+
+;;;###autoload
+(defun html-site-find-file ()
+  "Find file in current site."
+  (interactive)
+  (require 'ffip)
+  (ffip-set-current-project html-site-current
+                            (html-site-current-site-dir)
+                            'nxhtml)
+  (call-interactively 'ffip-find-file-in-project))
+
+;;;###autoload
+(defun html-site-rgrep (regexp files)
+  "Search current site's files with `rgrep'.
+See `rgrep' for the arguments REGEXP and FILES."
+  (interactive
+   (progn
+     (grep-compute-defaults)
+     (let* ((regexp (grep-read-regexp))
+            (files (grep-read-files regexp)))
+       (list regexp files))))
+  ;; fix-me: ask for site
+  (when (called-interactively-p)
+    )
+  (rgrep regexp files (html-site-current-site-dir)))
+
+;;;###autoload
+(defun html-site-query-replace (from to file-regexp delimited)
+  "Query replace in current site's files."
+  (interactive
+   (let ((parameters (dir-replace-read-parameters t t)))
+     ;; Delete element 3
+     ;;(length parameters)
+     (setcdr (nthcdr 2 parameters) (nthcdr 4 parameters))
+     ;;(length parameters)
+     parameters))
+  ;; fix-me: ask for site
+  (when (called-interactively-p)
+    )
+  (rdir-query-replace from to file-regexp
+                      ;;root
+                      (html-site-current-site-dir)
+                      delimited)
+  )
 
 (defun html-site-ensure-site-defined (site-name)
   (unless html-site-list
@@ -477,6 +531,8 @@ Each element in the list is a list containing:
            (string :tag "Web directory root for pages with TOC")
            ))
   :set (lambda (symbol value)
+         ;;(message "sym=%s, value=%s" symbol value)
+         (set-default symbol value)
          (let ((ok t))
            (dolist (e value)
              (let (
@@ -498,30 +554,32 @@ Each element in the list is a list containing:
                    (web-wtoc-dir (elt e 15))
                    )
                (unless (not (string= "" name))
-                 (lwarn '(html-site-list) :error "Empty site name"))
+                 (html-site-lwarn '(html-site-list) :error "Empty site name"))
                (if (not (file-directory-p site-dir))
                    (progn
-                     (lwarn '(html-site-list) :error "Site directory for %s not found: %s" name site-dir)
+                     (html-site-lwarn '(html-site-list) :error "Site directory for %s not found: %s" name site-dir)
                      (setq ok nil))
                  (unless (file-exists-p pag-file)
-                   (lwarn '(html-site-list) :warning "Pages list file for %s does not exist: %s" name pag-file))
+                   (html-site-lwarn '(html-site-list) :warning "Pages list file for %s does not exist: %s" name pag-file))
                  (unless (file-exists-p tpl-file)
-                   (lwarn '(html-site-list) :warning "Template file for %s does not exist: %s" name tpl-file)))
+                   (html-site-lwarn '(html-site-list) :warning "Template file for %s does not exist: %s" name tpl-file)))
                (when (< 0 (length out-dir))
                  (html-site-chk-wtocdir out-dir site-dir))
                (when fun
                  (unless (functionp fun)
-                   (lwarn '(html-site-list) :error "Site %s - Unknown function: %s" name fun)
+                   (html-site-lwarn '(html-site-list) :error "Site %s - Unknown function: %s" name fun)
                    (setq ok nil)
                    ))
                ))
-           (set-default symbol value)))
+           ))
   :group 'html-site)
 
 (defcustom html-site-current ""
   "Current site name.
 Use the entry with this name in `html-site-list'."
   :set (lambda (symbol value)
+         ;;(message "sym=%s, value=%s" symbol value)
+         (set-default symbol value)
          (or (when (= 0 (length value))
                (message "html-site-current (information): No current site set"))
              (let ((site-names))
@@ -529,11 +587,11 @@ Use the entry with this name in `html-site-list'."
                  (setq site-names (cons (elt m 0) site-names)))
                (or
                 (unless (member value site-names)
-                  (lwarn '(html-site-current) :error "Can't find site: %s" value))
+                  (html-site-lwarn '(html-site-current) :error "Can't find site: %s" value))
                 (let ((site-dir (html-site-site-dir value)))
                   (unless (file-directory-p site-dir)
-                    (lwarn '(html-site-current) :error "Can't find site directory: %s" value))))))
-         (set-default symbol value))
+                    (html-site-lwarn '(html-site-current) :error "Can't find site directory: %s" value))))))
+         )
   :type 'string
   :set-after '(html-site-list)
   :group 'html-site)
@@ -664,7 +722,9 @@ Use the entry with this name in `html-site-list'."
 
 ;; Provide here to be able to load the files in any order
 (provide 'html-site)
-(require 'html-upl nil t)
+
+(eval-when-compile (require 'html-upl nil t))
+
 (defvar html-site-mode-menu-map
   (let ((map (make-sparse-keymap "html-site-mode-menu-map")))
 

@@ -2,9 +2,9 @@
 
 ;; Copyright (C) 2008 by Lennart Borgman
 
-;; Author:  Lennart Borgman <lennart DOT borgman DOT 073 AT student DOT lu DOT se>
+;; Author:  Lennart Borgman <lennart DOT borgman AT gmail DOT com>
 ;; Created: Thu Jan 05 14:00:26 2006
-(defconst appmenu:version "0.61") ;; Version:
+(defconst appmenu:version "0.62") ;; Version:
 ;; Last-Updated: 2008-06-15T17:54:40+0200 Sun
 ;; Keywords:
 ;; Compatibility:
@@ -26,10 +26,12 @@
 ;;; Change log:
 ;;
 ;; Version 0.61:
-;; - Removed support for minor and major menus.
-;; - Added support for text and overlay keymaps.
-;; - Added customization options.
+;; - Remove support for minor and major menus.
+;; - Add support for text and overlay keymaps.
+;; - Add customization options.
 ;;
+;; Version 0.62:
+;; - Fix problem with keymap at point.
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
@@ -76,7 +78,7 @@ The entries in this list are lists:
 
    \(ID PRIORITY TEST TITLE DEFINITION)
 
-ID is a uniqure identity.
+ID is a unique identity.
 
 PRIORITY is a number or a variable whose value is a number
 telling where to put this entry when showing the menu.
@@ -104,6 +106,7 @@ For an example of use see mlinks.el.")
                   (when (symbolp priB) (setq priB (symbol-value priB)))
                   (< priA priB))))))
 
+;;;###autoload
 (defun appmenu-add (id priority test title definition)
   "Add entry to `appmenu-alist'.
 Add an entry to this list with ID, PRIORITY, TEST, TITLE and
@@ -132,41 +135,59 @@ DEFINITION as explained there."
     ml))
 
 (defvar appmenu-mouse-only
-  '(flyspell-correct-word))
+  '((flyspell-correct-word appmenu-flyspell-correct-word-before-point)))
+
+(defun appmenu-flyspell-correct-word-before-point ()
+  "Pop up a menu of possible corrections for misspelled word before point.
+Special version for AppMenu."
+  (interactive)
+  (flyspell-correct-word-before-point))
+
+(defcustom appmenu-at-any-point '(ispell-word)
+  "Commands that may work at any point in a buffer.
+Some important but not too often used commands that may be useful
+for most points in a buffer."
+  :group 'appmenu)
 
 (defun appmenu-make-menu-for-point ()
-  "Construct a menu based on point keymap."
+  "Construct a menu based on point.
+This includes some known commands for point and keymap at
+point."
   (let ((point-map (get-char-property (point) 'keymap))
-        funs
+        (funs appmenu-at-any-point)
         (map (make-sparse-keymap "At point"))
         (num 0)
         last-prefix
         this-prefix)
+    ;; Known for any point
     (when point-map
-      (map-keymap (lambda (key fun)
-                    (when (and (symbolp fun)
-                               (fboundp fun)
-                               (not (memq fun appmenu-mouse-only))
-                               )
-                      (add-to-list 'funs fun)))
-                  point-map)
-      (dolist (fun funs)
-        (let ((desc (when fun (documentation fun))))
-          (when desc
-            (setq desc (car (split-string desc "[\n]")))
-            ;;(lwarn t :warning "pk: %s, %s" fun desc)
-            (setq this-prefix
-                  (car (split-string (symbol-name fun) "[-]")))
-            (when (and last-prefix
-                       (not (string= last-prefix this-prefix)))
-              (define-key map
-                (vector (intern (format "appmenu-point-div-%s" num)))
-                (list 'menu-item "--")))
-            (setq last-prefix this-prefix)
-            (setq num (1+ num))
+      (let ((map-fun (lambda (key fun)
+                       (if (keymapp fun)
+                           (map-keymap map-fun fun)
+                         (when (and (symbolp fun)
+                                    (fboundp fun))
+                           (let ((mouse-only (assq fun appmenu-mouse-only)))
+                             (when mouse-only
+                               (setq fun (cadr mouse-only)))
+                             (add-to-list 'funs fun)))))))
+        (map-keymap map-fun point-map)))
+    (dolist (fun funs)
+      (let ((desc (when fun (documentation fun))))
+        (when desc
+          (setq desc (car (split-string desc "[\n]")))
+          ;;(lwarn t :warning "pk: %s, %s" fun desc)
+          (setq this-prefix
+                (car (split-string (symbol-name fun) "[-]")))
+          (when (and last-prefix
+                     (not (string= last-prefix this-prefix)))
             (define-key map
-              (vector (intern (format "appmenu-point-%s" num)))
-              (list 'menu-item desc fun))))))
+              (vector (intern (format "appmenu-point-div-%s" num)))
+              (list 'menu-item "--")))
+          (setq last-prefix this-prefix)
+          (setq num (1+ num))
+          (define-key map
+            (vector (intern (format "appmenu-point-%s" num)))
+            (list 'menu-item desc fun)))))
     (when (> num 0) map)))
 
 (defun appmenu-map ()
@@ -241,13 +262,14 @@ DEFINITION as explained there."
     (when is-mouse
       (goto-char (posn-point (event-start last-input-event)))
       (sit-for 0.01))
-    ;;(active-minibuffer-window)
-    (condition-case err
+    ;;active-minibuffer-window)
+    ;;(condition-case err
         (let ((menu (appmenu-map)))
           (if menu
               (popup-menu-at-point menu)
             (message "Appmenu is empty")))
-      (quit nil))))
+      ;;(quit nil))
+    ))
 
 (defvar appmenu-mode-map
   (let ((map (make-sparse-keymap)))
