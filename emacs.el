@@ -383,6 +383,8 @@
 (setq autotest-use-ui t)
 (require 'autotest)
 
+;; magit support. Source: git clone git://gitorious.org/magit/mainline.git
+(require 'magit)
 ;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; CUSTOMIZATIONS FILE ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;
