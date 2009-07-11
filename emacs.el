@@ -275,7 +275,6 @@
         (define-key map [(control meta next)]  'mumamo-forward-chunk)
         ;; (define-key map [tab] 'yas/expand)
         map))
-(mumamo-add-multi-keymap 'mumamo-multi-major-mode mumamo-map)
 
 ;; haml-mode and & sass-mode
 ;; http://github.com/nex3/haml/
