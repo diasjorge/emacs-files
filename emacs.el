@@ -63,7 +63,7 @@
 ;; Frame title bar formatting to show full path of file
 (setq-default
  frame-title-format
- (list '((buffer-file-name " %f" (dired-directory 
+ (list '((buffer-file-name " %f" (dired-directory
                                   dired-directory
                                   (revert-buffer-function " %b"
                                   ("%b - Dir:  " default-directory)))))))
@@ -132,7 +132,7 @@
 
 ;; ido-mode
 (setq ido-use-filename-at-point t)
-(setq ido-enable-flex-matching t) 
+(setq ido-enable-flex-matching t)
 (ido-mode t)
 (ido-everywhere t)
 (add-hook 'ido-setup-hook 'custom-ido-extra-keys)
@@ -248,33 +248,21 @@
 ;;   ctags-exuberant -a -e -f TAGS --tag-relative -R app lib vendor
 (setq rinari-tags-file-name "TAGS")
 
+;; nXhtml
+(load "~/.emacs.d/elisp/nxhtml/autostart.el")
+(require 'mumamo-fun)
+(setq
+ nxhtml-global-minor-mode t
+ mumamo-chunk-coloring 'submode-colored
+ nxhtml-skip-welcome t
+ indent-region-mode t
+ rng-nxml-auto-validate-flag nil
+ nxml-degraded t)
+
 ;; js2-mode (javascript IDE)
 ;; http://code.google.com/p/js2-mode/
 (autoload 'js2-mode "js2" nil t)
-(add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
-
-;; nXhtml
-;; http://ourcomments.org/Emacs/nXhtml/doc/nxhtml.html
-(load "~/.emacs.d/elisp/nxhtml/autostart.el")
-(eval-after-load 'nxhtml
-  '(define-key nxhtml-mode-map [f2] 'nxml-complete))
-(setq
- nxhtml-global-minor-mode nil
- mumamo-chunk-coloring 'submode-colored
- nxhtml-skip-welcome t
- ;; indent-region-mode t
- nxhtml-default-encoding "utf8"
- rng-nxml-auto-validate-flag nil
- ;; nxml-degraded t
- )
-(add-to-list 'auto-mode-alist '("\\.html\\.erb\\'" . eruby-nxhtml-mumamo))
-
-(setq mumamo-map
-      (let ((map (make-sparse-keymap)))
-        (define-key map [(control meta prior)] 'mumamo-backward-chunk)
-        (define-key map [(control meta next)]  'mumamo-forward-chunk)
-        ;; (define-key map [tab] 'yas/expand)
-        map))
+(add-to-list 'auto-mode-alist '("\.js$" . js2-mode))
 
 ;; haml-mode and & sass-mode
 ;; http://github.com/nex3/haml/
@@ -408,7 +396,7 @@
     (if (file-exists-p my-tags-file)
 	(delete-file my-tags-file))
     (shell-command
-     (format "find %s -regex \".+rb$\" | xargs ctags-exuberant -a -e -f %s"
+     (format "find -L %s -regex \".+rb$\" | xargs ctags-exuberant -a -e -f %s"
 	     root my-tags-file))
     (if (get-file-buffer my-tags-file)
 	 (kill-buffer (get-file-buffer my-tags-file)))
@@ -422,7 +410,7 @@
     (if (file-exists-p my-tags-file)
 	(delete-file my-tags-file))
     (shell-command
-     (format "find %s -regex \".+rb$\" | xargs ctags-exuberant -a -e -f %s"
+     (format "find -L %s -regex \".+rb$\" | xargs ctags-exuberant -a -e -f %s"
 	     root my-tags-file))
     (if (get-file-buffer my-tags-file)
 	 (kill-buffer (get-file-buffer my-tags-file)))
@@ -454,7 +442,7 @@
   "Convierte el buffer seleccionado a código haml"
   (interactive)
   (let ((nuevoarchivo
-	 (replace-regexp-in-string "r?html\\(.erb\\)?$" "haml" 
+	 (replace-regexp-in-string "r?html\\(.erb\\)?$" "haml"
 				   (buffer-file-name))))
      (haml-convert-region (point-min) (point-max))
      (write-file nuevoarchivo)))
