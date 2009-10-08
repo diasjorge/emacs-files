@@ -42,6 +42,10 @@
 	   (not (eq (process-status server-process) 'listen))))
   (server-start))
 
+;; Set font
+(if (>= emacs-major-version 23)
+  (set-default-font "BitStream Vera Sans Mono-12"))
+
 ;; Share clipboard with other X applications
 (setq x-select-enable-clipboard t)
 (setq interprogram-paste-function 'x-cut-buffer-or-selection-value)
