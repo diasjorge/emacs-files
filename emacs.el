@@ -378,6 +378,7 @@
 
 ;; magit support. Source: git clone git://gitorious.org/magit/mainline.git
 (require 'magit)
+(global-set-key (kbd "C-c m") 'magit-status)
 ;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; CUSTOMIZATIONS FILE ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;
