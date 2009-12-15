@@ -158,7 +158,7 @@
 (add-to-list 'load-path "~/.emacs.d/elisp/emacs-wget")
 (add-to-list 'load-path "~/.emacs.d/elisp/erlang")
 (add-to-list 'load-path "~/.emacs.d/elisp/gist")
-(add-to-list 'load-path "~/.emacs.d/elisp/feature-mode")
+(add-to-list 'load-path "~/.emacs.d/elisp/cucumber")
 ;; add more here as needed
 
 ;; emacs-wget
