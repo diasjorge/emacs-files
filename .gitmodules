@@ -10,3 +10,6 @@
 [submodule "elisp/gist"]
 	path = elisp/gist
 	url = git://github.com/defunkt/gist.el.git
+[submodule "elisp/cucumber"]
+	path = elisp/cucumber
+	url = git://github.com/michaelklishin/cucumber.el.git

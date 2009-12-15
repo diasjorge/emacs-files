@@ -44,7 +44,7 @@
 
 ;; Set font
 (if (>= emacs-major-version 23)
-  (set-default-font "BitStream Vera Sans Mono-12"))
+  (set-default-font "Dejavu Sans Sans Mono-12"))
 
 ;; Share clipboard with other X applications
 (setq x-select-enable-clipboard t)
@@ -158,6 +158,7 @@
 (add-to-list 'load-path "~/.emacs.d/elisp/emacs-wget")
 (add-to-list 'load-path "~/.emacs.d/elisp/erlang")
 (add-to-list 'load-path "~/.emacs.d/elisp/gist")
+(add-to-list 'load-path "~/.emacs.d/elisp/feature-mode")
 ;; add more here as needed
 
 ;; emacs-wget
@@ -379,6 +380,10 @@
 ;; magit support. Source: git clone git://gitorious.org/magit/mainline.git
 (require 'magit)
 (global-set-key (kbd "C-c m") 'magit-status)
+
+(require 'feature-mode)
+(add-to-list 'auto-mode-alist '("\.feature$" . feature-mode))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; CUSTOMIZATIONS FILE ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;
