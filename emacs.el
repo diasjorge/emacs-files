@@ -44,7 +44,7 @@
 
 ;; Set font
 (if (>= emacs-major-version 23)
-  (set-default-font "Dejavu Sans Sans Mono-12"))
+  (set-default-font "Dejavu Sans Mono-12"))
 
 ;; Share clipboard with other X applications
 (setq x-select-enable-clipboard t)
