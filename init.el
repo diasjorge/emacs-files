@@ -223,8 +223,13 @@
 ;; add file types to ruby-mode
 ;; (add-to-list 'auto-mode-alist '("\.treetop$" . ruby-mode))
 (add-to-list 'auto-mode-alist '("Rakefile" . ruby-mode))
+(add-to-list 'auto-mode-alist '("Capfile" . ruby-mode))
 (add-to-list 'auto-mode-alist '("\.rake$" . ruby-mode))
 (add-to-list 'auto-mode-alist '("\.thor$" . ruby-mode))
+(add-to-list 'auto-mode-alist '("\.builder$" . ruby-mode))
+(add-to-list 'auto-mode-alist '("\.autotest$" . ruby-mode))
+(add-to-list 'auto-mode-alist '("\.rjs" . ruby-mode))
+
 
 ;; inf-ruby
 (autoload 'run-ruby "inf-ruby" "Run an inferior Ruby process")
