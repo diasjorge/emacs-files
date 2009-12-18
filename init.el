@@ -398,7 +398,13 @@
 (setq fill-column 80)
 
 ;; delete trailing whitespace before save
-(add-hook 'before-save-hook 'delete-trailing-whitespace)
+;; (add-hook 'before-save-hook 'delete-trailing-whitespace)
+
+
+;; Turn off auto new line on yas/minor-mode
+(add-hook 'yas/minor-mode-on-hook 
+	  (lambda ()
+	    (setq mode-require-final-newline nil)))
 
 ;; My functions
 (defun rinari-merb-generate-tags()
