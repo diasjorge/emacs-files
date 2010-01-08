@@ -1,0 +1,3 @@
+#name : it { should } ...
+# --
+it { should $0 }
