@@ -5,7 +5,7 @@
 ;; Modified By Jorge Dias
 ;;
 ;; The following packages are required for this:
-;; emacs23 magit erlang yasnippet
+;; emacs23 magit erlang yasnippet js2-mode
 
 ;;;;;;;;;;;;;;;;;;
 ;; EMACS SERVER ;;
