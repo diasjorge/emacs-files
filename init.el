@@ -245,7 +245,6 @@
 ;;
 ;; Generate file with:
 ;;   ctags-exuberant -a -e -f TAGS --tag-relative -R app lib vendor
-(setq rinari-tags-file-name "TAGS")
 
 ;; nXhtml
 (load "~/.emacs.d/elisp/nxhtml/autostart.el")
@@ -420,7 +419,7 @@
     (if (file-exists-p my-tags-file)
 	(delete-file my-tags-file))
     (shell-command
-     (format "find -L %s -regex \".+rb$\" | xargs ctags-exuberant -a -e -f %s"
+     (format "find %s -regex \".+rb$\" | grep -v \"db\" | xargs ctags-exuberant -a -e -f %s"
 	     root my-tags-file))
     (if (get-file-buffer my-tags-file)
 	 (kill-buffer (get-file-buffer my-tags-file)))
