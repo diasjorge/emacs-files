@@ -1,0 +1,5 @@
+#name : debugger ...
+# --
+require 'ruby-debug'
+debugger
+$0
