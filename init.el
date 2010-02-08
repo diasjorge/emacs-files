@@ -4,32 +4,8 @@
 ;; Original By Jorge Calás Lozano.
 ;; Modified By Jorge Dias
 ;;
-;; Emacs should be compiled from CVS in order to make it work correctly with
-;; nXhtml and ruby mode. At least in debian based, emacs-snapshot is broken.
-;;
-;; cvs -d:pserver:anonymous@cvs.sv.gnu.org:/sources/emacs co emacs
-;; cd emacs
-;;
-;; Read the INSTALL file
-;;
-;; Verify you have Xfonts support if you want pretty fonts and other
-;; dependencies: txinfo, libgif-dev, libxpm-dev (Images), libgpmg1-dev
-;; (Mouse Support)
-;;
-;; wajig install libxfont-dev libxfont1 txinfo libgif-dev libxpm-dev libgpmg1-dev
-;;
-;; ./configure
-;;
-;; make
-;; sudo make install
-;;
-;; Set Monospace font
-;;
-;; echo "Emacs.font: Monospace-10" >> ~/.Xresources
-;; xrdb -merge ~/.Xresources
-;;
-;; /usr/local/bin/emacs
-;; /usr/local/bin/emacsclient
+;; The following packages are required for this:
+;; emacs23 magit 
 
 ;;;;;;;;;;;;;;;;;;
 ;; EMACS SERVER ;;
@@ -58,6 +34,9 @@
 
 ;; C-v & M-v return to original position
 (setq scroll-preserve-screen-position 1)
+
+;; keep scrolling in compilation result buffer
+(setq compilation-scroll-output t)
 
 ;; Enable disabled features
 (put 'upcase-region 'disabled nil)
@@ -135,17 +114,15 @@
 ;; add library dirs to load-path
 (add-to-list 'load-path "~/.emacs.d/elisp")
 (add-to-list 'load-path "~/.emacs.d/elisp/color-theme")
-(add-to-list 'load-path "~/.emacs.d/elisp/ruby-mode")
-(add-to-list 'load-path "~/.emacs.d/elisp/ri-emacs")
 (add-to-list 'load-path "~/.emacs.d/elisp/yaml-mode")
-(add-to-list 'load-path "~/.emacs.d/elisp/rinari")
 (add-to-list 'load-path "~/.emacs.d/elisp/git-emacs")
 (add-to-list 'load-path "~/.emacs.d/elisp/haml-mode")
 (add-to-list 'load-path "~/.emacs.d/elisp/emacs-wget")
-(add-to-list 'load-path "~/.emacs.d/elisp/erlang")
 (add-to-list 'load-path "~/.emacs.d/elisp/gist")
-(add-to-list 'load-path "~/.emacs.d/elisp/cucumber")
 ;; add more here as needed
+
+;; Load Ruby specific configuration
+(load-file "ruby.el")
 
 ;; emacs-wget
 ;; http://pop-club.hp.infoseek.co.jp/emacs/emacs-wget/emacs-wget-0.5.0.tar.gz
@@ -178,68 +155,8 @@
 ;; http://edward.oconnor.cx/config/elisp/color-theme-hober2.el (wget)
 ;; (require 'color-theme-hober2)
 ;; (color-theme-hober2)
-(load-file "~/.emacs.d/elisp/color-theme/blackboard.el")
+(load-file "elisp/color-theme/blackboard.el")
 (color-theme-blackboard)
-
-;; ri-ruby
-;; http://rubyforge.org/projects/ri-emacs/
-;;
-;; cd ~/.emacs.d/elisp
-;; cvs -d :pserver:anonymous@rubyforge.org:/var/cvs/ri-emacs login # Press ENTER for password
-;; cvs -d :pserver:anonymous@rubyforge.org:/var/cvs/ri-emacs checkout ri-emacs
-;;
-;; C-h r
-(setq ri-ruby-script "/home/jorge/.emacs.d/elisp/ri-emacs/ri-emacs.rb")
-(autoload 'ri "ri-ruby" nil t)
-(global-set-key (kbd "C-h r") 'ri)
-
-;; ruby-test  run test/specs for ruby projects
-;; http://www.emacswiki.org/cgi-bin/emacs/download/ruby-test.el (wget)
-;;
-;; C-x C-SPC => run this test/spec
-;; C-x t     => run tests/specs in this file
-;; C-c t     => toggle between specification and implementation
-(require 'ruby-test)
-
-;; rdebug from ruby-debug-extras-0.10.1 (not working as desire)
-;;
-;; Read http://groups.google.com/group/emacs-on-rails/browse_thread/thread/dfaa224905b51487
-;; http://rubyforge.iasi.roedu.net/files/ruby-debug/ruby-debug-extra-0.10.1.tar.gz (wget)
-(require 'rdebug)
-
-;; rinari
-;; http://github.com/eschulte/rinari
-(require 'rinari)
-(global-set-key (kbd "C-x C-M-f") 'find-file-in-project)
-(setq rinari-browse-url-func 'browse-url-generic)
-
-;; ruby-mode
-;; ruby-mode from ruby-lang svn
-;;
-;; svn co http://svn.ruby-lang.org/repos/ruby/trunk/misc/ ~/.emacs.d/elisp/ruby-mode
-(setq auto-mode-alist (append '(("\\.rb$" . ruby-mode)) auto-mode-alist))
-(setq interpreter-mode-alist (append '(("ruby" . ruby-mode)) interpreter-mode-alist))
-
-;; add file types to ruby-mode
-;; (add-to-list 'auto-mode-alist '("\.treetop$" . ruby-mode))
-(add-to-list 'auto-mode-alist '("Rakefile" . ruby-mode))
-(add-to-list 'auto-mode-alist '("Capfile" . ruby-mode))
-(add-to-list 'auto-mode-alist '("\.rake$" . ruby-mode))
-(add-to-list 'auto-mode-alist '("\.thor$" . ruby-mode))
-(add-to-list 'auto-mode-alist '("\.builder$" . ruby-mode))
-(add-to-list 'auto-mode-alist '("\.autotest$" . ruby-mode))
-(add-to-list 'auto-mode-alist '("\.rjs" . ruby-mode))
-
-
-;; inf-ruby
-(autoload 'run-ruby "inf-ruby" "Run an inferior Ruby process")
-(autoload 'inf-ruby-keys "inf-ruby" "Set local key defs for inf-ruby in ruby-mode")
-(add-hook 'ruby-mode-hook '(lambda () (inf-ruby-keys) ))
-
-;; ruby-electric
-(require 'ruby-electric)
-(add-hook 'ruby-mode-hook (lambda () (ruby-electric-mode t)))
-
 
 ;; use exuberant-ctags
 ;;
@@ -247,6 +164,7 @@
 ;;   ctags-exuberant -a -e -f TAGS --tag-relative -R app lib vendor
 
 ;; nXhtml
+;; http://ourcomments.org/Emacs/nXhtml/doc/nxhtml.html
 (load "~/.emacs.d/elisp/nxhtml/autostart.el")
 (require 'mumamo-fun)
 (setq
@@ -309,24 +227,6 @@
 ;; http://github.com/hornbeck/public_emacs/tree/master/treetop.el
 (require 'treetop-mode)
 
-;; po-mode
-;; Part of the gettext package, you can grab it at http://gnuftp.spegulo.be/gettext/
-;;
-;; po-mode+
-;; Adds some extensions to po-mode
-;; http://www.emacswiki.org/cgi-bin/wiki/po-mode+.el/download/po-mode+.el (wget)
-(autoload 'po-mode "po-mode+"
-  "Major mode for translators to edit PO files" t)
-(setq auto-mode-alist (cons '("\\.po\\'\\|\\.po\\." . po-mode)
-			    auto-mode-alist))
-
-;; (autoload 'po-find-file-coding-system "po-compat")
-;; (modify-coding-system-alist 'file "\\.po\\'\\|\\.po\\."
-;; 			    'po-find-file-coding-system)
-
-;; keep scrolling in compilation result buffer
-(setq compilation-scroll-output t)
-
 ;; emacs-compile font-lock tweaks to get a pretty rspec result output
 (add-to-list 'compilation-mode-font-lock-keywords
 	     '("^\\([[:digit:]]+\\) examples?, \\([[:digit:]]+\\) failures?\\(?:, \\([[:digit:]]+\\) pendings?\\)?$"
@@ -365,16 +265,9 @@
 ;; gist-support
 (require 'gist)
 
-;; autotest support
-(setq autotest-use-ui t)
-(require 'autotest)
-
 ;; magit support. Source: git clone git://gitorious.org/magit/mainline.git
 (require 'magit)
 (global-set-key (kbd "C-c m") 'magit-status)
-
-(require 'feature-mode)
-(add-to-list 'auto-mode-alist '("\.feature$" . feature-mode))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; CUSTOMIZATIONS FILE ;;
@@ -390,27 +283,12 @@
 ;; delete trailing whitespace before save
 ;; (add-hook 'before-save-hook 'delete-trailing-whitespace)
 
-
 ;; Turn off auto new line on yas/minor-mode
 (add-hook 'yas/minor-mode-on-hook 
 	  (lambda ()
 	    (setq mode-require-final-newline nil)))
 
 ;; My functions
-(defun rinari-merb-generate-tags()
-  (interactive)
-  (let ((my-tags-file (concat (rinari-merb-root) "TAGS"))
-	(root (rinari-merb-root)))
-    (message "Regenerating TAGS file: %s" my-tags-file)
-    (if (file-exists-p my-tags-file)
-	(delete-file my-tags-file))
-    (shell-command
-     (format "find -L %s -regex \".+rb$\" | xargs ctags-exuberant -a -e -f %s"
-	     root my-tags-file))
-    (if (get-file-buffer my-tags-file)
-	 (kill-buffer (get-file-buffer my-tags-file)))
-    (visit-tags-table my-tags-file)))
-
 (defun rinari-generate-tags()
   (interactive)
   (let ((my-tags-file (concat (rinari-root) "TAGS"))
