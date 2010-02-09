@@ -122,7 +122,7 @@
 ;; add more here as needed
 
 ;; Load Ruby specific configuration
-(load-file "ruby.el")
+(load-file "~/.emacs.d/ruby.el")
 
 ;; emacs-wget
 ;; http://pop-club.hp.infoseek.co.jp/emacs/emacs-wget/emacs-wget-0.5.0.tar.gz
