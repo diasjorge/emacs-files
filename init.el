@@ -152,10 +152,8 @@
 ;; uncompress and move to ~/.emacs.d/elisp/color-theme
 (require 'color-theme)
 (color-theme-initialize)
-;; http://edward.oconnor.cx/config/elisp/color-theme-hober2.el (wget)
-;; (require 'color-theme-hober2)
-;; (color-theme-hober2)
-(load-file "elisp/color-theme/blackboard.el")
+
+(load-file "~/.emacs.d/elisp/color-theme/blackboard.el")
 (color-theme-blackboard)
 
 ;; use exuberant-ctags
