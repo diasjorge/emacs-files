@@ -1,1 +1,4 @@
 elisp/nxhtml/.bzr/*
+*.elc
+/elisp/nxhtml/etc/schema/xhtml-loader.rnc
+auto-save-list/*
