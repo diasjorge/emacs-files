@@ -286,9 +286,10 @@
   "Insert the comment to mark the end of the post preview"
   (interactive)
   (insert "<!-- -**-END-**- -->"))
-;;;;;;;;;;;;;;;;;;;;;;;;;
-;; CUSTOMIZATIONS FILE ;;
-;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;;;;;;;;;;;;;;;;;;
+;; CUSTOMIZATIONS ;;
+;;;;;;;;;;;;;;;;;;;;
 
 (setq custom-file "~/.emacs.d/customizations.el")
 (load custom-file 'noerror)
@@ -298,14 +299,23 @@
 (setq fill-column 80)
 
 ;; delete trailing whitespace before save
-;; (add-hook 'before-save-hook 'delete-trailing-whitespace)
+(add-hook 'before-save-hook 'delete-trailing-whitespace)
 
 ;; Turn off auto new line on yas/minor-mode
 (add-hook 'yas/minor-mode-on-hook 
 	  (lambda ()
 	    (setq mode-require-final-newline nil)))
 
-;; My functions
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; ENVIRONMENT SPECIFIC SETTINGS ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(load "~/.emacs.d/elisp/environment.el" t)
+
+;;;;;;;;;;;;;;;;;;
+;; MY FUNCTIONS ;;
+;;;;;;;;;;;;;;;;;;
+
 (defun rinari-generate-tags()
   (interactive)
   (let ((my-tags-file (concat (rinari-root) "TAGS"))
