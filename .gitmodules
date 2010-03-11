@@ -13,3 +13,9 @@
 [submodule "elisp/cucumber"]
 	path = elisp/cucumber
 	url = git://github.com/michaelklishin/cucumber.el.git
+[submodule "elisp/jekyll.el"]
+        path = elisp/jekyll.el
+        url = git@github.com:diasjorge/jekyll.el.git
+[submodule "elisp/jekyll"]
+	path = elisp/jekyll
+	url = http://github.com/diasjorge/jekyll.el.git

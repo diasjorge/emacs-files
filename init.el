@@ -119,6 +119,7 @@
 (add-to-list 'load-path "~/.emacs.d/elisp/haml-mode")
 (add-to-list 'load-path "~/.emacs.d/elisp/emacs-wget")
 (add-to-list 'load-path "~/.emacs.d/elisp/gist")
+(add-to-list 'load-path "~/.emacs.d/elisp/jekyll")
 ;; add more here as needed
 
 ;; Load Ruby specific configuration
@@ -267,6 +268,24 @@
 (require 'magit)
 (global-set-key (kbd "C-c m") 'magit-status)
 
+;; jekyll blog support
+(require 'jekyll)
+(setq jekyll-directory "/home/boston/development/mrdias.com/")
+(global-set-key (kbd "C-c j n") 'jekyll-draft-post)
+(global-set-key (kbd "C-c j P") 'jekyll-publish-post)
+(global-set-key (kbd "C-c j p") (lambda ()
+                                  (interactive)
+                                  (find-file(concat jekyll-directory "_posts/"))))
+(global-set-key (kbd "C-c j d") (lambda ()
+                                  (interactive)
+                                  (find-file(concat jekyll-directory "_drafts/"))))
+
+(global-set-key (kbd "C-c j e") 'jekyll-insert-preview-end)
+
+(defun jekyll-insert-preview-end ()
+  "Insert the comment to mark the end of the post preview"
+  (interactive)
+  (insert "<!-- -**-END-**- -->"))
 ;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; CUSTOMIZATIONS FILE ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;
