@@ -19,3 +19,6 @@
 [submodule "elisp/jekyll"]
 	path = elisp/jekyll
 	url = http://github.com/diasjorge/jekyll.el.git
+[submodule "elisp/auto-complete"]
+	path = elisp/auto-complete
+	url = git://github.com/m2ym/auto-complete.git
