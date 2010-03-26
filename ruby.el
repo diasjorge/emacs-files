@@ -42,6 +42,7 @@
 (add-to-list 'auto-mode-alist '("\.builder$" . ruby-mode))
 (add-to-list 'auto-mode-alist '("\.autotest$" . ruby-mode))
 (add-to-list 'auto-mode-alist '("\.rjs" . ruby-mode))
+(add-to-list 'auto-mode-alist '("Gemfile" . ruby-mode))
 
 
 ;; inf-ruby
