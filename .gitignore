@@ -4,3 +4,4 @@ elisp/nxhtml/.bzr/*
 auto-save-list/*
 /ac-comphist.dat
 /tramp
+/elisp/environment.el
