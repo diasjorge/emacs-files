@@ -64,7 +64,10 @@
     (define-key shell-mode-map "\C-c\C-a" 'autotest-switch)
 
     (set (make-local-variable 'comint-output-filter-functions)
-         '(comint-truncate-buffer comint-postoutput-scroll-to-bottom))
+	 '(comint-truncate-buffer
+	   comint-postoutput-scroll-to-bottom
+	   ansi-color-process-output
+	   ))
     (set (make-local-variable 'comint-buffer-maximum-size) 5000)
     (set (make-local-variable 'comint-scroll-show-maximum-output) t)
     (set (make-local-variable 'comint-scroll-to-bottom-on-output) t)
@@ -74,9 +77,10 @@
            ("^ +\\(#{RAILS_ROOT}/\\)?\\([^(:]+\\):\\([0-9]+\\)" 2 3)
            ("\\[\\(.*\\):\\([0-9]+\\)\\]:$" 1 2)
            ("^ *\\([[+]\\)?\\([^:
-]+\\):\\([0-9]+\\):in" 2 3)
+]+\\):\\([0-9]+\\):" 2 3)
            ("^.* at \\([^:]*\\):\\([0-9]+\\)$" 1 2)
            ))
+    (ansi-color-for-comint-mode-on)
     (compilation-shell-minor-mode)
     (comint-send-string buffer (concat autotest-command "\n"))))
 
