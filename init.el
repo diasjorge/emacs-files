@@ -120,6 +120,7 @@
 (add-to-list 'load-path "~/.emacs.d/elisp/emacs-wget")
 (add-to-list 'load-path "~/.emacs.d/elisp/gist")
 (add-to-list 'load-path "~/.emacs.d/elisp/jekyll")
+(add-to-list 'load-path "~/.emacs.d/elisp/inf-ruby-bond")
 ;; add more here as needed
 
 ;; Load Ruby specific configuration
@@ -293,7 +294,8 @@
 (require 'auto-complete-config)
 (add-to-list 'ac-dictionary-directories "~/.emacs.d/elisp/auto-complete/ac-dict")
 (ac-config-default)
-
+;; Support for bond
+(require 'inf-ruby-bond)
 
 ;;;;;;;;;;;;;;;;;;;;
 ;; CUSTOMIZATIONS ;;

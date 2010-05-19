@@ -19,3 +19,6 @@
 [submodule "elisp/auto-complete"]
 	path = elisp/auto-complete
 	url = git://github.com/m2ym/auto-complete.git
+[submodule "elisp/inf-ruby-bond"]
+	path = elisp/inf-ruby-bond
+	url = http://github.com/pd/inf-ruby-bond.git
