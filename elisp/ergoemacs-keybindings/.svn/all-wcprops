@@ -1,0 +1,83 @@
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svn/!svn/ver/381/trunk/ergoemacs/ergoemacs-keybindings
+END
+ergoemacs-layout-sp.el
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/!svn/ver/313/trunk/ergoemacs/ergoemacs-keybindings/ergoemacs-layout-sp.el
+END
+ergoemacs-unbind.el
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/!svn/ver/233/trunk/ergoemacs/ergoemacs-keybindings/ergoemacs-unbind.el
+END
+_INSTALL.txt
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/!svn/ver/377/trunk/ergoemacs/ergoemacs-keybindings/_INSTALL.txt
+END
+ergoemacs-layout-us.el
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/!svn/ver/313/trunk/ergoemacs/ergoemacs-keybindings/ergoemacs-layout-us.el
+END
+ergoemacs-layout-gb.el
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/!svn/ver/381/trunk/ergoemacs/ergoemacs-keybindings/ergoemacs-layout-gb.el
+END
+ergoemacs-layout-dv.el
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/!svn/ver/313/trunk/ergoemacs/ergoemacs-keybindings/ergoemacs-layout-dv.el
+END
+ergoemacs-mode.el
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/!svn/ver/377/trunk/ergoemacs/ergoemacs-keybindings/ergoemacs-mode.el
+END
+functions.el
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/!svn/ver/377/trunk/ergoemacs/ergoemacs-keybindings/functions.el
+END
+ergoemacs-layout-colemak.el
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svn/!svn/ver/313/trunk/ergoemacs/ergoemacs-keybindings/ergoemacs-layout-colemak.el
+END
+ergoemacs-layout-it.el
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/!svn/ver/313/trunk/ergoemacs/ergoemacs-keybindings/ergoemacs-layout-it.el
+END
+ergoemacs-layout-gb-dv.el
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/!svn/ver/372/trunk/ergoemacs/ergoemacs-keybindings/ergoemacs-layout-gb-dv.el
+END
+Makefile
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/!svn/ver/282/trunk/ergoemacs/ergoemacs-keybindings/Makefile
+END
+_HISTORY.txt
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/!svn/ver/378/trunk/ergoemacs/ergoemacs-keybindings/_HISTORY.txt
+END

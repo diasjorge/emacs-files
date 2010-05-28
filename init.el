@@ -120,6 +120,7 @@
 (add-to-list 'load-path "~/.emacs.d/elisp/emacs-wget")
 (add-to-list 'load-path "~/.emacs.d/elisp/gist")
 (add-to-list 'load-path "~/.emacs.d/elisp/jekyll")
+(add-to-list 'load-path "~/.emacs.d/elisp/ergoemacs-keybindings")
 (add-to-list 'load-path "~/.emacs.d/elisp/inf-ruby-bond")
 ;; add more here as needed
 
@@ -296,6 +297,25 @@
 (add-to-list 'ac-dictionary-directories "~/.emacs.d/elisp/auto-complete/ac-dict")
 (ac-config-default)
 (setq ac-auto-start 4)
+
+;; disable arrow keys
+(global-unset-key (kbd "<up>"))
+(global-unset-key (kbd "<down>"))
+(global-unset-key (kbd "<left>"))
+(global-unset-key (kbd "<right>"))
+
+(setenv "ERGOEMACS_KEYBOARD_LAYOUT" "gb")
+(require 'ergoemacs-mode)
+(ergoemacs-mode 1)
+(global-unset-key (kbd "C-w")) ;; prevent accidentally closing buffer
+(global-set-key (kbd "C-l") 'goto-line)
+(global-set-key (kbd "C-j") 'newline-and-indent)
+
+;; Go back in history. Alternative to C-<up>
+(add-hook 'inf-ruby-mode-hook
+ (lambda ()
+   (define-key inf-ruby-mode-map (kbd "M-m") 'comint-previous-input);
+))
 
 ;; Support for bond
 (require 'inf-ruby-bond)
