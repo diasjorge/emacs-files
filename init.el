@@ -327,6 +327,9 @@
 ;; I hate tabs!
 (setq-default indent-tabs-mode nil)
 
+;; I don't debug by default
+(setq debug-on-error nil)
+
 (setq custom-file "~/.emacs.d/customizations.el")
 (load custom-file 'noerror)
 (setq ansi-color-for-comint-mode t)
