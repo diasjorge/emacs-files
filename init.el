@@ -319,10 +319,13 @@
 
 ;; Support for bond
 (require 'inf-ruby-bond)
-
 ;;;;;;;;;;;;;;;;;;;;
 ;; CUSTOMIZATIONS ;;
 ;;;;;;;;;;;;;;;;;;;;
+(show-paren-mode 1)
+
+;; I hate tabs!
+(setq-default indent-tabs-mode nil)
 
 (setq custom-file "~/.emacs.d/customizations.el")
 (load custom-file 'noerror)
