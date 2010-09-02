@@ -37,11 +37,11 @@
 ;; (add-to-list 'auto-mode-alist '("\.treetop$" . ruby-mode))
 (add-to-list 'auto-mode-alist '("Rakefile" . ruby-mode))
 (add-to-list 'auto-mode-alist '("Capfile" . ruby-mode))
-(add-to-list 'auto-mode-alist '("\.rake$" . ruby-mode))
-(add-to-list 'auto-mode-alist '("\.thor$" . ruby-mode))
-(add-to-list 'auto-mode-alist '("\.builder$" . ruby-mode))
-(add-to-list 'auto-mode-alist '("\.autotest$" . ruby-mode))
-(add-to-list 'auto-mode-alist '("\.rjs" . ruby-mode))
+(add-to-list 'auto-mode-alist '("\\.rake$" . ruby-mode))
+(add-to-list 'auto-mode-alist '("\\.thor$" . ruby-mode))
+(add-to-list 'auto-mode-alist '("\\.builder$" . ruby-mode))
+(add-to-list 'auto-mode-alist '("\\.autotest$" . ruby-mode))
+(add-to-list 'auto-mode-alist '("\\.rjs$" . ruby-mode))
 (add-to-list 'auto-mode-alist '("Gemfile" . ruby-mode))
 
 
@@ -56,5 +56,5 @@
 
 ;; cucumber features
 (require 'feature-mode)
-(add-to-list 'auto-mode-alist '("\.feature$" . feature-mode))
+(add-to-list 'auto-mode-alist '("\\.feature$" . feature-mode))
 
