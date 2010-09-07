@@ -98,6 +98,8 @@
 (global-set-key (kbd "C-x -") 'shrink-window)
 
 (global-set-key (kbd "C-c b") 'browse-url)
+(global-set-key (kbd "C-%") 'query-replace-regexp)
+
 
 ;; ido-mode
 (setq ido-use-filename-at-point t)
