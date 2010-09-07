@@ -200,7 +200,7 @@
 ;; yasnippets
 ;; http://code.google.com/p/yasnippet/
 (require 'yasnippet)
-;; (add-to-list 'yas/extra-mode-hooks 'ruby-mode-hook)
+
 (yas/initialize)
 (setq yas/text-popup-function
       'yas/dropdown-list-popup-for-template)
@@ -306,12 +306,14 @@
 (global-unset-key (kbd "<left>"))
 (global-unset-key (kbd "<right>"))
 
-(setenv "ERGOEMACS_KEYBOARD_LAYOUT" "gb")
+
+(if (not (getenv "ERGOEMACS_KEYBOARD_LAYOUT")) (setenv "ERGOEMACS_KEYBOARD_LAYOUT" "gb"))
 (require 'ergoemacs-mode)
 (ergoemacs-mode 1)
 (global-unset-key (kbd "C-w")) ;; prevent accidentally closing buffer
 (global-set-key (kbd "C-l") 'goto-line)
 (global-set-key (kbd "C-j") 'newline-and-indent)
+(global-set-key (kbd "M-[") 'align-string)
 
 ;; Go back in history. Alternative to C-<up>
 (add-hook 'inf-ruby-mode-hook
@@ -342,8 +344,10 @@
 ;; delete trailing whitespace before save
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 
+(add-hook 'js2-mode-hook 'untabify-hook)
+
 ;; Turn off auto new line on yas/minor-mode
-(add-hook 'yas/minor-mode-on-hook 
+(add-hook 'yas/minor-mode-on-hook
 	  (lambda ()
 	    (setq mode-require-final-newline nil)))
 
