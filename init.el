@@ -307,7 +307,6 @@
 (global-unset-key (kbd "<left>"))
 (global-unset-key (kbd "<right>"))
 
-
 (if (not (getenv "ERGOEMACS_KEYBOARD_LAYOUT")) (setenv "ERGOEMACS_KEYBOARD_LAYOUT" "gb"))
 (require 'ergoemacs-mode)
 (ergoemacs-mode 1)

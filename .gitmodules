@@ -22,9 +22,6 @@
 [submodule "elisp/inf-ruby-bond"]
 	path = elisp/inf-ruby-bond
 	url = http://github.com/pd/inf-ruby-bond.git
-[submodule "elisp/textmate"]
-	path = elisp/textmate
-	url = http://github.com/defunkt/textmate.el.git
 [submodule "elisp/zencoding"]
 	path = elisp/zencoding
 	url = git://github.com/chrisdone/zencoding.git
