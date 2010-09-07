@@ -50,10 +50,6 @@
 (autoload 'inf-ruby-keys "inf-ruby" "Set local key defs for inf-ruby in ruby-mode")
 (add-hook 'ruby-mode-hook '(lambda () (inf-ruby-keys) ))
 
-;; ruby-electric
-(require 'ruby-electric)
-(add-hook 'ruby-mode-hook (lambda () (ruby-electric-mode t)))
-
 ;; cucumber features
 (require 'feature-mode)
 (add-to-list 'auto-mode-alist '("\\.feature$" . feature-mode))
