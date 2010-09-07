@@ -367,6 +367,17 @@
 ;; MY FUNCTIONS ;;
 ;;;;;;;;;;;;;;;;;;
 
+(defun untabify-buffer ()
+  "Untabify current buffer"
+  (interactive)
+  (untabify (point-min) (point-max)))
+
+(defun untabify-hook()
+  (add-hook 'before-save-hook (lambda ()
+                                (untabify-buffer)
+                                (delete-trailing-whitespace))
+            t t))
+
 (defun rinari-generate-tags()
   (interactive)
   (let ((my-tags-file (concat (rinari-root) "TAGS"))
