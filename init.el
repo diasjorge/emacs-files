@@ -124,6 +124,7 @@
 (add-to-list 'load-path "~/.emacs.d/elisp/jekyll")
 (add-to-list 'load-path "~/.emacs.d/elisp/ergoemacs-keybindings")
 (add-to-list 'load-path "~/.emacs.d/elisp/inf-ruby-bond")
+(add-to-list 'load-path "~/.emacs.d/elisp/zencoding/")
 ;; add more here as needed
 
 ;; Load Ruby specific configuration
@@ -323,6 +324,11 @@
 
 ;; Support for bond
 (require 'inf-ruby-bond)
+
+(require 'zencoding-mode)
+(add-hook 'sgml-mode-hook 'zencoding-mode) ;; Auto-start on any markup modes
+(add-hook 'nxml-mode-hook 'zencoding-mode)
+
 ;;;;;;;;;;;;;;;;;;;;
 ;; CUSTOMIZATIONS ;;
 ;;;;;;;;;;;;;;;;;;;;
