@@ -5,7 +5,7 @@
 ;; Modified By Jorge Dias
 ;;
 ;; The following packages are required for this:
-;; emacs23 magit erlang yasnippet js2-mode yaml-mode
+;; emacs23 magit erlang yasnippet js2-mode yaml-mode exuberant-ctags
 
 ;;;;;;;;;;;;;;;;;;
 ;; EMACS SERVER ;;
@@ -62,6 +62,9 @@
       `((".*" . ,temporary-file-directory)))
 (setq auto-save-file-name-transforms
       `((".*" ,temporary-file-directory t)))
+
+;; backup for tramp files
+(setq tramp-backup-directory-alist backup-directory-alist)
 
 ;; disable menu bar
 (if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
@@ -288,19 +291,6 @@
 
 (global-set-key (kbd "C-c j e") 'jekyll-insert-preview-end)
 
-(defun jekyll-insert-preview-end ()
-  "Insert the comment to mark the end of the post preview"
-  (interactive)
-  (insert "<!-- -**-END-**- -->"))
-
-;; auto-complete support
-;; Execute make to bytecompile
-(add-to-list 'load-path "~/.emacs.d/elisp/auto-complete")
-(require 'auto-complete-config)
-(add-to-list 'ac-dictionary-directories "~/.emacs.d/elisp/auto-complete/ac-dict")
-(ac-config-default)
-(setq ac-auto-start 4)
-
 ;; disable arrow keys
 (global-unset-key (kbd "<up>"))
 (global-unset-key (kbd "<down>"))
@@ -314,12 +304,25 @@
 (global-set-key (kbd "C-l") 'goto-line)
 (global-set-key (kbd "C-j") 'newline-and-indent)
 (global-set-key (kbd "M-[") 'align-string)
+(global-unset-key (kbd "<insert>"))
 
 ;; Go back in history. Alternative to C-<up>
 (add-hook 'inf-ruby-mode-hook
  (lambda ()
    (define-key inf-ruby-mode-map (kbd "M-m") 'comint-previous-input);
+   (define-key inf-ruby-mode-map (kbd "M-M") 'comint-next-input);
 ))
+
+;; auto-complete support
+;; Execute make to bytecompile
+(add-to-list 'load-path "~/.emacs.d/elisp/auto-complete")
+(require 'auto-complete-config)
+(add-to-list 'ac-dictionary-directories "~/.emacs.d/elisp/auto-complete/ac-dict")
+(ac-config-default)
+(setq ac-auto-start 4)
+;; Distinguish case
+(setq ac-ignore-case nil)
+(define-key ac-mode-map (kbd "M-m") 'ac-complete)
 
 ;; Support for bond
 (require 'inf-ruby-bond)
@@ -356,6 +359,14 @@
 	  (lambda ()
 	    (setq mode-require-final-newline nil)))
 
+;; no overwrite mode
+(put 'overwrite-mode 'disabled t)
+
+;; beep and ignore disabled commands
+(setq disabled-command-hook 'beep)
+
+
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; ENVIRONMENT SPECIFIC SETTINGS ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -365,6 +376,25 @@
 ;;;;;;;;;;;;;;;;;;
 ;; MY FUNCTIONS ;;
 ;;;;;;;;;;;;;;;;;;
+(defun jekyll-insert-preview-end ()
+  "Insert the comment to mark the end of the post preview"
+  (interactive)
+  (insert "<!-- -**-END-**- -->"))
+
+;; Original idea from
+;; http://www.opensubscriber.com/message/emacs-devel@gnu.org/10971693.html
+(defun comment-dwim-line (&optional arg)
+  "Replacement for the comment-dwim command.
+        If no region is selected and current line is not blank and we are not at the end of the line,
+        then comment current line.
+        Replaces default behaviour of comment-dwim, when it inserts comment at the end of the line."
+  (interactive "*P")
+  (comment-normalize-vars)
+  (if (and (not (region-active-p)) (not (looking-at "[ \t]*$")))
+      (comment-or-uncomment-region (line-beginning-position) (line-end-position))
+    (comment-dwim arg)))
+
+(global-set-key (kbd "M-@") 'comment-dwim-line)
 
 ;; Behave like vi's o command
 (defun open-next-line (arg)
