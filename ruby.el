@@ -14,12 +14,6 @@
 (setq autotest-use-ui t)
 (require 'autotest)
 
-;; rdebug from ruby-debug-extras-0.10.1 (not working as desire)
-;;
-;; Read http://groups.google.com/group/emacs-on-rails/browse_thread/thread/dfaa224905b51487
-;; http://rubyforge.iasi.roedu.net/files/ruby-debug/ruby-debug-extra-0.10.1.tar.gz (wget)
-(require 'rdebug)
-
 ;; rinari
 ;; http://github.com/eschulte/rinari
 (require 'rinari)
