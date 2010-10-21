@@ -5,7 +5,7 @@
 ;; Modified By Jorge Dias
 ;;
 ;; The following packages are required for this:
-;; emacs23 magit erlang yasnippet js2-mode yaml-mode exuberant-ctags
+;; emacs23 emacs-goodies-el magit erlang yasnippet yaml-mode exuberant-ctags
 
 ;;;;;;;;;;;;;;;;;;
 ;; EMACS SERVER ;;
@@ -127,7 +127,8 @@
 (add-to-list 'load-path "~/.emacs.d/elisp/jekyll")
 (add-to-list 'load-path "~/.emacs.d/elisp/ergoemacs-keybindings")
 (add-to-list 'load-path "~/.emacs.d/elisp/inf-ruby-bond")
-(add-to-list 'load-path "~/.emacs.d/elisp/zencoding/")
+(add-to-list 'load-path "~/.emacs.d/elisp/zencoding")
+(add-to-list 'load-path "~/.emacs.d/elisp/js2")
 ;; add more here as needed
 
 ;; Load Ruby specific configuration
@@ -186,6 +187,7 @@
 ;; http://code.google.com/p/js2-mode/
 (autoload 'js2-mode "js2" nil t)
 (add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
+(setq js2-bounce-indent-p t)
 
 ;; haml-mode and & sass-mode
 ;; http://github.com/nex3/haml/
