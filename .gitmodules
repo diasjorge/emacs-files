@@ -25,3 +25,6 @@
 [submodule "elisp/zencoding"]
 	path = elisp/zencoding
 	url = git://github.com/chrisdone/zencoding.git
+[submodule "elisp/rvm"]
+	path = elisp/rvm
+	url = git://github.com/senny/rvm.el.git

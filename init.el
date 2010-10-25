@@ -129,6 +129,7 @@
 (add-to-list 'load-path "~/.emacs.d/elisp/inf-ruby-bond")
 (add-to-list 'load-path "~/.emacs.d/elisp/zencoding")
 (add-to-list 'load-path "~/.emacs.d/elisp/js2")
+(add-to-list 'load-path "~/.emacs.d/elisp/rvm")
 ;; add more here as needed
 
 ;; Load Ruby specific configuration

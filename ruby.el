@@ -48,3 +48,6 @@
 (require 'feature-mode)
 (add-to-list 'auto-mode-alist '("\\.feature$" . feature-mode))
 
+(require 'rvm)
+
+(rvm-use-default) ;; use rvm’s default ruby for the current Emacs session
