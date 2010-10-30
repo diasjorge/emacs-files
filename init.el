@@ -291,12 +291,6 @@
 
 (global-set-key (kbd "C-c j e") 'jekyll-insert-preview-end)
 
-;; disable arrow keys
-(global-unset-key (kbd "<up>"))
-(global-unset-key (kbd "<down>"))
-(global-unset-key (kbd "<left>"))
-(global-unset-key (kbd "<right>"))
-
 (if (not (getenv "ERGOEMACS_KEYBOARD_LAYOUT")) (setenv "ERGOEMACS_KEYBOARD_LAYOUT" "gb"))
 (require 'ergoemacs-mode)
 (ergoemacs-mode 1)
@@ -377,6 +371,7 @@
 ;;;;;;;;;;;;;;;;;;
 ;; MY FUNCTIONS ;;
 ;;;;;;;;;;;;;;;;;;
+
 (defun jekyll-insert-preview-end ()
   "Insert the comment to mark the end of the post preview"
   (interactive)
