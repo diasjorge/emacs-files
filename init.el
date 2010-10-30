@@ -322,7 +322,8 @@
 (setq ac-auto-start 4)
 ;; Distinguish case
 (setq ac-ignore-case nil)
-(define-key ac-mode-map (kbd "M-m") 'ac-complete)
+(define-key ac-mode-map (kbd "M-n") 'ac-complete)
+(define-key ac-mode-map (kbd "C-g") 'ac-complete)
 
 ;; Support for bond
 (require 'inf-ruby-bond)
