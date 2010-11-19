@@ -458,7 +458,6 @@
                          rhtmlFile
                          " "
                          hamlFile)))
-    (print comando (current-buffer))
     (shell-command comando)
     (find-file hamlFile))))
 
