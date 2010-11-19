@@ -28,3 +28,9 @@
 [submodule "elisp/rvm"]
 	path = elisp/rvm
 	url = git://github.com/senny/rvm.el.git
+[submodule "elisp/haml-mode"]
+	path = elisp/haml-mode
+	url = git://github.com/nex3/haml-mode.git
+[submodule "elisp/sass-mode"]
+	path = elisp/sass-mode
+	url = git://github.com/nex3/sass-mode.git

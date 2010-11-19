@@ -122,6 +122,7 @@
 (add-to-list 'load-path "~/.emacs.d/elisp/yaml-mode")
 (add-to-list 'load-path "~/.emacs.d/elisp/git-emacs")
 (add-to-list 'load-path "~/.emacs.d/elisp/haml-mode")
+(add-to-list 'load-path "~/.emacs.d/elisp/sass-mode")
 (add-to-list 'load-path "~/.emacs.d/elisp/emacs-wget")
 (add-to-list 'load-path "~/.emacs.d/elisp/gist")
 (add-to-list 'load-path "~/.emacs.d/elisp/jekyll")
