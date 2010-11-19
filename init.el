@@ -449,30 +449,32 @@
 	 (kill-buffer (get-file-buffer my-tags-file)))
     (visit-tags-table my-tags-file)))
 
-(defun haml-convert-rhtml-file (rhtmlFile hamlFile)
-  "Convierte un fichero rhtml en un haml y abre un nuevo buffer"
-  (interactive "fSelect rhtml file: \nFSelect output (haml) file: ")
-  (let ((comando (concat "/usr/bin/html2haml -r "
+(defun haml-convert-erb-file (rhtmlFile)
+  "Convert an erb file to haml and opens a new buffer"
+  (interactive "fSelect erb file: \n")
+  (let ((hamlFile (replace-regexp-in-string ".erb" ".haml" rhtmlFile)))
+    (let ((comando (concat "html2haml -e "
                          rhtmlFile
                          " "
                          hamlFile)))
+    (print comando (current-buffer))
     (shell-command comando)
-    (find-file hamlFile)))
+    (find-file hamlFile))))
 
 (defun haml-convert-region (beg end)
-  "Convierte la región seleccionada a código haml"
+  "Convert selected region to haml"
   (interactive "r")
-  (let ((comando "/usr/bin/html2haml -r -s"))
+  (let ((comando "html2haml -r -s"))
   (shell-command-on-region beg end comando (buffer-name) t)))
 
 (defun haml-to-html-region (beg end)
-  "Convierte la región seleccionada a código html"
+  "Convert selected region to html"
   (interactive "r")
-  (let ((comando "/usr/bin/haml -s -c"))
+  (let ((comando "haml -s -c"))
   (shell-command-on-region beg end comando (buffer-name) t)))
 
 (defun haml-convert-buffer ()
-  "Convierte el buffer seleccionado a código haml"
+  "Convert selected buffer to haml"
   (interactive)
   (let ((nuevoarchivo
 	 (replace-regexp-in-string "r?html\\(.erb\\)?$" "haml"
@@ -481,7 +483,7 @@
      (write-file nuevoarchivo)))
 
 (defun sass-convert-region (beg end)
-  "Convierte la región seleccionada a código sass"
+  "Convert selected region to sass"
   (interactive "r")
-  (let ((comando "/usr/bin/css2sass -s"))
+  (let ((comando "css2sass -s"))
   (shell-command-on-region beg end comando (buffer-name) t)))
