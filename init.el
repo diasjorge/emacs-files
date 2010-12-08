@@ -487,3 +487,11 @@
   (interactive "r")
   (let ((comando "css2sass -s"))
   (shell-command-on-region beg end comando (buffer-name) t)))
+
+(defun indent-magically (beg end spaces)
+  "Indent region of code"
+  (interactive "r\nnEnter number of spaces: \n")
+  (indent-code-rigidly beg end spaces))
+
+(global-set-key (kbd "M-]") 'indent-magically)
+
