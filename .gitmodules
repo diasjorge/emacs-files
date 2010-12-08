@@ -9,7 +9,7 @@
 	url = git://github.com/eschulte/rinari.git
 [submodule "elisp/gist"]
 	path = elisp/gist
-	url = git://github.com/defunkt/gist.el.git
+	url = git://github.com/diasjorge/gist.el.git
 [submodule "elisp/cucumber"]
 	path = elisp/cucumber
 	url = git://github.com/michaelklishin/cucumber.el.git
