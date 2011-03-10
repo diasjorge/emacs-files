@@ -131,6 +131,7 @@
 (add-to-list 'load-path "~/.emacs.d/elisp/zencoding")
 (add-to-list 'load-path "~/.emacs.d/elisp/js2")
 (add-to-list 'load-path "~/.emacs.d/elisp/rvm")
+(add-to-list 'load-path "~/.emacs.d/elisp/yasnippet")
 ;; add more here as needed
 
 ;; emacs-wget
@@ -204,15 +205,17 @@
 
 ;; yasnippets
 ;; http://code.google.com/p/yasnippet/
+(require 'dropdown-list)
 (require 'yasnippet)
 
 (yas/initialize)
-(setq yas/text-popup-function
-      'yas/dropdown-list-popup-for-template)
 (yas/load-directory "~/.emacs.d/snippets/defaults")
 (yas/load-directory "~/.emacs.d/snippets/contrib-snippets")
 (yas/load-directory "~/.emacs.d/snippets/yasnippets-rails/rails-snippets")
 (yas/load-directory "~/.emacs.d/snippets/my-snippets")
+(setq yas/prompt-functions '(yas/dropdown-prompt
+                             yas/ido-prompt
+                             yas/completing-prompt))
 
 ;; git-emacs
 ;; http://github.com/tsgates/git-emacs
