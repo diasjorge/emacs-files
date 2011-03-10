@@ -133,9 +133,6 @@
 (add-to-list 'load-path "~/.emacs.d/elisp/rvm")
 ;; add more here as needed
 
-;; Load Ruby specific configuration
-(load-file "~/.emacs.d/ruby.el")
-
 ;; emacs-wget
 ;; http://pop-club.hp.infoseek.co.jp/emacs/emacs-wget/emacs-wget-0.5.0.tar.gz
 ;; Download, uncompress and move to ~/.emacs.d/elisp/emacs-wget
@@ -364,7 +361,17 @@
 ;; beep and ignore disabled commands
 (setq disabled-command-hook 'beep)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Ruby specific configuration ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(load-file "~/.emacs.d/ruby.el")
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; PHP specific configuration ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(load-file "~/.emacs.d/php.el")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; ENVIRONMENT SPECIFIC SETTINGS ;;
