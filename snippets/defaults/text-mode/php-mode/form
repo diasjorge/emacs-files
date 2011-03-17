@@ -1,0 +1,12 @@
+# -*- mode: snippet -*-
+# contributor : Da Costa Alcindo <sir.squall.leonheart@gmail.com>
+# name: drupal
+# key: form
+# --
+
+/**
+ * Implementation of hook_form().
+ */
+function ${1:`(file-name-nondirectory (file-name-sans-extension (buffer-file-name)))`}_form(&$node, $form_state){
+$0
+}

@@ -6,7 +6,8 @@
 def ${1:name}($2):
     """$3
     ${2:$
-    (let* ((indent
+      (let* 
+        ((indent
             (concat "\n" (make-string (current-column) 32)))
            (args
             (mapconcat
@@ -18,8 +19,8 @@ def ${1:name}($2):
               '(lambda (x)
                  (mapcar
                   '(lambda (x)
-                     (replace-regexp-in-string "\s*$" ""
-                      (replace-regexp-in-string "^\s*" "" x)))
+                     (replace-regexp-in-string "[[:blank:]]*$" ""
+                      (replace-regexp-in-string "^[[:blank:]]*" "" x)))
                   x))
               (mapcar '(lambda (x) (split-string x "="))
                       (split-string text ",")))

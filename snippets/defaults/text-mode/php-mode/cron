@@ -1,0 +1,13 @@
+# -*- mode: snippet -*-
+# contributor : Da Costa Alcindo <sir.squall.leonheart@gmail.com>
+# name: drupal
+# key: cron
+# --
+
+/**
+ * Implementation of hook_cron().
+ */
+function ${1:`(file-name-nondirectory (file-name-sans-extension (buffer-file-name)))`}_cron(){
+$0
+}
+

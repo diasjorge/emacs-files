@@ -1,0 +1,12 @@
+# -*- mode: snippet -*-
+# contributor : Da Costa Alcindo <sir.squall.leonheart@gmail.com>
+# name: drupal
+# key: boot
+# --
+
+/**
+ * Implementation of hook_boot().
+ */
+function ${1:`(file-name-nondirectory (file-name-sans-extension (buffer-file-name)))`}_boot(){
+$0
+}

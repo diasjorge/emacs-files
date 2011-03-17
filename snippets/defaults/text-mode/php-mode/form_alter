@@ -1,0 +1,12 @@
+# -*- mode: snippet -*-
+# contributor : Da Costa Alcindo <sir.squall.leonheart@gmail.com>
+# name: drupal
+# key: form_alter
+# --
+
+/**
+ * Implementation of hook_form_alter().
+ */
+function ${1:`(file-name-nondirectory (file-name-sans-extension (buffer-file-name)))`}_form_alter(&$form, $form_state, $form_id){
+$0
+}

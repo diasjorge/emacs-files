@@ -1,0 +1,61 @@
+# -*- mode: snippet -*-
+# contributor : Da Costa Alcindo <sir.squall.leonheart@gmail.com>
+# name: drupal
+# key: nodeapi
+# --
+
+/**
+ * Implementation of hook_nodeapi().
+ */
+function ${1:`(file-name-nondirectory (file-name-sans-extension (buffer-file-name)))`}_nodeapi(&$node, $op, $a3, $a4){
+switch($op) {
+    case'alter':
+    $2
+    break;
+    case'delete':
+    $3
+    break;
+    case'delete revision':
+    $4
+    break;
+    case'insert':
+    $5
+    break;
+    case'load':
+    $6
+    break;
+    case'prepare':
+    $7
+    break;
+    case'prepare translation':
+    $8
+    break;
+    case'print':
+    $9
+    break;
+    case'rss item':
+    $10
+    break;
+    case'search result':
+    $11
+    break;
+    case'presave':
+    $12
+    break;
+    case'update':
+    $13
+    break;
+    case'update index':
+    $14
+    break;
+    case'validate':
+    $15
+    break;
+    case'view':
+    $16
+    break;
+  }
+}
+
+$0
+
