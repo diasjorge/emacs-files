@@ -330,6 +330,29 @@
 (add-hook 'sgml-mode-hook 'zencoding-mode) ;; Auto-start on any markup modes
 (add-hook 'nxml-mode-hook 'zencoding-mode)
 
+;; Code folding support. http://www.emacswiki.org/emacs/HideShow
+(defun toggle-selective-display (column)
+  (interactive "P")
+  (set-selective-display
+   (or column
+       (unless selective-display
+         (1+ (current-column))))))
+
+(defun toggle-hiding (column)
+  (interactive "P")
+  (if hs-minor-mode
+      (if (condition-case nil
+              (hs-toggle-hiding)
+            (error t))
+          (hs-show-all))
+    (toggle-selective-display column)))
+
+(global-set-key (kbd "M-#") 'toggle-hiding)
+
+(add-hook 'emacs-lisp-mode-hook 'hs-minor-mode)
+(add-hook 'lisp-mode-hook       'hs-minor-mode)
+(add-hook 'sh-mode-hook         'hs-minor-mode)
+
 ;;;;;;;;;;;;;;;;;;;;
 ;; CUSTOMIZATIONS ;;
 ;;;;;;;;;;;;;;;;;;;;
