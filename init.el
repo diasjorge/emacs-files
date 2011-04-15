@@ -5,7 +5,7 @@
 ;; Modified By Jorge Dias
 ;;
 ;; The following packages are required for this:
-;; emacs23 emacs-goodies-el magit erlang yasnippet yaml-mode exuberant-ctags
+;; emacs23 emacs-goodies-el erlang-mode yaml-mode exuberant-ctags
 
 ;;;;;;;;;;;;;;;;;;
 ;; EMACS SERVER ;;
@@ -386,6 +386,9 @@
 
 ;; beep and ignore disabled commands
 (setq disabled-command-hook 'beep)
+
+;; mardown support
+(add-to-list 'auto-mode-alist '("\\.md$" . markdown-mode))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Ruby specific configuration ;;
