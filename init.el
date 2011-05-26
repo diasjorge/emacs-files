@@ -11,12 +11,10 @@
 ;; EMACS SERVER ;;
 ;;;;;;;;;;;;;;;;;;
 
-;; Only start emacs-server it is not already started
-(when (and
-       (> emacs-major-version 22)
-       (or (not (boundp 'server-process))
-	   (not (eq (process-status server-process) 'listen))))
-  (server-start))
+;; Initialize emacs server if it is not already running
+(require 'server)
+(if (not (eq t (server-running-p server-name)))
+    (server-start))
 
 ;; Set font
 (if (>= emacs-major-version 23)
