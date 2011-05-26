@@ -2,7 +2,90 @@
 
 # when viewing this file in emacs, press Shift+Tab 3 times to expand all headings.
 
-Note: When talking about keys, QWERTY is assumed to indicate the key, unless otherwise specified. For example, “Changed M+y to something”, that “y” means the key that is under the key 7. (which is Dvorak's “f”).
+Note: When talking about key POSITION on keyboard, QWERTY is used, unless otherwise specified. For example, “Changed Alt+y to something”, that “y” means the key that is under the key 7. (which is Dvorak's “f”). But when talking about code, such as “remap M-r to something”, that means the letter r on whatever layout.
+
+* version 5.3.9, 2011-04-17
+
+** 2011-04-17 Fixed shift key selection with cua-mode
+r647
+Fixed a bug
+http://code.google.com/p/ergoemacs/issues/detail?id=91
+with a default GNU Emacs, when cua-mode is NOT turned on, load ergoemacs-mode and turn it on, then keys with Shift will also highlight text. This is because ergoemacs-fix-cua--pre-command-handler-1 tries to set symbols from cua-mode but they are not there.
+
+thanks to zyangm...@gmail.com for bug report.
+
+fixed by temp turning on cua-mode.
+
+** 2011-03-22 Added a compatibility fix for auto-complete-mode
+Added a ergoemacs-auto-complete-mode-hook.
+http://code.google.com/p/ergoemacs/source/detail?r=638
+
+Thanks to Renier (renierm@gmail.com) for code. http://groups.google.com/group/ergoemacs/msg/f5f9337e34b4eab3?hl=en
+
+** 2010-11-18 added a hotkey 【Ctrl+Shift+t】 for open-last-closed
+r556
+This key follows browser convention. But won't work in Terminal.
+
+** 2010-12-10 copy/cut with no text selection will include the line ending.
+r578. 
+Thanks to Max Arnold for bug report.
+
+* version 5.3.7, 2010-11-15
+
+** Added open-in-desktop command with key 【Ctrl+Shift+o】.
+
+** Added open-last-closed command.
+
+** More international layouts
+
+Added Danish layout. Thanks to Michael Budde
+Added ergoemacs-layout-pt-nativo.el. Thanks to Xavier Pinho
+
+You can see all supported layouts and their contributors in the directory 〔ergoemacs-keybindings〕.
+
+See also: 〈Dvorak, Maltron, Colemak, NEO, Bépo, Turkish-F, Keyboard Layouts Fight!〉 @ http://xahlee.org/kbd/dvorak_and_all_keyboard_layouts.html
+
+** minor fixes
+
+*** 【Ctrl+Backspace】 for backward-kill-word
+
+This is a standard key together with 【Ctrl+Arrow】 and 【Ctrl+Del】.
+
+r477 Technically, removed the unbinding of <C-backspace>.
+
+*** Added ergoemacs-keyboard-quit-key to ergoemacs-layout-gb.el
+
+A bug fix. Thanks to Jorge Dias.
+
+* version 5.3.4, 2010-08-16
+
+** Added a Swedish layout
+Contributed by Kristian Hellquist.
+
+** remapped split window keys for all layouts.
+
+OLD             command                  new
+Alt+1        delete-other-windows        Alt+3
+Alt+!        delete-window               Alt+0
+Alt+2        split-window-vertically     Alt+4
+Alt+@         split-window-horizontally   Alt+$
+
+Reason: the 1 and 2 keys are two of the most difficult to press keys on the top row.
+3 and 4 are the best for left hand.
+8 and 9 are the best for right hand.
+(this can be verified by looking at the original Dvorak layout for number keys)
+
+For emacs commands, according to command frequency statistics, the order are roughly this, from most used to least:
+
+delete-other-windows
+split-window-vertically
+delete-window
+split-window-horizontally
+
+therefore this change. For Xah Lee's personal experience in this, see:
+ http://xahlee.org/emacs/vi_esc_syndrome.html
+
+Note that Alt+0 for delete-window was in the original ErgoEmacs keybinding design for about a year, but got changed to Alt+Shift+1 (Alt+!). The thinking was for some logical consistency with Alt+1. My experience since is that logical consistency is bad for ergonomics advantage. Logical consistency is good at beginning for learning, but once muscle memory is developed, ergonomic efficiency is far more important, and will be used for years.
 
 * version 5.3.3, 2010-05-24
 
@@ -20,7 +103,7 @@ http://code.google.com/p/ergoemacs/source/detail?r=371
 http://groups.google.com/group/ergoemacs/browse_frm/thread/3e1b9326b6cc2cc4
 
 ** Added United Kingdom Dvorak layout (gb-dv).
-Thanks to phillip.wood@@dunelm.org.uk
+Thanks to Phillip Wood
 http://code.google.com/p/ergoemacs/issues/detail?id=73
 
 ** fixed keybinding conflict problem. You can now change bindings
@@ -34,6 +117,11 @@ http://code.google.com/p/ergoemacs/issues/detail?id=67#c3
 ** Copy and Cut to copy/cut current line
 
 Added a feature so that copy/cut will get the current line if there's no text selection.
+
+* version 5.x.x
+Italian layout has been created, by By David Capello, with help by Francesco Biccari
+
+A colemak layout is added or sometimes before. The bulk of key mapping was helped by Ivan Haralamov (aka postivan), and vockets?
 
 * version 5, 2009-09-15
 
@@ -127,28 +215,33 @@ This version is now a full featured minor mode. It supports 3 different keyboard
 ** “Ctrl+h m” now calls describe-major-mode.
 
 * version 4.2.1, 2009-02-28
- Changed the keybinding for previous-user-buffer from Ctrl+← to Ctrl+PageUp. And previous-emacs-buffer from Ctrl+Shift+← to Ctrl+Shift+PageUp. Similar for the “next” versions. Rationale: The Ctrl+Arrow are standard editing shortcuts commond in Windows, Mac, Linux.
+
+Changed the keybinding for previous-user-buffer from Ctrl+← to Ctrl+PageUp. And previous-emacs-buffer from Ctrl+Shift+← to Ctrl+Shift+PageUp. Similar for the “next” versions. Rationale: The Ctrl+Arrow are standard editing shortcuts commond in Windows, Mac, Linux.
 
 * version 4.2.0, 2009-02-27
- Added Alt+t for keyword completion. Rationale: The default M-TAB is used by Windows, Mac, Linux, to switch apps.
+
+Added Alt+t for keyword completion. Rationale: The default M-TAB is used by Windows, Mac, Linux, to switch apps.
 
 * version 4.1.8, 2009-02-15
- Corrected the keybinding for Save As (write-file)
+Corrected the keybinding for Save As (write-file)
 
 * version 4.1.7, 2008-12-10
- Made compact-uncompact-block to work on text selection if there's one.
+Made compact-uncompact-block to work on text selection if there's one.
 
 * version 4.1.6, 2008-12-09
-. Added select-text-in-quote.
+
+** Added select-text-in-quote
 
 * version 4.1.5, 2008-10-21
-. Added extend-selection by Nikolaj Schumacher.
+** Added extend-selection by Nikolaj Schumacher.
 
 * version 4.1.4, 2008-10-20
-. Fixed close-current-buffer: sometimes when closing a buffer not associated with a file, it'll prompt whether to kill instead of whether to save.
+** Fixed close-current-buffer
+Sometimes when closing a buffer not associated with a file, it'll prompt whether to kill instead of whether to save.
 
 * version 4.1.3, 2008-10-18
-. Fixed minor bug in toggle-letter-case. It now works non-english letters such as éÉ and single letter word “a teapot” or words starting with a number “1st timer”. Thanks to Andreas Politz and Nikolaj Schumacher.
+** Fixed minor bug in toggle-letter-case.
+It now works non-english letters such as éÉ and single letter word “a teapot” or words starting with a number “1st timer”. Thanks to Andreas Politz and Nikolaj Schumacher.
 ** next-frame-command is renamed to switch-to-next-frame. Similar for previous-frame-command.
 
 * version 4.1.2, 2008-10-16
@@ -158,11 +251,14 @@ This version is now a full featured minor mode. It supports 3 different keyboard
 
 * version 4.1.1, 2008-10-07
 
-** Removed unfill-paragraph and unfill-region because they are defined in ourcomments-util.el bundled with emacs 22, also because they are not used in this file now (compact-uncompact-block replaced most of their functionality).
+** Removed unfill-paragraph and unfill-region
+Because they are defined in ourcomments-util.el bundled with emacs 22, also because they are not used in this file now (compact-uncompact-block replaced most of their functionality).
 
 * version 4.1, 2008-10-06
 
-** Added keys for previous-user-buffer, next-user-buffer, next-frame-command, previous-frame-command, query-replace and query-replace-regexp, move-cursor-to-next-pane, move-cursor-to-previous-pane, split-window-horizontally, toggle-letter-case. Combined delete-blank-lines and just-one-space to shrink-whitespaces. Moved delete-window to be with delete-other-window.
+** Added keys for about 9 commands
+ previous-user-buffer, next-user-buffer, next-frame-command, previous-frame-command, query-replace and query-replace-regexp, move-cursor-to-next-pane, move-cursor-to-previous-pane, split-window-horizontally, toggle-letter-case. Combined delete-blank-lines and just-one-space to shrink-whitespaces.
+** Moved delete-window to be with delete-other-window.
 
 * version 4.0.1, 2008-09-23
 
@@ -170,7 +266,8 @@ This version is now a full featured minor mode. It supports 3 different keyboard
 
 * version 4, 2008-09-21
 
-** Unbind almost all Meta-‹key› and Ctrl-‹key› space bindings. Added about 11 commands, such as next-user-buffer, close-current-buffer etc.
+** Unbind almost all Meta-‹key› and Ctrl-‹key› space bindings.
+** Added about 11 commands, such as next-user-buffer, close-current-buffer etc.
 
 * version 3.6, 2008-09-18
 

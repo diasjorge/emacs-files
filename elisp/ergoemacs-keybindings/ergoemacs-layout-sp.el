@@ -1,5 +1,8 @@
 ;-*- coding: utf-8 -*-
 ;; Shortcuts for ERGOEMACS_KEYBOARD_LAYOUT=sp
+;; Keyboard Layout: Spanish (Spain), aka Spanish (International sort)
+;; Contributor: David Capello
+;; Creation date: 2009
 
 ;;; --------------------------------------------------
 ;;; CURSOR MOVEMENTS

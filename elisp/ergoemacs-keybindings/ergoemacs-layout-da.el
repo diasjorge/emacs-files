@@ -1,5 +1,8 @@
-;-*- coding: utf-8 -*-
-;; Shortcuts for ERGOEMACS_KEYBOARD_LAYOUT=it
+;coding: utf-8 -*-
+;; Shortcuts for ERGOEMACS_KEYBOARD_LAYOUT=da
+;; Keyboard Layout: Danish
+;; Contributor: Michael Budde
+;; Creation date: 2010-08
 
 ;;; --------------------------------------------------
 ;;; CURSOR MOVEMENTS
@@ -31,8 +34,8 @@
 (defconst ergoemacs-end-of-buffer-key			(kbd "M-L"))
 
 ;; isearch
-(defconst ergoemacs-isearch-forward-key			(kbd "M-ò"))
-(defconst ergoemacs-isearch-backward-key		(kbd "M-ç"))
+(defconst ergoemacs-isearch-forward-key			(kbd "M-æ"))
+(defconst ergoemacs-isearch-backward-key		(kbd "M-Æ"))
 
 (defconst ergoemacs-recenter-key			(kbd "M-p"))
 
@@ -66,7 +69,7 @@
 
 (defconst ergoemacs-mark-paragraph-key			(kbd "M-S-SPC"))
 (defconst ergoemacs-shrink-whitespaces-key		(kbd "M-w"))
-(defconst ergoemacs-comment-dwim-key			(kbd "M-à"))
+(defconst ergoemacs-comment-dwim-key			(kbd "M-ø"))
 (defconst ergoemacs-toggle-letter-case-key		(kbd "M--"))
 
 ; keyword completion, because Alt+Tab is used by OS
@@ -93,17 +96,17 @@
 ;;; --------------------------------------------------
 ;;; OTHER SHORTCUTS
 
-(defconst ergoemacs-switch-to-previous-frame-key        (kbd "M-|"))
-(defconst ergoemacs-switch-to-next-frame-key            (kbd "M-\\"))
+(defconst ergoemacs-switch-to-previous-frame-key	(kbd "M-§"))
+(defconst ergoemacs-switch-to-next-frame-key		(kbd "M-½"))
 
 (defconst ergoemacs-query-replace-key                   (kbd "M-5"))
 (defconst ergoemacs-query-replace-regexp-key            (kbd "M-%"))
 
-(defconst ergoemacs-delete-other-windows-key            (kbd "M-1"))
-(defconst ergoemacs-delete-window-key                   (kbd "M-!"))
+(defconst ergoemacs-delete-other-windows-key            (kbd "M-3"))
+(defconst ergoemacs-delete-window-key                   (kbd "M-0"))
 
-(defconst ergoemacs-split-window-vertically-key         (kbd "M-2"))
-(defconst ergoemacs-split-window-horizontally-key       (kbd "M-\""))
+(defconst ergoemacs-split-window-vertically-key         (kbd "M-4"))
+(defconst ergoemacs-split-window-horizontally-key       (kbd "M-¤"))
 
 (defconst ergoemacs-extend-selection-key                (kbd "M-8"))
-(defconst ergoemacs-select-text-in-quote-key            (kbd "M-("))
+(defconst ergoemacs-select-text-in-quote-key            (kbd "M-9"))

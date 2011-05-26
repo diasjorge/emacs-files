@@ -1,5 +1,8 @@
 ;-*- coding: utf-8 -*-
 ;; Shortcuts for ERGOEMACS_KEYBOARD_LAYOUT=dv | us_dvorak
+;; Keyboard Layout: Dvorak
+;; Contributor: Xah Lee, David Capello
+;; Creation date: 2009
 
 ;;; --------------------------------------------------
 ;;; CURSOR MOVEMENTS
@@ -99,11 +102,11 @@
 (defconst ergoemacs-query-replace-key                   (kbd "M-5"))
 (defconst ergoemacs-query-replace-regexp-key            (kbd "M-%"))
 
-(defconst ergoemacs-delete-other-windows-key            (kbd "M-1"))
-(defconst ergoemacs-delete-window-key                   (kbd "M-!"))
+(defconst ergoemacs-delete-other-windows-key            (kbd "M-3"))
+(defconst ergoemacs-delete-window-key                   (kbd "M-0"))
 
-(defconst ergoemacs-split-window-vertically-key         (kbd "M-2"))
-(defconst ergoemacs-split-window-horizontally-key       (kbd "M-@"))
+(defconst ergoemacs-split-window-vertically-key         (kbd "M-4"))
+(defconst ergoemacs-split-window-horizontally-key       (kbd "M-$"))
 
 (defconst ergoemacs-extend-selection-key                (kbd "M-8"))
 (defconst ergoemacs-select-text-in-quote-key            (kbd "M-*"))

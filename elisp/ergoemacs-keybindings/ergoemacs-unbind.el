@@ -16,7 +16,6 @@
      "C-7"
      "C-8"
      "C-9"
-     "C-<backspace>"
      "C-<next>"
      "C-<prior>"
      "C-@"

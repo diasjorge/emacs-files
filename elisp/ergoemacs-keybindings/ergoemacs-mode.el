@@ -5,7 +5,7 @@
 ;; Copyright © 2009, 2010 by David Capello
 
 ;; Author: Xah Lee ( http://xahlee.org/ ), David Capello ( http://www.davidcapello.com.ar/ )
-;; Version: 5.3.3
+;; Version: 5.3.9
 ;; Keywords: qwerty, dvorak, keybinding, ergonomic, colemak
 
 ;; You can redistribute this program and/or modify it under the terms
@@ -18,7 +18,7 @@
 ;; This keybinding set puts the most frequently used emacs keyboard
 ;; shortcuts into the most easy-to-type spots.
 ;;
-;; For complete detail, see: 
+;; For complete detail, see:
 ;; http://xahlee.org/emacs/ergonomic_emacs_keybinding.html
 
 ;;; INSTALL
@@ -34,13 +34,20 @@
 ;; Thanks to Andreas Politz and Nikolaj Schumacher for correcting/improving implementation of toggle-letter-case.
 ;; Thanks to Lennart Borgman for several suggestions on code to prevent shortcuts involving shift key to start select text when CUA-mode is on.
 ;; Thanks to marciomazza for spotting several default bindings that should have been unbound.
-;; Thanks to those who have created and improved the version for Colemak layout. They are (by date): “vockets”, “postivan”, Graham Poulter.
 ;; Thanks to lwarxx for bug report on diff-mode
 ;; Thanks to maddin for ergoemacs-global/local-set-key functions and ergoemacs-hook-modes improvements.
-;; Thanks to maddin for ergoemacs-global/local-set-key functions and ergoemacs-hook-modes improvements.
-;; Thanks to Jorge Dias for UK layout.
-;; Thanks to phillip.wood@@dunelm.org.uk for UK Dvorak layout.
 ;; Thanks to many users who send in comments and appreciations on this.
+;; Layout contributors:
+;; ergoemacs-layout-da.el Contributor: Michael Budde
+;; ergoemacs-layout-dv.el Contributor: Xah Lee, David Capello
+;; ergoemacs-layout-gb-dv.el Contributor: Phillip Wood
+;; ergoemacs-layout-gb.el Contributor: Jorge Dias (aka theturingmachine)
+;; ergoemacs-layout-it.el Contributor: David Capello, Francesco Biccari
+;; ergoemacs-layout-sp.el Contributor: David Capello
+;; ergoemacs-layout-sv.el Contributor: Kristian Hellquist
+;; ergoemacs-layout-us.el Contributor: David Capello, Xah Lee
+;; ergoemacs-layout-colemak.el Contributor: Ivan Haralamov ( postivan gmail.com ), “vockets”, Graham Poulter.
+;; ergoemacs-layout-pt-nativo.el Contributor: Xavier Pinho
 
 ;;; --------------------------------------------------
 
@@ -48,7 +55,7 @@
 (add-to-list 'load-path (file-name-directory (or load-file-name buffer-file-name)))
 
 ;; Ergoemacs-keybindings version
-(defconst ergoemacs-mode-version "5.3.3"
+(defconst ergoemacs-mode-version "5.3.9"
   "Ergoemacs-keybindings minor mode version number.")
 
 ;; Include extra files
@@ -58,15 +65,21 @@
 ;; Load the keyboard layout looking the ERGOEMACS_KEYBOARD_LAYOUT
 ;; enviroment variable (this variable is set by ErgoEmacs runner)
 (defvar ergoemacs-keyboard-layout (getenv "ERGOEMACS_KEYBOARD_LAYOUT")
-  "It is set with the value of ERGOEMACS_KEYBOARD_LAYOUT
-enviroment variable.  The possible values are:
+  "Specifies which keyboard layout to use.
+This is a mirror of the environment variable ERGOEMACS_KEYBOARD_LAYOUT
+Valid values are:
 
-  us = US English QWERTY keyboard layout
-  dv = US-Dvorak keyboard layout
-  gb = UK keyboard layout
-  sp = Spanish keyboard layout
-  it = Italian keyboard layout
-  colemak = Ergonomic Colemak keyboard layout")
+ “us” (US English QWERTY)
+ “dv” (US-Dvorak)
+ “gb” (UK)
+ “gb-dv” (UK Dvorak)
+ “sp” (Spanish)
+ “it” (Italian)
+ “sv” (Swedish)
+ “da” (Danish)
+ “colemak” (Ergonomic Colemak URL `http://colemak.com/')
+ “pt-nativo” (Ergonomic PT-Nativo URL `http://tecladobrasileiro.com.br')"
+)
 
 (cond
  ((string= ergoemacs-keyboard-layout "us")
@@ -83,8 +96,14 @@ enviroment variable.  The possible values are:
   (load "ergoemacs-layout-gb"))
  ((string= ergoemacs-keyboard-layout "gb-dv")
   (load "ergoemacs-layout-gb-dv"))
+ ((string= ergoemacs-keyboard-layout "sv")
+  (load "ergoemacs-layout-sv"))
+ ((string= ergoemacs-keyboard-layout "da")
+  (load "ergoemacs-layout-da"))
  ((string= ergoemacs-keyboard-layout "colemak")
   (load "ergoemacs-layout-colemak"))
+((string= ergoemacs-keyboard-layout "pt-nativo")
+  (load "ergoemacs-layout-pt-nativo.el"))
  (t ; US qwerty by default
   (load "ergoemacs-layout-us"))
  )
@@ -187,6 +206,8 @@ enviroment variable.  The possible values are:
 (define-key ergoemacs-keymap (kbd "C-n") 'new-empty-buffer)
 (define-key ergoemacs-keymap (kbd "C-S-n") 'make-frame-command)
 (define-key ergoemacs-keymap (kbd "C-o") 'find-file)
+(define-key ergoemacs-keymap (kbd "C-S-o") 'open-in-desktop)
+(define-key ergoemacs-keymap (kbd "C-S-t") 'open-last-closed)
 (define-key ergoemacs-keymap (kbd "C-w") 'close-current-buffer)
 (define-key ergoemacs-keymap (kbd "C-s") 'save-buffer)
 (define-key ergoemacs-keymap (kbd "C-S-s") 'write-file)
@@ -234,6 +255,9 @@ enviroment variable.  The possible values are:
 
 ;;----------------------------------------------------------------------
 ;; CUA fix
+
+(let (cuaModeState cua-mode)
+(cua-mode 1) ; turn on cua-mode first so the command ergoemacs-fix-cua--pre-command-handler-1 will be able to set some symbols from cua-mode
 
 (defun ergoemacs-fix-cua--pre-command-handler-1 ()
   "Fixes CUA minor mode so selection is highlighted only when
@@ -326,6 +350,8 @@ Shift+<special key> is used (arrows keys, home, end, pgdn, pgup, etc.)."
   (setq cua--buffer-and-point-before-command
         (if cua--rectangle (cons (current-buffer) (point)))))
  )
+(if cuaModeState (cua-mode 1) (cua-mode 0))
+  )
 
 ;;----------------------------------------------------------------------
 ;; ErgoEmacs hooks
@@ -455,6 +481,17 @@ Shift+<special key> is used (arrows keys, home, end, pgdn, pgup, etc.)."
   (add-to-list 'minor-mode-overriding-map-alist (cons 'ergoemacs-mode ergoemacs-ido-keymap))
   )
 
+(defun ergoemacs-auto-complete-mode-hook ()
+  "Hook for `auto-complete-mode-hook'.
+
+When the `auto-complete-mode' is on, and when a word completion
+is in process, Ctrl+s does `ac-isearch'.
+This fixes it."
+
+(define-key ac-completing-map ergoemacs-isearch-forward-key 'ac-isearch)
+(define-key ac-completing-map (kbd "C-s") nil)
+  )
+
 (defvar ergoemacs-hook-list (list)
   "List of hook and hook-function pairs.")
 
@@ -470,6 +507,7 @@ ergoemacs hooks."
 (ergoemacs-add-hook 'minibuffer-setup-hook 'ergoemacs-minibuffer-setup-hook)
 (ergoemacs-add-hook 'iswitchb-minibuffer-setup-hook 'ergoemacs-iswitchb-hook)
 (ergoemacs-add-hook 'ido-minibuffer-setup-hook 'ergoemacs-ido-minibuffer-setup-hook)
+(ergoemacs-add-hook 'auto-complete-mode-hook 'ergoemacs-auto-complete-mode-hook)
 
 (defun ergoemacs-hook-modes ()
   "Installs/Removes ErgoEmacs minor mode hooks from major modes
@@ -486,7 +524,13 @@ will change."
 
     ;; when ergoemacs-mode is on, activate hooks and unset global keys, else do inverse
     (if (and ergoemacs-mode (not (equal ergoemacs-mode 0)))
-        (ergoemacs-unset-redundant-global-keys)
+	(progn
+	  (ergoemacs-unset-redundant-global-keys)
+
+	  ;; alt+n is the new "Quit" in query-replace-map
+	  (ergoemacs-unset-global-key query-replace-map "\e")
+	  (define-key query-replace-map ergoemacs-keyboard-quit-key 'exit-prefix))
+      ;; if ergoemacs was disabled: restore original keys
       (ergoemacs-restore-global-keys))
 
     ;; install the mode-hooks
@@ -530,7 +574,7 @@ any key unbound or claimed by ergoemacs."
   "Set a key in the ergoemacs local map."
   ;; install keymap if not already installed
   (interactive)
-  (progn 
+  (progn
     (unless ergoemacs-local-keymap
       (setq ergoemacs-local-keymap (copy-keymap ergoemacs-keymap))
       (add-to-list 'minor-mode-overriding-map-alist (cons 'ergoemacs-mode ergoemacs-local-keymap)))
@@ -578,7 +622,7 @@ Without argument, toggles the minor mode.
 If optional argument is 1, turn it on.
 If optional argument is 0, turn it off.
 Argument of t or nil should not be used.
-For full documentation, see: 
+For full documentation, see:
 URL `http://xahlee.org/emacs/ergonomic_emacs_keybinding.html'
 
 If you turned on by mistake, the shortcut to call execute-extended-command is M-a."
