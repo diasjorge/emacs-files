@@ -5,7 +5,7 @@
 ;; Modified By Jorge Dias
 ;;
 ;; The following packages are required for this:
-;; emacs23 emacs-goodies-el magit erlang yasnippet yaml-mode exuberant-ctags
+;; emacs23 emacs-goodies-el erlang yasnippet exuberant-ctags
 
 ;;;;;;;;;;;;;;;;;;
 ;; EMACS SERVER ;;
@@ -130,6 +130,7 @@
 (add-to-list 'load-path "~/.emacs.d/elisp/js2")
 (add-to-list 'load-path "~/.emacs.d/elisp/rvm")
 (add-to-list 'load-path "~/.emacs.d/elisp/yasnippet")
+(add-to-list 'load-path "~/.emacs.d/elisp/magit")
 ;; add more here as needed
 
 ;; emacs-wget
@@ -278,6 +279,13 @@
 ;; magit support. Source: git clone git://gitorious.org/magit/mainline.git
 (require 'magit)
 (global-set-key (kbd "C-c m") 'magit-status)
+;; change magit diff colors
+(eval-after-load 'magit
+  '(progn
+     (set-face-foreground 'magit-diff-add "green3")
+     (set-face-foreground 'magit-diff-del "red3")
+     (when (not window-system)
+       (set-face-background 'magit-item-highlight "black"))))
 
 ;; jekyll blog support
 (require 'jekyll)
