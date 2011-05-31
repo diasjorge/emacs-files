@@ -76,9 +76,6 @@
 ;; don't show startup message
 (setq inhibit-startup-message t)
 
-;; don't bother about abbrev-file
-(quietly-read-abbrev-file)
-
 ;; show line and column numbers
 (line-number-mode t)
 (column-number-mode t)
@@ -279,7 +276,7 @@
 ;; magit support. Source: git clone git://gitorious.org/magit/mainline.git
 (require 'magit)
 (global-set-key (kbd "C-c m") 'magit-status)
-;; change magit diff colors
+;; change magit diff colors http://readystate4.com/2011/02/22/emacs-changing-magits-default-diff-colors/
 (eval-after-load 'magit
   '(progn
      (set-face-foreground 'magit-diff-add "green3")
@@ -289,7 +286,7 @@
 
 ;; jekyll blog support
 (require 'jekyll)
-(setq jekyll-directory "/home/boston/development/mrdias.com/")
+(setq jekyll-directory "~/development/mrdias.com/")
 (global-set-key (kbd "C-c j n") 'jekyll-draft-post)
 (global-set-key (kbd "C-c j P") 'jekyll-publish-post)
 (global-set-key (kbd "C-c j p") (lambda ()
@@ -437,7 +434,3 @@
     (if (get-file-buffer my-tags-file)
 	 (kill-buffer (get-file-buffer my-tags-file)))
     (visit-tags-table my-tags-file)))
-
-
-
-
