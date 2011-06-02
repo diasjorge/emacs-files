@@ -4,7 +4,7 @@ task :compile do
   end
 
   Dir["elisp/*.el"].each do |f|
-    compile_file(f)
+    compile_file(f) unless f =~ /environment.el/
   end
 end
 
@@ -38,7 +38,7 @@ def red(str)
 end
 
 def emacs
-  emacs = ENV['EMACS'] || 'emacs'
+  ENV['EMACS'] || 'emacs'
 end
 
 def make_dirs
