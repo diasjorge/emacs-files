@@ -59,3 +59,45 @@
   (indent-code-rigidly beg end spaces))
 
 (global-set-key (kbd "M-]") 'indent-magically)
+
+;; Code folding support. http://www.emacswiki.org/emacs/HideShow
+(defun toggle-selective-display (column)
+  (interactive "P")
+  (set-selective-display
+   (or column
+       (unless selective-display
+         (1+ (current-column))))))
+
+(defun toggle-hiding (column)
+  (interactive "P")
+  (if hs-minor-mode
+      (if (condition-case nil
+              (hs-toggle-hiding)
+            (error t))
+          (hs-show-all))
+    (toggle-selective-display column)))
+
+(global-set-key (kbd "M-#") 'toggle-hiding)
+
+(add-hook 'emacs-lisp-mode-hook 'hs-minor-mode)
+(add-hook 'lisp-mode-hook       'hs-minor-mode)
+(add-hook 'sh-mode-hook         'hs-minor-mode)
+
+(defun jekyll-insert-preview-end ()
+  "Insert the comment to mark the end of the post preview"
+  (interactive)
+  (insert "<!-- -**-END-**- -->"))
+
+(defun rinari-generate-tags()
+  (interactive)
+  (let ((my-tags-file (concat (rinari-root) "TAGS"))
+	(root (rinari-root)))
+    (message "Regenerating TAGS file: %s" my-tags-file)
+    (if (file-exists-p my-tags-file)
+	(delete-file my-tags-file))
+    (shell-command
+     (format "find %s -iname *.rb | grep -v db | xargs ctags -a -e -f %s"
+	     root my-tags-file))
+    (if (get-file-buffer my-tags-file)
+	 (kill-buffer (get-file-buffer my-tags-file)))
+    (visit-tags-table my-tags-file)))

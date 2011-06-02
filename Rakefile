@@ -4,7 +4,7 @@ task :compile do
   end
 
   Dir["elisp/*.el"].each do |f|
-    compile_file(f) unless f =~ /environment.el/
+    compile_file(f)
   end
 end
 
