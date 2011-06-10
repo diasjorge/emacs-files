@@ -1,14 +1,12 @@
-(add-to-list 'load-path "~/.emacs.d/elisp/ruby-mode")
-(add-to-list 'load-path "~/.emacs.d/elisp/rinari")
-(add-to-list 'load-path "~/.emacs.d/elisp/cucumber")
-
 ;; ruby-test  run test/specs for ruby projects
-;; http://www.emacswiki.org/cgi-bin/emacs/download/ruby-test.el (wget)
 ;;
-;; C-x C-SPC => run this test/spec
+;; C-x SPC   => run this test/spec
 ;; C-x t     => run tests/specs in this file
 ;; C-c t     => toggle between specification and implementation
-(require 'ruby-test)
+(require 'ruby-test-mode)
+(global-set-key (kbd "C-x t") 'ruby-test-run-file)
+(global-set-key (kbd "C-x SPC") 'ruby-test-run-at-point)
+
 
 ;; autotest support
 (setq autotest-use-ui t)

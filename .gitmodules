@@ -40,3 +40,6 @@
 [submodule "elisp/nxhtml"]
 	path = elisp/nxhtml
 	url = https://github.com/emacsmirror/nxhtml.git
+[submodule "elisp/ruby-test-mode"]
+	path = elisp/ruby-test-mode
+	url = git@github.com:diasjorge/ruby-test-mode.git
