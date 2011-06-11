@@ -43,3 +43,6 @@
 [submodule "elisp/ruby-test-mode"]
 	path = elisp/ruby-test-mode
 	url = git@github.com:diasjorge/ruby-test-mode.git
+[submodule "elisp/yaml-mode"]
+	path = elisp/yaml-mode
+	url = git@github.com:diasjorge/yaml-mode.git
