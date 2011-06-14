@@ -65,20 +65,6 @@
 (add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
 (setq js2-bounce-indent-p t)
 
-;; haml-mode and & sass-mode
-;; http://github.com/nex3/haml/
-(require 'haml-mode)
-(require 'sass-mode)
-(add-to-list 'auto-mode-alist '("\\.haml$" . haml-mode))
-(add-to-list 'auto-mode-alist '("\\.sass$" . sass-mode))
-
-;; yaml-mode
-;; http://svn.clouder.jp/repos/public/yaml-mode/trunk/
-(autoload 'yaml-mode "yaml-mode" "Yaml editing mode")
-(add-to-list 'auto-mode-alist '("\\.yml$" . yaml-mode))
-(add-hook 'yaml-mode-hook
-	  '(lambda () (define-key yaml-mode-map "\C-m" 'newline-and-indent)))
-
 ;; yasnippets
 ;; http://code.google.com/p/yasnippet/
 (require 'dropdown-list)
@@ -178,25 +164,8 @@
 
 (global-set-key (kbd "C-c j e") 'jekyll-insert-preview-end)
 
-(if (not (getenv "ERGOEMACS_KEYBOARD_LAYOUT")) (setenv "ERGOEMACS_KEYBOARD_LAYOUT" "gb"))
-(require 'ergoemacs-mode)
-(ergoemacs-mode 1)
-(global-unset-key (kbd "C-w")) ;; prevent accidentally closing buffer
-(global-set-key (kbd "C-l") 'goto-line)
-(global-set-key (kbd "C-j") 'newline-and-indent)
-(global-set-key (kbd "M-[") 'align-string)
-(global-unset-key (kbd "<insert>"))
-
-;; Go back in history. Alternative to C-<up>
-(add-hook 'inf-ruby-mode-hook
- (lambda ()
-   (define-key inf-ruby-mode-map (kbd "M-m") 'comint-previous-input);
-   (define-key inf-ruby-mode-map (kbd "M-M") 'comint-next-input);
-))
-
 ;; auto-complete support
 ;; Execute make to bytecompile
-(add-to-list 'load-path "~/.emacs.d/elisp/auto-complete")
 (require 'auto-complete-config)
 (add-to-list 'ac-dictionary-directories "~/.emacs.d/elisp/auto-complete/ac-dict")
 (ac-config-default)
@@ -206,9 +175,25 @@
 (define-key ac-mode-map (kbd "M-n") 'ac-complete)
 (define-key ac-mode-map (kbd "C-g") 'ac-complete)
 
-;; Support for bond
-(require 'inf-ruby-bond)
-
 (require 'zencoding-mode)
 (add-hook 'sgml-mode-hook 'zencoding-mode) ;; Auto-start on any markup modes
 (add-hook 'nxml-mode-hook 'zencoding-mode)
+
+;; yaml-mode
+;; http://svn.clouder.jp/repos/public/yaml-mode/trunk/
+(autoload 'yaml-mode "yaml-mode" "Yaml editing mode")
+(add-to-list 'auto-mode-alist '("\\.yml$" . yaml-mode))
+(add-hook 'yaml-mode-hook
+	  '(lambda () (define-key yaml-mode-map "\C-m" 'newline-and-indent)))
+
+
+(if (not (getenv "ERGOEMACS_KEYBOARD_LAYOUT")) (setenv "ERGOEMACS_KEYBOARD_LAYOUT" "gb"))
+(require 'ergoemacs-mode)
+(ergoemacs-mode 1)
+(global-unset-key (kbd "C-w")) ;; prevent accidentally closing buffer
+(global-set-key (kbd "C-l") 'goto-line)
+(global-set-key (kbd "C-j") 'newline-and-indent)
+(global-set-key (kbd "M-[") 'align-string)
+(global-unset-key (kbd "<insert>"))
+(global-set-key (kbd "M-m") 'comint-previous-input)
+(global-set-key (kbd "M-M") 'comint-next-input)

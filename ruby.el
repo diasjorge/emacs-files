@@ -35,17 +35,27 @@
 (add-to-list 'auto-mode-alist '("\\.autotest$" . ruby-mode))
 (add-to-list 'auto-mode-alist '("\\.rjs$" . ruby-mode))
 (add-to-list 'auto-mode-alist '("Gemfile" . ruby-mode))
-
+(add-to-list 'auto-mode-alist '("\\.irbrc$" . ruby-mode))
 
 ;; inf-ruby
 (autoload 'run-ruby "inf-ruby" "Run an inferior Ruby process")
 (autoload 'inf-ruby-keys "inf-ruby" "Set local key defs for inf-ruby in ruby-mode")
 (add-hook 'ruby-mode-hook '(lambda () (inf-ruby-keys) ))
 
+;; Support for bond
+(require 'inf-ruby-bond)
+
 ;; cucumber features
 (require 'feature-mode)
 (add-to-list 'auto-mode-alist '("\\.feature$" . feature-mode))
 
+;; rvm
 (require 'rvm)
-
 (rvm-use-default) ;; use rvm’s default ruby for the current Emacs session
+
+;; haml-mode and & sass-mode
+;; http://github.com/nex3/haml/
+(require 'haml-mode)
+(require 'sass-mode)
+(add-to-list 'auto-mode-alist '("\\.haml$" . haml-mode))
+(add-to-list 'auto-mode-alist '("\\.sass$" . sass-mode))
