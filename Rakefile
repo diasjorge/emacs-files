@@ -1,4 +1,4 @@
-task :compile do
+task :compile => :clean do
   make_dirs do
     system "make $EMACS=#{emacs}"
   end
