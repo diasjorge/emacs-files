@@ -5,7 +5,12 @@
 ;; Modified By Jorge Dias
 ;;
 ;; The following packages are required for this:
-;; emacs23 emacs-goodies-el erlang yasnippet exuberant-ctags
+;; emacs23 emacs-goodies-el erlang exuberant-ctags
+;;
+;; To bytecompile most important files run:
+;;
+;; rake
+;; on OSX: rake EMACS=/Applications/Emacs.app/Contents/MacOS/Emacs
 
 ;;;;;;;;;;;;;;;;;;
 ;; EMACS SERVER ;;
