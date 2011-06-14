@@ -18,6 +18,10 @@
 ;; keep scrolling in compilation result buffer
 (setq compilation-scroll-output t)
 
+;; remove ^M characters from commint
+(add-hook 'comint-output-filter-functions
+          'comint-strip-ctrl-m)
+
 ;; Enable disabled features
 (put 'upcase-region 'disabled nil)
 (put 'downcase-region 'disabled nil)

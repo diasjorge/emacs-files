@@ -4,7 +4,7 @@
 ;; C-x t     => run tests/specs in this file
 ;; C-c t     => toggle between specification and implementation
 (require 'ruby-test-mode)
-(global-set-key (kbd "C-x t") 'ruby-test-run-file)
+(global-set-key (kbd "C-x t") 'ruby-test-run)
 (global-set-key (kbd "C-x SPC") 'ruby-test-run-at-point)
 
 
