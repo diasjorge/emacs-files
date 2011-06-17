@@ -1,6 +1,6 @@
 [submodule "elisp/git-emacs"]
 	path = elisp/git-emacs
-	url = git@github.com:diasjorge/git-emacs.git
+	url = git://github.com/tsgates/git-emacs.git
 [submodule "snippets/yasnippets-rails"]
 	path = snippets/yasnippets-rails
 	url = git://github.com/eschulte/yasnippets-rails.git
