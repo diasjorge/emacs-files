@@ -15,7 +15,6 @@
 ;; rinari
 ;; http://github.com/eschulte/rinari
 (require 'rinari)
-(global-set-key (kbd "C-x C-M-f") 'find-file-in-project)
 (setq rinari-browse-url-func 'browse-url-generic)
 
 ;; ruby-mode
@@ -36,6 +35,7 @@
 (add-to-list 'auto-mode-alist '("\\.rjs$" . ruby-mode))
 (add-to-list 'auto-mode-alist '("Gemfile" . ruby-mode))
 (add-to-list 'auto-mode-alist '("\\.irbrc$" . ruby-mode))
+(add-to-list 'auto-mode-alist '("\\.gemspec$" . ruby-mode))
 
 ;; inf-ruby
 (autoload 'run-ruby "inf-ruby" "Run an inferior Ruby process")

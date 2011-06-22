@@ -1,5 +1,4 @@
 ;; ido-mode
-(setq ido-use-filename-at-point t)
 (setq ido-enable-flex-matching t)
 (ido-mode t)
 (ido-everywhere t)
@@ -185,7 +184,6 @@
 (add-to-list 'auto-mode-alist '("\\.yml$" . yaml-mode))
 (add-hook 'yaml-mode-hook
 	  '(lambda () (define-key yaml-mode-map "\C-m" 'newline-and-indent)))
-
 
 (if (not (getenv "ERGOEMACS_KEYBOARD_LAYOUT")) (setenv "ERGOEMACS_KEYBOARD_LAYOUT" "gb"))
 (require 'ergoemacs-mode)
