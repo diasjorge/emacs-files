@@ -41,14 +41,10 @@
                                   (revert-buffer-function " %b"
                                   ("%b - Dir:  " default-directory)))))))
 
-;; Puts backup and autosave files in one place
-(setq backup-directory-alist
-      `((".*" . ,temporary-file-directory)))
-(setq auto-save-file-name-transforms
-      `((".*" ,temporary-file-directory t)))
-
-;; backup for tramp files
-(setq tramp-backup-directory-alist backup-directory-alist)
+;; No backup or auto-save
+(setq backup-by-copying t)
+(setq make-backup-files nil)
+(setq auto-save-default nil)
 
 ;; don't show startup message
 (setq inhibit-startup-message t)
