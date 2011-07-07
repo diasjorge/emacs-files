@@ -1,0 +1,1 @@
+(require 'emacs-goodies-el)
