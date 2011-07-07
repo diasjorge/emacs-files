@@ -17,6 +17,11 @@
 (require 'rinari)
 (setq rinari-browse-url-func 'browse-url-generic)
 
+;; ported from rinari to support rvm
+(setq inf-ruby-prompt-pattern "^\\(j?ruby[^> ]+\\|J?RUBY[^> ]+\\|irb([^> ]+\\)?\\( ?:[0-9]+\\)* ?>>? ")
+(setq inf-ruby-first-prompt-pattern inf-ruby-prompt-pattern)
+
+
 ;; ruby-mode
 ;; ruby-mode from ruby-lang svn
 ;;
