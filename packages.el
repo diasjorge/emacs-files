@@ -32,15 +32,6 @@
 ;; http://www.emacswiki.org/cgi-bin/wiki/download/icomplete+.el (wget)
 (eval-after-load "icomplete" '(progn (require 'icomplete+)))
 
-;; color-theme
-;; http://download.gna.org/color-theme/color-theme-6.6.0.tar.gz (wget)
-;; uncompress and move to ~/.emacs.d/elisp/color-theme
-(require 'color-theme)
-(color-theme-initialize)
-
-(load-file "~/.emacs.d/elisp/color-theme/blackboard.el")
-(color-theme-blackboard)
-
 ;; use exuberant-ctags
 ;;
 ;; Generate file with:
@@ -70,6 +61,7 @@
 (require 'yasnippet)
 
 (yas/initialize)
+
 (yas/load-directory "~/.emacs.d/snippets/defaults")
 (yas/load-directory "~/.emacs.d/snippets/contrib-snippets")
 (yas/load-directory "~/.emacs.d/snippets/yasnippets-rails/rails-snippets")

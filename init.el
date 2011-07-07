@@ -41,36 +41,45 @@
 ;; Preferences ;;
 ;;;;;;;;;;;;;;;;;
 
-(load-file "~/.emacs.d/preferences.el")
+(load "~/.emacs.d/preferences")
 
 ;;;;;;;;;;;;;;;;;;;
 ;; Load packages ;;
 ;;;;;;;;;;;;;;;;;;;
 
-(load-file "~/.emacs.d/packages.el")
+(setenv "ERGOEMACS_KEYBOARD_LAYOUT" "us")
+
+(load "~/.emacs.d/packages")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Ruby specific configuration ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(load-file "~/.emacs.d/ruby.el")
+(load "~/.emacs.d/ruby")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; PHP specific configuration ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(load-file "~/.emacs.d/php.el")
+(load "~/.emacs.d/php")
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Mac Specific Configuration ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(when (string-equal system-type "darwin")
+  (load "~/.emacs.d/mac"))
 
 ;;;;;;;;;;;;;;;;;;
 ;; My Functions ;;
 ;;;;;;;;;;;;;;;;;;
 
-(load "~/.emacs.d/elisp/customization_functions.el")
+(load "~/.emacs.d/elisp/customization_functions")
 
-(load "~/.emacs.d/elisp/haml_functions.el")
+(load "~/.emacs.d/elisp/haml_functions")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Environment Specific Settings ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(load "~/.emacs.d/environment.el" t)
+(load "~/.emacs.d/environment" t)

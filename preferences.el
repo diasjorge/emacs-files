@@ -101,3 +101,10 @@
 
 ;; beep and ignore disabled commands
 (setq disabled-command-hook 'beep)
+
+;; color-theme
+(require 'color-theme)
+(color-theme-initialize)
+
+(load-file "~/.emacs.d/elisp/color-theme/blackboard.el")
+(color-theme-blackboard)
