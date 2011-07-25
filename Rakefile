@@ -1,18 +1,18 @@
 task :compile => :clean do
   make_dirs do
-    system "make $EMACS=#{emacs}"
+    system "make EMACS=#{emacs}"
   end
 
-  Dir["elisp/*.el"].each do |f|
+  Dir["elisp/*.el", "elisp/js2/*.el"].each do |f|
     compile_file(f)
   end
 end
 
 task :clean do
-  puts green("Cleaning up")
+  puts red("Cleaning up")
 
   make_dirs do
-    system "make clean"
+    system "make clean || make distclean"
   end
 
   elc_files = Dir["**/*.elc"]
@@ -26,7 +26,7 @@ end
 
 def compile_file(file)
   puts green(file)
-  system "#{emacs} -Q -L . -batch -f batch-byte-compile #{file}"
+  system "#{emacs} -q -Q -L . -batch -f batch-byte-compile #{file}"
 end
 
 def green(str)
@@ -38,7 +38,7 @@ def red(str)
 end
 
 def emacs
-  ENV['EMACS'] || 'emacs'
+  ENV['EMACS'] || %x{which emacs}.chomp
 end
 
 def make_dirs
