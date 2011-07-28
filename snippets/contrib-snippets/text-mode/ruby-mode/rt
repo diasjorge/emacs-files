@@ -1,5 +1,3 @@
-#name : respond_to
+#name : render :text => " ... "
 # --
-respond_to do |${1:format}|
-  $0
-end
+render :text => "${Text here...}"

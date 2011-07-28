@@ -64,7 +64,6 @@
 
 (yas/load-directory "~/.emacs.d/snippets/defaults")
 (yas/load-directory "~/.emacs.d/snippets/contrib-snippets")
-(yas/load-directory "~/.emacs.d/snippets/yasnippets-rails/rails-snippets")
 (yas/load-directory "~/.emacs.d/snippets/my-snippets")
 (setq yas/prompt-functions '(yas/dropdown-prompt
                              yas/ido-prompt
@@ -168,7 +167,6 @@
 
 (require 'zencoding-mode)
 (add-hook 'sgml-mode-hook 'zencoding-mode) ;; Auto-start on any markup modes
-(add-hook 'nxml-mode-hook 'zencoding-mode)
 
 ;; yaml-mode
 ;; http://svn.clouder.jp/repos/public/yaml-mode/trunk/
