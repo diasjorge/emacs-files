@@ -4,13 +4,13 @@
 ;; Copyright (C) 1994 Per Abrahamsen
 
 ;; Author: Per Abrahamsen <abraham@dina.kvl.dk>
-;; Version: $Id: all.el,v 1.2 2003/05/09 16:22:59 psg Exp $
+;; Version: $Id: all.el,v 1.2 2003-05-09 16:22:59 psg Exp $
 ;; Keywords: matching
 
 ;; LCD Archive Entry:
 ;; all|Per Abrahamsen|abraham@dina.kvl.dk|
 ;; Edit all lines matching a given regexp|
-;; $Date: 2003/05/09 16:22:59 $|$Revision: 1.2 $|~/misc/all.Z|
+;; $Date: 2003-05-09 16:22:59 $|$Revision: 1.2 $|~/misc/all.Z|
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by

@@ -93,7 +93,7 @@
   :prefix "slang-"
   :group 'languages)
 
-(defcustom slang-default-application "/usr/bin/slsh"
+(defcustom slang-default-application "c:/bin/slsh.exe"
   "Default slang application to run in slang subprocess."
   :type 'string
   :group 'slang)

@@ -1,8 +1,10 @@
 ;;; map-lines.el --- Map a command over many lines
 
 ;; Copyright (C) 2002  Andreas Fuchs <asf@void.at>
+;; Copyright (C) 2010  Paul Hobbs <Paul_Hobbs@hmc.edu>
 
 ;; Author: Andreas Fuchs <asf@void.at>
+;; Maintainer: Paul Hobbs <Paul_Hobbs@hmc.edu>
 ;; Keywords: matching, files
 
 ;; This file is free software; you can redistribute it and/or modify
@@ -22,24 +24,70 @@
 
 ;;; Commentary:
 
+;; ------------------------------ TYPICAL USE ------------------------------
 ;; This module allows you to map a command over a set of lines
-;; matching a regex. The trick: You can then go ahead and insert these
+;; matching a regex.  The trick: You can then go ahead and insert these
 ;; lines in one clean yank.
-;; <flamebait>Emacs can now be called ED, THE STANDARD TEXT EDITOR
-;; </flamebait>
 ;;
-;; To use this module, put into your ~/.emacs:
-;; (autoload 'map-lines "map-lines"
-;;           "Map COMMAND over lines matching REGEX."
-;;           t)
-;; ;; And, if you're feeling like you never need faces anyway:
-;; (global-set-key "\M-g" 'map-lines)
+;; Example text:
+;; 
+;;     Hello,
+;;     Here are the requested documents:
+;;     a.txt
+;;     b.txt
+;;     c.txt
+;;     Also, I have included the following:
+;;     license.txt
 ;;
-;; This is Version 0.1 of map-lines.el.
+;; Running M-x map-lines-copy-regex ".txt" will give you
+;;     a.txt
+;;     b.txt
+;;     c.txt
+;;     license.txt
 ;;
-;; You can find the latest version of this module at:
-;; http://asf.void.at/emacs/map-lines.el
+;; This is also useful for using Emacs with UNIX: just run M-! ls, and filter
+;; out the files you want to operate on using map-lines-kill, or grab those you
+;; want using map-lines-copy.  Then, paste into a scratch buffer and use
+;; keyboard macros and/or rectangles to form the commands you want to run on
+;; each file, and to execute each command.  Nifty!
+
+;; ------------------------------ INSTALLATION ------------------------------
+;; To use this module, put this file somewhere in your load-path and this into
+;; your .emacs:
+;; (load-library "map-lines")
+;; 
+;; Alternatively, you can autoload the functions one at a time, which will
+;; reduce your Emacs start-up time and typical RAM usage (slightly):
+;;     (autoload 'map-lines "map-lines"
+;;       "For each matching line, kill, copy or run a custom command" t)
+;;     (autoload 'map-lines-kill "map-lines" "Kill each line matching regex" t)
+;;     (autoload 'map-lines-copy "map-lines" "Copy each line matching regex" t)
+;;     (autoload 'copy-line      "map-lines" "Copy the current line" t)
 ;;
+;; You can set (recommended) keyboard shortcuts using
+;;     (global-set-key (kbd "C-c m l") 'map-lines)
+;;     (global-set-key (kbd "C-c m k") 'map-lines-kill)
+;;     (global-set-key (kbd "C-c m c") 'map-lines-copy)
+;;     (global-set-key (kbd "C-x c")
+;;
+;; ... or your own key combinations as you see fit.
+
+;; ------------------------------ VERSIONS ------------------------------
+;; This is version 0.2 of map-lines.el.
+;;
+;; You can find the latest version of this module in the debian package
+;; emacs-goodies-el.  If you want to see new features, feel free to add them and
+;; email the maintainer of this package.
+;; 
+;;; History:
+;;
+;; Version 0.2
+;;  - Changed map-lines to always put a newline between each line, and added
+;;    kill-lines and copy-lines.  (Paul Hobbs)
+;;
+;; Version 0.1
+;;  - First version (Andreas Fuchs)
+
 ;;; Code:
 
 (defvar mapl-command-alist
@@ -56,9 +104,10 @@
 	(read-command "Other command (takes no args and returns a string): ")
       command)))
 
+;;;###autoload
 (defun map-lines (command-c regex)
-  "Map COMMAND over lines matching REGEX."
-  (interactive "cCommand (Kill, Copy, Other) [kco]: 
+  "Map a COMMAND-C (kill, copying, or a custom command) over lines matching REGEX."
+  (interactive "cCommand (Kill, Copy, Other) [kco]:
 sRegular Expression: ")
   (save-excursion
     (let ((command (mapl-lookup-command command-c))
@@ -70,22 +119,30 @@ sRegular Expression: ")
 	    (while (re-search-forward regex nil t)
 	      (let ((the-line (funcall command)))
 	        (with-current-buffer temp-buffer
-		  (insert the-line)))
+		  (insert the-line)
+		  (newline)))
 	      (end-of-line)))
 	  (kill-region (point-min) (point-max)))))))
 
 (defun mapl-kill-line ()
   "Kill a line entirely and return it."
-  (mapl-kill-universal 'kill-line))
+  (mapl-kill-universal (lambda () (kill-line))))
+
+
+;;;###autoload
+(defun copy-line ()
+  "Copy a whole line to the kill ring."
+  (interactive)
+  (let ((original-point (point)))
+    (copy-region-as-kill (progn (beginning-of-line)
+				(point))
+			 (progn (end-of-line)
+				(point)))
+    (goto-char original-point)))
 
 (defun mapl-copy-line ()
   "Copy a line entirely and return it."
-  (mapl-kill-universal (lambda ()
-			 (copy-region-as-kill (progn (beginning-of-line)
-						     (point))
-					      (progn (end-of-line)
-						     (goto-char (+ 1 (point)))
-						     (point))))))
+  (mapl-kill-universal (lambda () (copy-line))))
 
 (defun mapl-kill-universal (kill-fun)
   "Execute KILL-FUN on an entire line."
@@ -93,6 +150,18 @@ sRegular Expression: ")
   (funcall kill-fun)
   (prog1 (car kill-ring)
     (setq kill-ring (cdr kill-ring))))
+
+;;;###autoload
+(defun map-lines-kill (regex)
+  "Kill all lines matching REGEX.  Yanking will insert all killed lines."
+  (interactive "sRegular Expression: ")
+  (map-lines ?\k regex))
+
+;;;###autoload
+(defun map-lines-copy (regex)
+  "Copy all lines matching REGEX to the kill ring.  Yanking will insert all such lines."
+  (interactive "sRegular Expression: ")
+  (map-lines ?\c regex))
 
 (provide 'map-lines)
 ;;; map-lines.el ends here

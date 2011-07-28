@@ -1,23 +1,28 @@
 ;;; rfcview.el -- view IETF RFCs with readability-improved formatting
 
 ;; Copyright (C) 2001-2002 Neil W. Van Dyke
-;; Copyright (C) 2006 Free Software Foundation, Inc.
+;; Copyright (C) 2006, 2008 Free Software Foundation, Inc.
 ;;    (mods by Dave Love <fx@gnu.org>)
 
 ;; Author:   Neil W. Van Dyke <neil@neilvandyke.org>
-;; Version:  0.10
+;; Author: Dave Love <fx@gnu.org>
+;; Version:  0.12
 ;; X-URL:    http://www.loveshack.ukfsn.org/emacs/rfcview.el
-;; X-CVS:    $Id: rfcview.el,v 1.2 2008-03-28 03:17:05 psg Exp $ GMT
 
-;; This is free software; you can redistribute it and/or modify it under the
-;; terms of the GNU General Public License as published by the Free Software
-;; Foundation; either version 2, or (at your option) any later version.  This
-;; is distributed in the hope that it will be useful, but without any warranty;
-;; without even the implied warranty of merchantability or fitness for a
-;; particular purpose.  See the GNU General Public License for more details.
-;; You should have received a copy of the GNU General Public License along with
-;; GNU Emacs; see the file `COPYING'.  If not, write to the Free Software
-;; Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+;; This file is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This file is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with GNU Emacs.  If not, see <http://www.gnu.org/licenses/>.
+
+;; [Van Dyke's original is GPL 2 or later.]
 
 ;;; COMMENTARY:
 
@@ -88,9 +93,14 @@
 ;;         Addresses
 ;;
 ;;   * Have a stack for (internal) hyperlinks a la Info.
+;;
+;;   * Deal with an index (e.g. RFC 3986).
 
 ;;; CHANGE LOG:
 
+;; [Version 0.11, 2008-02-02]  (Dave Love)
+;; * rfcview-find-rfc.
+;;
 ;; [Version 0.10, 2008-01-28]  (Dave Love)
 ;; * Fix rfcview-find-location-of-rfc-mouse interactive spec.
 ;; * Get speedbar working.
@@ -106,7 +116,7 @@
 ;; * Use ange-ftp, not browse-url;
 ;; * Handle STDs as well as RFCs.
 ;;
-;; [Version 0.6, 2006-07-07] Hyperlinking (Dave Love).
+;; [Version 0.6, 2006-07-07] Hyperlinking, imenu (Dave Love).
 ;;
 ;; [Version 0.5, 15-Oct-2002] Updated email address.
 ;;
@@ -159,14 +169,17 @@
 ;; 21's value of that is wrong, and we probably don't want to require
 ;; ffap.
 ;; Fixme: This should be a path, e.g. local directory plus rfc-editor site.
-(defcustom rfcview-rfc-location-pattern "/ftp@ftp.rfc-editor.org:/in-notes/rfc%s.txt"
+(defcustom rfcview-rfc-location-pattern
+  "/ftp@ftp.rfc-editor.org:/in-notes/rfc%s.txt"
   "Pattern to generate the location of a numbered RFC.
 Must contain a single `%s' to be substituted with the RFC's number.
 On a Debian-style system, with the doc-rfc packages installed, this could be
 \"/usr/share/doc/RFC/links/rfc%s.txt.gz\" to read local copies.
 A list of such patterns is also valid; its elements are tried in order
 to find the RFC.  Typically you want to try a local directory first and
-then the IETF site."
+then the IETF site.  If you have installed suitable file handlers, e.g.
+with `url-handler-mode', you can use arbitrary URL patterns.
+See also `rfcview-std-location-pattern'."
   :type '(choice string (repeat string))
   :group 'rfcview)
 
@@ -176,9 +189,22 @@ then the IETF site."
 Must contain a single `%s' to be substituted with the STD's number.
 A list of such patterns is also valid; its elements are tried in order
 to find the RFC.  Typically you want to try a local directory first and
-then the IETF site."
+then the IETF site.  See also `rfcview-rfc-location-pattern'."
   :type '(choice string (repeat string))
   :group 'rfcview)
+
+(defcustom rfcview-index-location
+  (if (consp rfcview-rfc-location-pattern)
+      (mapcar (lambda (elt)
+		(replace-regexp-in-string "%s.txt" "-index.txt" elt))
+	      rfcview-rfc-location-pattern)
+    (replace-regexp-in-string "%s.txt" "-index.txt"
+			      rfcview-rfc-location-pattern))
+  "Location, or list of locations in which to find the RFC index.
+The index is usually rfc-index.txt in the RFC directory."
+  :group 'rfcview
+  :type '(choice string (repeat string))
+  :set-after '(rfcview-rfc-location-pattern))
 
 (defface rfcview-title-face
   '((t (:bold t)))
@@ -639,17 +665,45 @@ Else return nil."
 					    'rfcview-reflink-ovlcat)
 		       'rfcview-link (list 'ref (cdr elt))))))))
 
+(defun rfcview-find-internal (files &optional sort mode)
+  "Find the first of FILES which exists.
+FILES may be a list or a single file."
+  (catch 'found
+    (dolist (file files)
+      (when (file-exists-p file)
+	(let (text-mode-hook)		; don't run Flyspell etc.
+	  (find-file file))
+	(throw 'found t)))
+    (error "%s not found: %s" (or sort "RFC")
+	   (mapconcat #'identity files ", ")))
+  (if (and mode (not (eq major-mode 'rfcview-mode)))
+    (rfcview-mode)))
+
+;;;###autoload
+(defun rfcview-find-rfc (number)
+  "Find RFC NUMBER and view it in RFcview mode.
+Interactively, prompt for the number.
+See `rfcview-rfc-location-pattern' for where to search."
+  (interactive  (rfcview-prompt-number))
+  (rfcview-find-internal (mapcar
+			  (lambda (x)
+			    (format x number))
+			  (if (listp rfcview-rfc-location-pattern)
+			      rfcview-rfc-location-pattern
+			    (list rfcview-rfc-location-pattern)))
+			 nil t))
+
+(defun rfcview-prompt-number ()
+  (let* ((n (number-at-point))
+	 (val (read-string "RFC number: " (if n (number-to-string n)) nil n)))
+    (if (> (length val) 0)
+	(list (string-to-number val))
+      (error "Missing number"))))
+
 (defun rfcview-find-location-of-rfc ()
   "Browse to the LOCATION of any RFC referenced at point."
   (interactive)
-  (let ((location (get-char-property (point) 'location)))
-    (catch 'found
-      (dolist (file location)
-	(when (file-exists-p file)
-	  (find-file file)
-	  (throw 'found t)))
-      (error "Referenced document not found: %s"
-	     (mapconcat #'identity location ", ")))))
+  (rfcview-find-internal (get-char-property (point) 'location) nil t))
 
 (defun rfcview-find-location-of-rfc-mouse (event)
   "Browse to the LOCATION of the RFC reference at the mouse EVENT."
@@ -664,6 +718,33 @@ Else return nil."
     (define-key map [?\C-m] #'rfcview-find-location-of-rfc)
     map)
   "Keymap for links to RFC locations.")
+
+;;;###autoload
+(defun rfcview-find-index ()
+  "Find the RFC index and hyperlink it."
+  (interactive)
+  (rfcview-find-internal (if (listp rfcview-index-location)
+			     rfcview-index-location
+			   (list rfcview-index-location))
+			 "RFC index")
+  (view-mode)
+  (save-excursion
+    (goto-char (point-min))
+    (when (= (point-max)
+	     (next-single-char-property-change (point) 'rfcview-rfcnum-ovlcat))
+      (let ((pattern (if (listp rfcview-rfc-location-pattern)
+			 rfcview-rfc-location-pattern
+		       (list rfcview-rfc-location-pattern))))
+      (while (re-search-forward "^\\([0-9]\\{4\\}\\) " nil t)
+	(let ((start (match-beginning 1)))
+	  (let ((overlay (make-overlay start (line-end-position))))
+	    (overlay-put overlay 'category 'rfcview-rfcurl-ovlcat)
+	    (overlay-put overlay 'location
+			 (mapcar (lambda (x)
+				   (format x (match-string 1)))
+				 pattern)))
+	  (rfcview-add-overlay start (match-end 1)
+			       'rfcview-rfcnum-ovlcat)))))))
 
 ;; Major mode
 

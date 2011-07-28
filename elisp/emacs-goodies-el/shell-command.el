@@ -1,10 +1,10 @@
 ;;; shell-command.el --- enables tab-completion for `shell-command'
 
-;; Copyright (C) 1998-2003 TSUCHIYA Masatoshi <tsuchiya@namazu.org>
+;; Copyright (C) 1998-2007 TSUCHIYA Masatoshi <tsuchiya@namazu.org>
 
 ;; Author: TSUCHIYA Masatoshi <tsuchiya@namazu.org>
 ;; Keywords: shell
-;; Version: $Revision: 1.3 $
+;; Version: $Revision: 1.4 $
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 ;; You should have received a copy of the GNU General Public License
 ;; along with this program; if not, you can either send email to this
 ;; program's maintainer or write to: The Free Software Foundation,
-;; Inc.; 59 Temple Place, Suite 330; Boston, MA 02111-1307, USA.
+;; Inc.; 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
 ;;; Commentary:
 
@@ -98,6 +98,16 @@ detail, see the document of `shell-command-make-prompt-string'."
   :type 'string
   :group 'shell-command)
 
+(defcustom shell-command-on-region-prompt-if-region-inactive
+  "Shell command on buffer [%w]%$ "
+  "*Prompt string of `shell-command-on-region' when tab-completion is enabled.
+This string is used if `shell-command-on-region' is called when
+there is no active region.
+Some %-sequences are available to customize this variable.  For more
+detail, see the document of `shell-command-make-prompt-string'."
+  :type 'string
+  :group 'shell-command)
+
 (defcustom grep-prompt
   "Run grep [%w]%$ "
   "*Prompt string of `grep' when tab-completion is enabled.
@@ -124,7 +134,7 @@ detail, see the document of `shell-command-make-prompt-string'."
 
 (put 'shell-command/static-if 'lisp-indent-function 2)
 (defmacro shell-command/static-if (cond then &rest else)
-  (if (eval cond) then (` (progn  (,@ else)))))
+  (if (eval cond) then (cons 'progn else)))
 
 (defun shell-command-make-prompt-string (format-string current-directory) "\
 Function to generate prompt string
@@ -272,16 +282,30 @@ by `shell-command-prompt'."
   (defadvice shell-command-on-region
     (before shell-command-on-region-with-completion disable compile)
     "Defined in shell-command.el, to enable tab-completion of commands
-and dir/filenames within the input context.  Its prompt string is kept
-by `shell-command-on-region-prompt'."
+and dir/filenames within the input context.  This advice also makes
+`shell-command-on-region' to use this current buffer as its input when
+a region is visible and inactive.
+Its prompt string is kept by `shell-command-on-region-prompt' and
+`shell-command-on-region-prompt-if-region-inactive'."
     (interactive
-     (list (region-beginning) (region-end)
-	   (shell-command-read-minibuffer shell-command-on-region-prompt
-					  default-directory
-					  nil nil nil 'shell-command-history)
-	   current-prefix-arg
-	   current-prefix-arg
-	   shell-command-default-error-buffer))))
+     (let (beg end prompt)
+       (if (shell-command/static-if (featurep 'xemacs)
+	       (and zmacs-regions (not (region-active-p)))
+	     (and transient-mark-mode (not mark-active)))
+	   (setq beg (point-min)
+		 end (point-max)
+		 prompt shell-command-on-region-prompt-if-region-inactive)
+	 (unless (mark)
+	   (error "The mark is not set now, so there is no region"))
+	 (setq beg (region-beginning)
+	       end (region-end)
+	       prompt shell-command-on-region-prompt))
+       (list beg end
+	     (shell-command-read-minibuffer prompt default-directory
+					    nil nil nil 'shell-command-history)
+	     current-prefix-arg
+	     current-prefix-arg
+	     shell-command-default-error-buffer)))))
 
 (let (current-load-list)
   (defadvice grep
@@ -360,7 +384,6 @@ The commands are `shell-command', `shell-command-on-region', `grep',
 `grep-find' and `compile'."
   :type 'boolean
   :set 'shell-command-custom-set
-  :require 'shell-command
   :group 'shell-command)
 
 ;;;###autoload

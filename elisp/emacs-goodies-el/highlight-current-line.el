@@ -1,6 +1,6 @@
 ;;; highlight-current-line.el --- highlight line where the cursor is.
 
-;; Copyright (c) 1997-2003 Christoph Conrad Time-stamp: <07.09.2003 20:43:48>
+;; Copyright (c) 1997-2003 Christoph Conrad Time-stamp: <19.09.2003 20:10:05>
 
 ;; Author: Christoph Conrad <Christoph.Conrad@gmx>
 ;; Created: 10 Oct 1997
@@ -174,7 +174,6 @@
 
 ;;; Code:
 
-
 ;; Initialization for XEmacs
 
 ;; XEmacs needs overlay emulation package.
@@ -328,7 +327,6 @@ Key: \\[highlight-current-line-set-fg-color]"
   (if (equal "none" color)
       (setq color highlight-current-line-no-color))
   (set-face-foreground 'highlight-current-line-face color))
-
 
 ;; Compatibility code - Set backgroundcolor of cursor-line.
 (defun highlight-current-line-set-bg-color (color)

@@ -5,7 +5,7 @@
 ;; Author: Francis J. Wright <F.J.Wright at qmul.ac.uk>
 ;; Time-stamp: <23 August 2004>
 ;; URL: http://centaur.maths.qmul.ac.uk/Emacs/
-;; Version: $Id: csv-mode.el,v 1.1 2005/09/28 01:52:41 psg Exp $
+;; Version: $Id: csv-mode.el,v 1.1 2005-09-28 01:52:41 psg Exp $
 ;; Keywords: convenience
 
 ;; This file is not part of GNU Emacs.

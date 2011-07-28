@@ -5,14 +5,15 @@
 
 ;; Authors:    Joseph S. Riel <joer@k-online.com>
 ;;             and Roland Winkler <Roland.Winkler@physik.uni-erlangen.de>
-;; Time-stamp: "2003-10-09 13:32:59 jriel"
+;; Time-stamp: "2003-10-09 22:49:16 joe"
 ;; Created:    June 1999
-;; Version:    2.154
+;; Version:    2.155
 ;; Keywords:   Maple, languages
 ;; X-URL:      http://www.k-online.com/~joer/maplev/maplev.html
-;; X-RCS:      $$
+;; X-RCS:      $Id: maplev.el,v 1.3 2009-11-12 21:33:35 psg Exp $
 
 ;;{{{ License
+
 ;; This program is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License as
 ;; published by the Free Software Foundation; either version 2 of the
@@ -25,8 +26,10 @@
 ;; along with this program; if not, write to the Free Software
 ;; Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
 ;; 02111-1307, USA.
+
 ;;}}}
 ;;{{{ Introduction
+
 ;;; Commentary:
 ;;
 ;; This package defines five major modes:
@@ -79,8 +82,10 @@
 ;;; History:
 
 ;; Oct 99:  Initial release.
+
 ;;}}}
 ;;{{{ To Do
+
 ;; High Priority:
 ;; - make `maplev-beginning-of-proc' and `maplev-end-of-proc' more reliable.
 ;;
@@ -97,13 +102,15 @@
 ;; Low Priority:
 ;; - font lock local variables
 ;; - fix problem with folding
+
 ;;}}}
 
 ;;; Code:
 
 ;;{{{ Information
+
 (defconst maplev-version 
-  "2.154"
+  "2.155"
   "Version of MapleV mode.")
 
 (defconst maplev-developer 
@@ -114,16 +121,22 @@
   (interactive)
   (sit-for 0)
   (message "maplev-mode version %s, (C) %s" maplev-version maplev-developer))
-;;}}}
 
+;;}}}
 
 (require 'abbrevlist)
 (require 'font-lock)
-(require 'imenu)
 (require 'comint)
 (require 'info)
-(require 'align)
+(require 'cl)
 
+(eval-and-compile
+  (condition-case nil (require 'imenu) (error nil))
+  (condition-case nil (require 'align) (error nil)))
+
+(defsubst maplev--short-delay ()
+  "Pause for a brief duration."
+  (sleep-for 0.1))
 
 ;;{{{ Compatibility assignments
 
@@ -191,7 +204,9 @@ is an integer correspond to the button number; preceding items are optional modi
       (vector (reverse rkeys)))))
 
 ;;}}}
+
 ;;{{{ Group definitions
+
 (defgroup maplev nil
   "Major mode for editing Maple source in Emacs"
   :group 'languages)
@@ -222,10 +237,18 @@ is an integer correspond to the button number; preceding items are optional modi
 
 ;;}}}
 ;;{{{ Configurable options
+
 ;;{{{   executables
+
 (defcustom maplev-executable-alist
   (if (string-match "windows-nt\\|ms-dos" (symbol-name system-type))
       '(
+        ("11" . ("c:/Program Files/Maple Release 11/bin.wnt/cmaple11.exe"
+                nil
+                "c:/Program Files/Maple Release 10/bin.wnt/mint10.exe"))
+        ("10" . ("c:/Program Files/Maple Release 10/bin.wnt/cmaple10.exe"
+                nil
+                "c:/Program Files/Maple Release 10/bin.wnt/mint10.exe"))
         ("9" . ("c:/Program Files/Maple Release 9/bin.wnt/cmaple9.exe"
                 nil
                 "c:/Program Files/Maple Release 9/bin.wnt/mint9.exe"))
@@ -248,6 +271,8 @@ is an integer correspond to the button number; preceding items are optional modi
                   nil
                   "c:/maplev4/bin.win/mint.exe")))
     '(
+      ("11"  . ("maple" nil "mint"))
+      ("10"  . ("maple" nil "mint"))
       ("9"   . ("maple" nil "mint"))
       ("8"   . ("maple" nil "mint"))
       ("7"   . ("maple" nil "mint"))
@@ -273,7 +298,7 @@ if nil the default initialization file is used."
 ;; this isn't quite right, it doesn't permit assigning
 ;; a new release.
 
-(defcustom maplev-default-release "9"
+(defcustom maplev-default-release "11"
   "*Release of Maple used as the default executable.
 It must be a key in `maplev-executable-alist'."
   :type `(choice ,@(mapcar (lambda (item)
@@ -292,7 +317,7 @@ Used to index `maplev-executable-alist'.")
          (concat
           "if not assigned(maplev_print) then\n"
           "  maplev_print := proc(n)\n"
-          "    print(`if`(type(evaln(n),procedure),eval,readlib)(n))\n"
+          "    print(`if`(type(evaln(n),'procedure'),eval,readlib)(n))\n"
           "  end;\n"
           "fi:\n"))
         (maplev-print-R6+
@@ -305,10 +330,22 @@ Used to index `maplev-executable-alist'.")
           "prettyprint=1,"
           "verboseproc=2,"
           "errorbreak=0,\n"
-          "screenheight=9999,"
+          "screenheight=infinity,"
           "warnlevel=2"))
         (maplev-kernelopts "kernelopts(printbytes=false):\n"))
     `(
+      ("11"  . ,(concat maplev-print-R6+
+                        "interface(" maplev-interface-string
+                        ",errorcursor=false):\n"
+                        maplev-kernelopts))
+      ("10"  . ,(concat maplev-print-R6+
+                        "interface(" maplev-interface-string
+                        ",errorcursor=false):\n"
+                        maplev-kernelopts))
+      ("9.5" . ,(concat maplev-print-R6+
+                        "interface(" maplev-interface-string
+                        ",errorcursor=false):\n"
+                        maplev-kernelopts))
       ("9" . ,(concat maplev-print-R6+
                       "interface(" maplev-interface-string
                       ",errorcursor=false):\n"
@@ -389,9 +426,9 @@ specified in Maple preprocessor $include directives."
   :group 'maplev-executables
   :group 'maplev-mint)
 
-
 ;;}}}
 ;;{{{   comments
+
 (defcustom maplev-comment-column 40
   "*Column for inline comments.
 Use \\[indent-for-comment] to insert or align an inline comment."
@@ -413,6 +450,7 @@ Use \\[indent-for-comment] to insert or align an inline comment."
   "*Non-nil means initially enable `auto-fill-mode' in a Maple buffer."
   :type 'boolean
   :group 'maplev-comments)
+
 ;;}}}
 ;;{{{   indentation
 
@@ -430,19 +468,19 @@ Use \\[indent-for-comment] to insert or align an inline comment."
   "*Lines starting with this regular expression will not be auto-indented."
   :type '(choice string (const :tag "default" nil))
   :group 'maplev-indentation)
-
+ 
 ;;}}}
 ;;{{{   templates
 
 (defcustom maplev-copyright-owner "John Q. Public"
-  "*Copyright owner inserted in the copyright string by `maplev-template-proc'."
+  "*Copyright owner inserted in the copyright string by `maplev--template-proc-module'."
   :type 'string
   :group 'maplev-templates
   :group 'maplev-important)
 
 (defcustom maplev-comment-end-flag t
   "*Non-nil means add a template's name as a comment following the end.
-See `maplev-template-proc'."
+See `maplev--template-proc-module'."
   :type 'boolean
   :group 'maplev-templates)
 
@@ -479,6 +517,7 @@ double quote.  Procbody, alas, does not handle a double quote."
   "*Maple assignment operator.  Used by `maplev-insert-assignment-operator'."
   :type 'string
   :group 'maplev-templates)
+
 ;;}}}
 ;;{{{   completion
 
@@ -489,8 +528,10 @@ otherwise it is completed with `od'.  If the maple release is less than 6
 than the long delimiter is never used."
   :type 'boolean
   :group 'maplev-completions)
+
 ;;}}}
 ;;{{{   miscellaneous
+
 ;; Abbrev mode
 
 (defcustom maplev-initial-abbrev-mode-flag nil
@@ -511,72 +552,80 @@ Nil means do not expand in either."
   "*Non-nil means run `maplev-remove-trailing-spaces' before saving."
   :type 'boolean
   :group 'maplev-misc)
+
 ;;}}}
 ;;{{{   align rules
 
 ;; Define the maplev alignment rules.
 ;; Align the assignment operator (`:='), equals signs,
-;; columns (`|'), commas, and comments.  
+;; columns (`|'), commas, double colons (`::'), and comments.  
 ;; Columns and commas are aligned only if the
 ;; the prefix argument is active (i.e. C-u M-x align).
 ;; The comment rule is the last rule so that comments are properly aligned.
 
-(defcustom maplev-align-rules-list
-  '((maple-assignment-rule
-     (regexp   . "\\s-*\\w+\\(\\s-*:\\)=\\(\\s-*\\)")
-     (group    . (1 2))
-     (justify  . t)
-     (tab-stop . nil))
-    (maple-equals-rule
-     (regexp   . "\\s-*\\w+\\(\\s-*\\)=\\(\\s-*\\)")
-     (group    . (1 2))
-     (repeat   . t)
-     (tab-stop . nil))
-    (maple-column-delimiter
-     (regexp . "\\(\\s-*\\)\|\\(\\s-*\\)")
-     (group  . (1 2))
-     (repeat . t)
-     (run-if lambda nil current-prefix-arg))
-    (maple-comma-delimiter
-     (regexp . ",\\(\\s-*\\)\\S-")
-     (repeat . t)
-     (run-if lambda nil current-prefix-arg))
-    (maple-comment
-     (regexp . "\\(\\s-+\\)\\s<")
-     (column . comment-column)))
-  "*A list describing the maplev alignment rules.
+(eval-and-compile
+  (when (featurep 'align)
+    (defcustom maplev-align-rules-list
+      '((maple-assignment-rule
+         (regexp   . "\\s-*\\w+\\(\\s-*:\\)=\\(\\s-*\\)")
+         (group    . (1 2))
+         (justify  . t)
+         (tab-stop . nil))
+        (maple-equals-rule
+         (regexp   . "\\s-*\\w+\\(\\s-*\\)=\\(\\s-*\\)")
+         (group    . (1 2))
+         (repeat   . t)
+         (tab-stop . nil))
+        (maple-type-rule
+         (regexp   . "\\s-*\\w+\\(\\s-*\\)::\\(\\s-*\\)")
+         (group    . (1 2))
+         (repeat   . t)
+         (tab-stop . nil))
+        (maple-column-delimiter
+         (regexp . "\\(\\s-*\\)\|\\(\\s-*\\)")
+         (group  . (1 2))
+         (repeat . t)
+         (run-if lambda nil current-prefix-arg))
+        (maple-comma-delimiter
+         (regexp . ",\\(\\s-*\\)\\S-")
+         (repeat . t)
+         (run-if lambda nil current-prefix-arg))
+        (maple-comment
+         (regexp . "\\(\\s-+\\)\\s<")
+         (column . comment-column)))
+      "*A list describing the maplev alignment rules.
 See the documentation for `align-rules-list' for more info on the format."
-  :type align-rules-list-type
-  :group 'maplev-align)
+      :type align-rules-list-type
+      :group 'maplev-align)
 
-;; Define the alignment exclusion rules.
-;; The prevent changing quoted material and comments.
+    ;; Define the alignment exclusion rules.
+    ;; The prevent changing quoted material and comments.
 
-(defcustom maplev-align-exclude-rules-list
-  `((exc-dq-string
-     (regexp . "\"\\([^\"\n]+\\)\"")
-     (repeat . t))
-    (exc-sq-string
-     (regexp . "'\\([^'\n]+\\)'")
-     (repeat . t))
-    (exc-bq-string
-     (regexp . "`\\([^`\n]+\\)`")
-     (repeat . t))
-     (exc-open-comment
-      (regexp . ,(function
- 	  (lambda (end reverse)
- 	    (funcall (if reverse 're-search-backward
- 		       're-search-forward)
- 		     (concat "[^ \t\n\\\\]"
- 			     (regexp-quote comment-start)
- 			     "\\(.+\\)$") end t))))))
-  "*A list describing text that should be excluded from alignment.
+    (defcustom maplev-align-exclude-rules-list
+      `((exc-dq-string
+         (regexp . "\"\\([^\"\n]+\\)\"")
+         (repeat . t))
+        (exc-sq-string
+         (regexp . "'\\([^'\n]+\\)'")
+         (repeat . t))
+        (exc-bq-string
+         (regexp . "`\\([^`\n]+\\)`")
+         (repeat . t))
+        (exc-open-comment
+         (regexp . ,(function
+                     (lambda (end reverse)
+                       (funcall (if reverse 're-search-backward
+                                  're-search-forward)
+                                (concat "[^ \t\n\\\\]"
+                                        (regexp-quote comment-start)
+                                        "\\(.+\\)$") end t))))))
+      "*A list describing text that should be excluded from alignment.
 See the documentation for `align-exclude-rules-list' for more info."
-  :type align-rules-list-type
-  :group 'maplev-align)
-
+      :type align-rules-list-type
+      :group 'maplev-align)))
 
 ;;}}}
+
 ;;}}}
 ;;{{{ Internal variables
 
@@ -590,7 +639,8 @@ See the documentation for `align-exclude-rules-list' for more info."
   "Marker at end of region in `maplev-mint--code-buffer' that was passed to Mint.")
 
 (defvar maplev-completion-alist nil
-  "Alist for minibuffer completion.")
+  "Alist for minibuffer completion.
+It has the form ((maple-release1  (...)) (maple-release2 (...)))")
 
 (defvar maplev-completion-release nil
   "Maple release for which completion has been requested.")
@@ -598,76 +648,93 @@ See the documentation for `align-exclude-rules-list' for more info."
 (defvar maplev-history-list nil
   "History list used by maplev.")
 
-(defvar complete-symbol-function nil
-  "Mode-specific function to complete a symbol at point.")
 
 ;;}}}
 ;;{{{ Regular expressions
+
 (defconst maplev--declaration-re
-  "\\<\\(local\\|options?\\|global\\|description\\|export\\)\\>"
+  "\\<\\(?:local\\|options?\\|global\\|description\\|export\\|uses\\)\\>"
   "Regular expression for a Maple procedure declaration statement.")
 
 (defconst maplev--simple-name-re  "\\<[a-zA-Z_][a-zA-Z0-9_]*\\>"
   "Regular expression for a simple name.")
 
-(defconst maplev--quoted-name-re  "`[^`\n\\\\]*\\(\\\\.[^`\n\\\\]*\\)*`"
+(defconst maplev--quoted-name-re  "`[^`\n\\\\]*\\(?:\\\\.[^`\n\\\\]*\\)*`"
   "Regular expression for a Maple quoted name.
 It correctly handles escaped backquotes in a name, but not doubled
 backquotes.  It intentionally fails for the exceptional case where a
 name has a newline character.")
 
-(defconst maplev--symbol-re (concat maplev--simple-name-re "\\|"
-                                    maplev--quoted-name-re)
+(defconst maplev--symbol-re (concat "\\(?:" 
+                                    maplev--simple-name-re 
+                                    "\\|"
+                                    maplev--quoted-name-re
+                                    "\\)")
   "Regular expression for a Maple symbol.")
 
-(defconst maplev--indexed-name-re
-  (concat "\\("  maplev--symbol-re "\\)" ; base name
-          "\\([ \t]*\\[[^][]*\\]\\)+"    ; mandatory indices
-          "\\([ \t]*([^)(]*)\\)*")       ; optional arguments
-  "Regular expression for a Maple indexed name.
-Does not allow a square bracket in the index expression,
-nor a parenthesis in the optional arguments.")
-
 (defconst maplev--name-re
-  (concat "\\("  maplev--symbol-re "\\)"  ; base name
-          "\\([ \t\n\f]*\\[[^][]*\\]\\)*" ; optional indices
-          "\\([ \t\n\f]*([^)(]*)\\)*")    ; optional arguments
+  (concat maplev--symbol-re             ; base name
+	  "\\(?:[ \t\n\f]*:-" maplev--symbol-re "\\)*" ; optional module components
+          "\\(?:[ \t\n\f]*\\[[^][]*\\]\\)*" ; optional indices
+          "\\(?:[ \t\n\f]*([^)(]*)\\)*") ; optional arguments
   "Regular expression for Maple names.")
 
 (defconst maplev--comment-re "#.*$"
   "Regular expression for Maple comments.
 A backslash at the end of the line does not continue the comment.")
 
-(defconst maplev--defun-re "\\<proc\\>\\|\\<module\\>"
+(defconst maplev--defun-re "\\(?:\\<proc\\>\\|\\<module\\>\\)"
   "Regular expression at start of a Maple procedure or module.")
 
 (defconst maplev--assignment-re
-  (concat maplev--name-re "[ \t\n]*:=[ \t\n]*")
-  "Regex that matches a Maple assignment.")
+  ;; Use "^" to anchor the regular expression.  This forces
+  ;; re-search-backward to match the complete assignee name, provided
+  ;; that the name is not a split between lines, a very poor practice.
+;;  (concat "^\\s-*"
+;;	  "\\(" maplev--name-re "\\)[ \t\n]*:=[ \t\n]*")
+;;  "Regular expression that matches a Maple assignment.")
+  (concat "\\(?:^\\|\\s-\\|[,]\\)"
+	  "\\('?" maplev--name-re "'?\\)[ \t\n]*:?=[ \t\n]*")
+  "Regular expression that matches a Maple assignment.")
+
 
 (defconst maplev--defun-begin-re
+  ;; This regular expression does not match a named module,
+  ;; nor does it match a procedure/module that is not an
+  ;; assignment statement.  
   (concat maplev--assignment-re
-          "\\(" maplev--comment-re "\\)?"
-          "[ \t\f\n]*\\(" maplev--defun-re "\\)")
-  "Regular expression for Maple procedure assignments.")
+          "\\(?:" maplev--comment-re "\\)?"
+          "[ \t\f\n]*" maplev--defun-re)
+  "Regular expression for Maple defun assignments.  
+The first group corresponds to the name of the defun.")
 
 (defconst maplev--top-defun-begin-re
-  (concat "^" maplev--defun-begin-re)
-  "Regular expression for top level Maple procedure assignments.")
+  (concat "^\\(" maplev--name-re "\\)[ \t\n]*:=[ \t\n]*"
+          "\\(?:" maplev--comment-re "\\)?"
+          "[ \t\f\n]*" maplev--defun-re)
+  "Regular expression for top level Maple defun assignments.
+The first group corresponds to the name of the defun.")
+
 
 (defconst maplev--defun-end-re
+  ;; This regular expression matches any nonqualified end statement,
+  ;; such as "do ... end"; however, I consider such code to be bad form
+  ;; (with the exception of procedures and modules, which allow it for
+  ;; historical reasons).  The proper technique is "do ... end do" or
+  ;; "do ... od".
   (concat "\\<end\\>"
-          ;; "\\([ \t]+" maplev--defun-re "\\)?"
+          "\\(?:[ \t]+" maplev--defun-re "\\)?"
           "[ \t]*[:;]")
-  "Regex for \"end\" statement in a Maple procedure assignment.
-Does not allow linebreaks as this messes up searching.")
+  "Regular expression for \"end\" statement in a Maple defun.
+It does not allow linebreaks as this messes up searching.  
+It matches from the \"end\" to the terminating colon or semicolon.")
 
 (defconst maplev--top-defun-end-re
-  (concat "^\\(" maplev--defun-end-re "\\)"           ; flush left end
-          "\\|"                                       ; or
-          maplev--top-defun-begin-re "[^#\n]*"        ; one line proc
+  (concat "^\\(?:" maplev--defun-end-re "\\)" ; flush left end
+          "\\|"                         ; or
+          maplev--top-defun-begin-re "[^#\n]*" ; one line proc
           maplev--defun-end-re)
-  "Regex for \"end\" statement in a top level Maple procedure assignment.
+  "Regular expression for \"end\" statement in a top level Maple procedure assignment.
 It matches either a flush left \"end\" or a one line procedure assignment.")
 
 (defconst maplev--space-dot-quote-re "\\s-*\\.[`\"]") ; space could be allowed 'twixt dot and quote
@@ -675,7 +742,7 @@ It matches either a flush left \"end\" or a one line procedure assignment.")
 ;;;(defconst maplev--quote-re "\"[^\"]*\"\\|`[^`]*`")    ; fails when a quote contains a quote.
 
 (defconst maplev--string-re "\"[^\"\\\\]*\\(\\\\[[:ascii:]][^\"\\\\]*\\)*\""
-  "Regex that matches a double-quoted Maple string.
+  "Regular expression that matches a double-quoted Maple string.
 It matches even when a string contains newlines or escaped characters, 
 including double-quotes.")
 
@@ -683,12 +750,79 @@ including double-quotes.")
 (defconst maplev--quote-re
   (concat maplev--quoted-name-re
           "\\|"
-          maplev--string-re))
+          maplev--string-re)
+  "Regular expression that matches a backward-quoted name or double code string.")
 
 (eval-and-compile
   (defun maplev--list-to-word-re (words)
     "Generate a regular expression that matches one of WORDS, a list."
     (concat "\\<\\(" (regexp-opt words) "\\)\\>")))
+
+;;}}}
+;;{{{ Syntax table
+
+(defvar maplev-mode-syntax-table nil
+  "Syntax table used in MapleV mode buffers \(except R4\).")
+
+(unless maplev-mode-syntax-table
+  (let ((table (make-syntax-table)))
+    (modify-syntax-entry ?_  "_"  table) ; symbol constituent
+    (modify-syntax-entry ?&  "w"  table) ; word constituent
+    (modify-syntax-entry ?\\ "\\" table) ; escape
+    (modify-syntax-entry ?#  "<"  table) ; comment starter
+    (modify-syntax-entry ?\n ">"  table) ; newline = comment ender
+    (modify-syntax-entry ?\f ">"  table) ; formfeed = comment ender
+    (modify-syntax-entry ?\r " "  table) ; return = whitespace
+    (modify-syntax-entry ?\t " "  table) ; tab = whitespace
+
+    (modify-syntax-entry ?*  "."  table) ; punctuation
+    (modify-syntax-entry ?/  "."  table)
+    (modify-syntax-entry ?+  "."  table)
+    (modify-syntax-entry ?-  "."  table)
+    (modify-syntax-entry ?=  "."  table)
+    (modify-syntax-entry ?<  "."  table)
+    (modify-syntax-entry ?>  "."  table)
+    (modify-syntax-entry ?.  "."  table)
+
+    (modify-syntax-entry ?\' "\"" table) ; string quotes
+    (modify-syntax-entry ?\` "\"" table) ; string quotes
+    (modify-syntax-entry ?\{ "(}" table) ; balanced brackets
+    (modify-syntax-entry ?\[ "(]" table)
+    (modify-syntax-entry ?\( "()" table)
+    (modify-syntax-entry ?\} "){" table)
+    (modify-syntax-entry ?\] ")[" table)
+    (modify-syntax-entry ?\) ")(" table)
+
+    ;; Entries for R5 and later
+    (modify-syntax-entry ?%  "."  table)
+    (modify-syntax-entry ?\" "\"" table)
+
+    (setq maplev-mode-syntax-table table)))
+
+(defvar maplev-mode-4-syntax-table nil
+  "Syntax table used in MapleV mode buffers for R4.")
+
+;; In R4 the ditto operator is `"'
+
+(unless maplev-mode-4-syntax-table
+  (setq maplev-mode-4-syntax-table
+        (copy-syntax-table maplev-mode-syntax-table))
+  (modify-syntax-entry ?\" "." maplev-mode-4-syntax-table))
+
+(defvar maplev--symbol-syntax-table nil
+  "Syntax table for Maple, where `_' is a word consituent.")
+
+(unless maplev--symbol-syntax-table
+  (setq maplev--symbol-syntax-table (copy-syntax-table maplev-mode-syntax-table))
+  (modify-syntax-entry ?_  "w"  maplev--symbol-syntax-table))
+
+(defvar maplev-help-mode-syntax-table nil
+  "Syntax table used in Maple help buffer.")
+
+(unless maplev-help-mode-syntax-table
+  (let ((table (make-syntax-table)))
+    (modify-syntax-entry ?_ "w" table)
+    (setq maplev-help-mode-syntax-table table)))
 
 ;;}}}
 
@@ -715,21 +849,21 @@ including double-quotes.")
 
 
 ;;{{{   module
+
 ;; Define variables and functions for handling indentation information.
 
 (defvar maplev--indent-info nil
   "Buffer local variable storing previous indent information.
+
 Nil when there is no previous, or valid, indent information.
-Otherwise it's a list: \(POINT STATE STACK\).  
-POINT is the character position at which the information applies.  
-STATE is the output of `parse-partial-sexp' 
-\(valid from the start of the buffer to POINT\).
-STACK is a list of lists, each list having the form 
-\(KEYWORD INDENT-CLOSE INDENT-FOLLOW\).  
-KEYWORD is a keyword or parenthesis in the source.  
-INDENT-CLOSE is the indentation amount for the closing keyword.  
-INDENT-FOLLOW is the indentation amount for source between
-KEYWORD and the closing keyword.")
+Otherwise it's a list: \(POINT STATE STACK\).  POINT is the character
+position at which the information applies.  STATE is the output of
+`parse-partial-sexp' \(valid from the start of the buffer to POINT\).
+STACK is a list of lists, each list having the form \(KEYWORD
+INDENT-CLOSE INDENT-FOLLOW\).  KEYWORD is a keyword or parenthesis in
+the source.  INDENT-CLOSE is the indentation amount for the closing
+keyword associated with KEYWORD.  INDENT-FOLLOW is the indentation
+amount for source between KEYWORD and its closing keyword.")
 
 ;; Procedures for accessing the contents of `maplev--indent-info'.
 
@@ -749,9 +883,11 @@ KEYWORD and the closing keyword.")
   "Assign POINT, STATE, and STACK to the variable `maplev--indent-info'."
   (setq maplev--indent-info (list point state stack)))
 
-(defsubst maplev--clear-indent-info ()
+(defsubst maplev-clear-indent-info ()
   "Clear the indent information."
+  (interactive)
   (setq maplev--indent-info nil))
+
 
 (defun maplev--validate-indent-info ()
   "Update the variable `maplev--indent-info' if nil.
@@ -766,14 +902,21 @@ Set STATE and STACK in variable to nil."
     ;; of the buffer.  WHAT ABOUT NARROWING AND/OR FOLDING?
     (maplev--indent-info-assign
      (or (and (looking-at maplev--top-defun-begin-re) (point))
+         ;; Handle noweb mode.
+         ;; If noweb is active in the buffer, then search for
+         ;; the chunk starter.
+         (and (boundp 'noweb-minor-mode) noweb-minor-mode
+              (save-excursion
+                (when (re-search-backward "^<<\\(.*\\)>>=$" nil t)
+                  (1+ (match-end 0)))))
          (save-excursion
            (when (re-search-backward
                   (concat "\\(" maplev--top-defun-begin-re "\\)\\|"
                           "\\(" maplev--top-defun-end-re "\\)") nil t)
-             (if (nth 2 (match-data)) ; found proc?
-                 (match-beginning 0)  ;   goto start of proc
-               (match-end 0))))       ;   goto end of proc
-         (point-min))                 ; goto top of buffer
+             (if (nth 2 (match-data))   ; found proc?
+                 (match-beginning 0)    ;   start of proc
+               (match-end 0))))         ;   end of proc
+         (point-min))                   ; top of buffer
      nil nil)))
 
 (defun maplev--before-change-function (beg &rest unused)
@@ -782,9 +925,11 @@ This function is called whenever the buffer is changed.  BEG is the
 character position of the beginning of the change.  UNUSED is not used."
   (and maplev--indent-info
        (< beg (maplev--indent-info-point))
-       (maplev--clear-indent-info)))
+       (maplev-clear-indent-info)))
+
 ;;}}}
 ;;{{{   grammar
+
 (defconst maplev--grammar-alist nil
   "Assoc list defining the grammar for Maple indentation.
 Each entry has the form \(KEY . \(MATCH-RE OPEN-P INDENT ADJUST-FUNC
@@ -844,6 +989,7 @@ is handled.  Currently it is only used by the keyword `end'.")
 (defconst maplev--grammar-keyword-re
   (eval-when-compile
     (concat
+     ;;     (maplev--list-to-word-re
      (maplev--list-to-word-re
       '("proc" "module" "end"
 ;;;      "for" "from" "to" "by" "while" "in" "do" "od"
@@ -860,6 +1006,7 @@ is handled.  Currently it is only used by the keyword `end'.")
   (if (looking-at (concat "[ \t]+"
                           (maplev--list-to-word-re '("proc" "module" "do" "use" "if" "try"))))
       (goto-char (match-end 0))))
+
 ;;}}}
 ;;{{{   errors
 
@@ -886,6 +1033,7 @@ start of the offending keyword."
 
 ;;}}}
 ;;{{{   functions
+
 (defun maplev-goto-previous-codeline ()
   "Move point to the start of the previous line of Maple code.
 Blank lines and comment lines are skipped.
@@ -894,13 +1042,14 @@ THIS WILL FAIL IN A STRING."
   (while (and (= (forward-line -1) 0)
               (looking-at "\\s-*\\(#\\|$\\)"))))
 
-(defsubst maplev--indent-point-of-proc ()
+(defun maplev--indent-point-of-proc ()
   "Move point to position from where a procedure is indented.
-Point must originally be just to the left of the \"proc\".
+Point must originally be just to the left of the \"proc\" or \"module\".
 If procedure is anonymous, point is not moved and nil is returned.
 Otherwise point is moved to left of assignee and point is returned."
   ;; Regexp does not include possible comments.
-  (re-search-backward (concat maplev--assignment-re "\\=") nil t))
+  (and (re-search-backward (concat maplev--assignment-re "\\=") nil t)
+       (goto-char (match-beginning 1))))
 
 (defun maplev--indent-line-with-info ()
   "Indent the current line as Maple code.  Point must be at the left margin."
@@ -910,6 +1059,7 @@ Otherwise point is moved to left of assignee and point is returned."
                 (or (nth 3 state) (nth 4 state))))
     (delete-region (point) (progn (skip-chars-forward " \t") (point)))
     (indent-to (maplev--compute-indent (car (maplev--indent-info-stack))))))
+
 ;;}}}
 ;;{{{   algorithm
 
@@ -936,98 +1086,117 @@ indent position to point.  Update the stack and state according to the
 syntax table and the grammar, `maplev--grammar-alist'.  Restore point.
 The calling function must ensure that the previous info point is not
 beyond \(point\)."
+
+;; This uses unwind-protect to restore the syntax table.
+;; Why not use with-syntax-table instead?  One excuse for
+;; not changing this is that with-syntax-table is more complicated,
+;; it uses unwind-protect as well as save-current-buffer.
   (save-excursion
     (let ((point (maplev--indent-info-point))
           (stack (maplev--indent-info-stack))
           (state (maplev--indent-info-state))
           (end (point))
+          (previous-syntax-table (syntax-table))
+
           keyword keyword-beginning key-list indent indent-close
           adjust-func post-func top-stack old-keyword match-re
           case-fold-search)
-      (goto-char point)
-      (while (re-search-forward maplev--grammar-keyword-re end 'move)
 
-        ;; Assign loop variables.  KEY-POINT is assigned the position
-        ;; after the next keyword.  If no keyword exists in the line,
-        ;; KEY-POINT is nil.
+      (unwind-protect
+          (save-restriction
+            (widen)
 
-        (setq keyword (match-string-no-properties 0)
-              key-list (cdr (assoc keyword maplev--grammar-alist))
-              indent (nth 2 key-list)
-              adjust-func (nth 3 key-list)
-              post-func (nth 4 key-list)
-              top-stack (car stack)
-              indent-close (nth 1 top-stack)
-              old-keyword (car top-stack) ; Don't set to (old) KEYWORD, it might have been matched
-              match-re (and old-keyword
-                            (car (cdr (assoc old-keyword maplev--grammar-alist))))
-              keyword-beginning (match-beginning 0)
-              state (parse-partial-sexp point (point) nil nil state)
-              point (point))
-        (cond
+            ;; Change the buffer syntax table to maplev--symbol-syntax-table 
+            ;; so that the underscore is considered a word constituent.
 
-         ;; If KEYWORD is in a comment or a quote, do nothing.
-         ((or (nth 4 state) (nth 3 state))) ; comments are more frequent, so check first
+            (set-syntax-table maplev--symbol-syntax-table)
+            (goto-char point)
+            (while (re-search-forward maplev--grammar-keyword-re end 'move)
 
-         ;; Does KEYWORD pair with the top one on STACK?
-         ((and match-re (string-match match-re keyword))
-          ;; Should more keywords follow KEYWORD?
-          (if (nth 0 key-list)
-              ;; If so, replace the top of STACK with a new list.  The
-              ;; new list has the new KEYWORD, the INDENT-CLOSE from
-              ;; the old list, and
-              (setcar stack (list keyword
-                                  indent-close
-                                  (+ indent-close indent)))
-            ;; otherwise pop the top of STACK.
-            (and post-func (funcall post-func))
-            (setq stack (cdr stack))))
+              ;; Assign loop variables.  KEY-POINT is assigned the position
+              ;; after the next keyword.  If no keyword exists in the line,
+              ;; KEY-POINT is nil.
+              
+              (setq keyword (match-string-no-properties 0)
+                    key-list (cdr (assoc keyword maplev--grammar-alist))
+                    indent (nth 2 key-list)
+                    adjust-func (nth 3 key-list)
+                    post-func (nth 4 key-list)
+                    top-stack (car stack)
+                    indent-close (nth 1 top-stack)
+                    old-keyword (car top-stack) ; Don't set to (old) KEYWORD, it might have been matched
+                    match-re (and old-keyword
+                                  (car (cdr (assoc old-keyword maplev--grammar-alist))))
+                    keyword-beginning (match-beginning 0)
+                    state (parse-partial-sexp point (point) nil nil state)
+                    point (point))
+              (cond
+               
+               ;; If KEYWORD is in a comment or a quote, do nothing.
+               ((or (nth 4 state) (nth 3 state))) ; comments are more frequent, so check first
+               
+               ;; Does KEYWORD pair with the top one on STACK?
+               ((and match-re (string-match match-re keyword))
+                ;; Should more keywords follow KEYWORD?
+                (if (nth 0 key-list)
+                    ;; If so, replace the top of STACK with a new list.  The
+                    ;; new list has the new KEYWORD, the INDENT-CLOSE from
+                    ;; the old list, and
+                    (setcar stack (list keyword
+                                        indent-close
+                                        (+ indent-close indent)))
+                  ;; otherwise pop the top of STACK.
+                  (and post-func (funcall post-func))
+                  (setq stack (cdr stack))))
 
-         ;; Is KEYWORD an opening keyword?  Push a new item onto
-         ;; STACK.
+               ;; Is KEYWORD an opening keyword?  Push a new item onto
+               ;; STACK.
 
-         ((nth 1 key-list)
-          (setq stack
-                (cons
-                 (cons
-                  keyword
-                  ;; Handle keywords and parentheses
-                  ;; differently. Indentation for keywords that start
-                  ;; a Maple statement is from `keyword-beginning';
-                  ;; however, if the keyword is an assigned proc then
-                  ;; the actual beginning of the keyword is the start
-                  ;; of the assigned name.
-                  (if indent
-                      (save-excursion
-                        (goto-char keyword-beginning)
-                        (and adjust-func (funcall adjust-func))
-                        (list (current-column) ; alignment for closing keyword
-                              (+ (current-column) indent))) ; alignment for subblock
+               ((nth 1 key-list)
+                (setq stack
+                      (cons
+                       (cons
+                        keyword
+                        ;; Handle keywords and parentheses appropriately.
+                        ;; Indentation for keywords that
+                        ;; start a Maple statement is from
+                        ;; `keyword-beginning'; however, if the
+                        ;; keyword is an assigned proc then the actual
+                        ;; beginning of the keyword is the start of
+                        ;; the assigned name.
+                        (if indent
+                            (save-excursion
+                              (goto-char keyword-beginning)
+                              (and adjust-func (funcall adjust-func))
+                              (list (current-column) ; alignment for closing keyword
+                                    (+ (current-column) indent))) ; alignment for subblock
 
-                    ;; Handle an open parenthesis.  INDENT-CLOSE is
-                    ;; set to the same column as the parerenthesis so
-                    ;; that the closing parenthesis is aligned.  If
-                    ;; space or a a comment follows the parenthesis,
-                    ;; then the following block of code is indented
-                    ;; from the current indentation.  Otherwise
-                    ;; following code indents to first character
-                    ;; following the parenthesis.
-                    (list
-                     (1- (current-column)) ; INDENT-CLOSE
-                     (progn
-                       (skip-chars-forward " \t")
-                       (if (looking-at "#\\|$") ; no code on remainder of line
-                           (+ (current-indentation) maplev-indent-level)
-                         (current-column))))))
-                 stack)))
+                          ;; Handle an open parenthesis.  INDENT-CLOSE is
+                          ;; set to the same column as the parerenthesis so
+                          ;; that the closing parenthesis is aligned.  If
+                          ;; space or a a comment follows the parenthesis,
+                          ;; then the following block of code is indented
+                          ;; from the current indentation.  Otherwise
+                          ;; following code indents to first character
+                          ;; following the parenthesis.
+                          (list
+                           (1- (current-column)) ; INDENT-CLOSE
+                           (progn
+                             (skip-chars-forward " \t")
+                             (if (looking-at "#\\|$") ; no code on remainder of line
+                                 (+ (current-indentation) maplev-indent-level)
+                               (current-column))))))
+                       stack)))
 
-         ;; KEYWORD is out of sequence.  Move point before KEYWORD and
-         ;; signal an error.
-         (t (re-search-backward keyword)
-            (signal 'keyword-out-of-sequence (list keyword (point))))))
-      (if (< point end)
-          (setq state (parse-partial-sexp point (point) nil nil state)))
-      (maplev--indent-info-assign end state stack))))
+               ;; KEYWORD is out of sequence.  Move point before KEYWORD and
+               ;; signal an error.
+               (t (re-search-backward keyword)
+                  (signal 'keyword-out-of-sequence (list keyword (point))))))
+            (if (< point end)
+                (setq state (parse-partial-sexp point (point) nil nil state)))
+            (maplev--indent-info-assign end state stack))
+        ;; Restore the syntax table
+        (set-syntax-table previous-syntax-table)))))
 
 ;;}}}
 ;;{{{   commands
@@ -1041,7 +1210,8 @@ is returned.  Point must be at current indentation."
   (if (not indent-info)
       0
     (save-excursion
-      (let ((point (point)))
+      (let ((point (point))
+            case-fold-search)
         (cond
          ;; Handle declarations in procedures (and modules)
          ((and (string-match maplev--defun-re (car indent-info))
@@ -1088,7 +1258,7 @@ BEG and END may also be passed to the function."
           (goto-char beg)
           (beginning-of-line)
           (setq end (set-marker (make-marker) end))
-          (maplev--clear-indent-info)  ; temporary
+          (maplev-clear-indent-info)   ; temporary
           (maplev--validate-indent-info)
 
           ;; THE FOLLOWING LINE IS EXPERIMENTAL BUT SEEMS NECESSARY
@@ -1116,10 +1286,10 @@ BEG and END may also be passed to the function."
     (widen)
     (maplev-indent-region (point-min) (point-max))))
 
-(defun maplev-indent-procedure (&optional level)
+(defun maplev-indent-procedure ()
   "Indent the current procedure or module."
-  (interactive "p")
-  (apply 'maplev-indent-region (maplev-current-proc level)))
+  (interactive)
+  (apply 'maplev-indent-region (maplev-current-defun)))
 
 (defun maplev-indent-line ()
   "Indent current line according to grammar.
@@ -1127,7 +1297,7 @@ If point was to the left of the initial indentation, it moves to the
 final indentation; otherwise it remains in the same position relative
 to the indentation."
   (interactive)
-;; 25-Feb-2001: Added condition-case to move cursor to an out of sequence keyword.
+  ;; 25-Feb-2001: Added condition-case to move cursor to an out of sequence keyword.
   (condition-case err
       (let ((before-change-functions nil))
         (goto-char (max (save-excursion
@@ -1147,7 +1317,7 @@ to the indentation."
   "Return the column at which a comment should be started or moved to.
 If the line starts with a flush left comment, return 0."
   (if (looking-at "^#")
-      0                 ; Existing comment at bol stays there.
+      0                         ; Existing comment at bol stays there.
     comment-column))
 
 ;; Xmaple doesn't support selections
@@ -1190,17 +1360,20 @@ regardless of where you click."
   (let ((map (make-sparse-keymap)))
     (define-key map [(tab)]                      'maplev-electric-tab)
     (define-key map [(meta tab)]                 'maplev-complete-symbol)
+    (define-key map [(control c) (meta tab)]     'maplev-add-exports-of-module-at-point)
     (define-key map [(backspace)]                'backward-delete-char-untabify)
     (define-key map [(control backspace)]        'maplev-untab)
     (define-key map [(control ?\;)]              'maplev-insert-assignment-operator)
     (define-key map [(control c) (control t) ?p] 'maplev-template-proc)
     (define-key map [(control c) (control t) ?m] 'maplev-template-module)
+    (define-key map [(control c) (control t) ?u] 'maplev-template-use-statement)
+
     (define-key map [(control j)]                'maplev-indent-newline)
     (define-key map [(control return)]           'maplev-newline-and-comment)
-    (define-key map [(meta control h)]           'maplev-mark-proc)
-    (define-key map [(meta control a)]           'maplev-beginning-of-proc)
-    (define-key map [(meta control e)]           'maplev-end-of-proc)
-    (define-key map [(control x) ?n ?d]          'maplev-narrow-to-proc)
+    (define-key map [(meta control h)]           'maplev-mark-defun)
+    ;;  (define-key map [(meta control a)]           'maplev-beginning-of-proc)
+    ;;  (define-key map [(meta control e)]           'maplev-end-of-proc)
+    (define-key map [(control x) ?n ?d]          'maplev-narrow-to-defun)
 
     ;; These two bindings are needed only under linux / unix
     (define-key map [(meta control y)]          'maplev-insert-cut-buffer)
@@ -1215,12 +1388,14 @@ regardless of where you click."
     (define-key map [(control c) (tab) tab] 'maplev-indent-buffer)
     (define-key map [(control c) (tab) ?p]  'maplev-indent-procedure)
     (define-key map [(control c) (tab) ?r]  'maplev-indent-region)
+    (define-key map [(control c) (tab) ?k]  'maplev-clear-indent-info)
+    
 
     ;; Cmaple commands
     (define-key map [(control c) (control c) ?b]      'maplev-cmaple-send-buffer)
     (define-key map [(control c) (control c) ?p]      'maplev-cmaple-send-procedure)
     (define-key map [(control c) (control c) ?r]      'maplev-cmaple-send-region)
-    (define-key map [(control c) (control c) return] 'maplev-cmaple-send-line)
+    (define-key map [(control c) (control c) return]  'maplev-cmaple-send-line)
     (define-key map [(control c) (control c) ?g]      'maplev-cmaple-pop-to-buffer)
     (define-key map [(control c) (control c) ?i]      'maplev-cmaple-interrupt)
     (define-key map [(control c) (control c) ?k]      'maplev-cmaple-kill)
@@ -1248,6 +1423,7 @@ regardless of where you click."
     (define-key map [(control c) (control s) ?c] 'maplev-switch-buffer-cmaple)
 
     (setq maplev-mode-map map)))
+
 ;;}}}
 ;;{{{ Menu
 
@@ -1376,72 +1552,13 @@ controls the expansion."
   (list-one-abbrev-table maplev-mode-abbrev-table "*Abbrevs*"))
 
 ;;}}}
-;;{{{ Syntax table
-
-(defvar maplev-mode-syntax-table nil
-  "Syntax table used in MapleV mode buffers \(except R4\).")
-
-(unless maplev-mode-syntax-table
-  (setq maplev-mode-syntax-table (make-syntax-table))
-  (modify-syntax-entry ?_  "_"  maplev-mode-syntax-table) ; symbol constituent
-  (modify-syntax-entry ?\\ "\\" maplev-mode-syntax-table) ; escape
-  (modify-syntax-entry ?#  "<"  maplev-mode-syntax-table) ; comment starter
-  (modify-syntax-entry ?\n ">"  maplev-mode-syntax-table) ; newline = comment ender
-  (modify-syntax-entry ?\f ">"  maplev-mode-syntax-table) ; formfeed = comment ender
-  (modify-syntax-entry ?\r " "  maplev-mode-syntax-table) ; return = whitespace
-  (modify-syntax-entry ?\t " "  maplev-mode-syntax-table) ; tab = whitespace
-
-  (modify-syntax-entry ?*  "."  maplev-mode-syntax-table) ; punctuation
-  (modify-syntax-entry ?/  "."  maplev-mode-syntax-table)
-  (modify-syntax-entry ?+  "."  maplev-mode-syntax-table)
-  (modify-syntax-entry ?-  "."  maplev-mode-syntax-table)
-  (modify-syntax-entry ?=  "."  maplev-mode-syntax-table)
-  (modify-syntax-entry ?<  "."  maplev-mode-syntax-table)
-  (modify-syntax-entry ?>  "."  maplev-mode-syntax-table)
-  (modify-syntax-entry ?.  "."  maplev-mode-syntax-table)
-
-  (modify-syntax-entry ?\' "\"" maplev-mode-syntax-table) ; string quotes
-  (modify-syntax-entry ?\` "\"" maplev-mode-syntax-table) ; string quotes
-  (modify-syntax-entry ?\{ "(}" maplev-mode-syntax-table) ; balanced brackets
-  (modify-syntax-entry ?\[ "(]" maplev-mode-syntax-table)
-  (modify-syntax-entry ?\( "()" maplev-mode-syntax-table)
-  (modify-syntax-entry ?\} "){" maplev-mode-syntax-table)
-  (modify-syntax-entry ?\] ")[" maplev-mode-syntax-table)
-  (modify-syntax-entry ?\) ")(" maplev-mode-syntax-table)
-
-  ;; Entries for R5 and later
-  (modify-syntax-entry ?%  "."  maplev-mode-syntax-table)
-  (modify-syntax-entry ?\" "\"" maplev-mode-syntax-table)
-  )
-
-(defvar maplev-mode-4-syntax-table nil
-  "Syntax table used in MapleV mode buffers for R4.")
-
-;; In R4 the ditto operator is `"'
-(unless maplev-mode-4-syntax-table
-  (setq maplev-mode-4-syntax-table
-        (copy-syntax-table maplev-mode-syntax-table))
-  (modify-syntax-entry ?\" "." maplev-mode-4-syntax-table))
-
-(defvar maplev-help-mode-syntax-table nil
-  "Syntax table used in Maple help buffer.")
-
-(unless maplev-help-mode-syntax-table
-  (let ((table (make-syntax-table)))
-    (modify-syntax-entry ?_ "w" table)
-    ;;    (modify-syntax-entry ?[ "w" table)
-    ;;    (modify-syntax-entry ?] "w" table)
-    ;;    (modify-syntax-entry ?/ "w" table)
-    (setq maplev-help-mode-syntax-table table)))
-
-;;}}}
 ;;{{{ Imenu support
 ;; Index all the procedure assignments.  Other possiblities to index
 ;; are global variable assignments, macros and aliases; however,
 ;; selecting them is difficult.
 
 (defvar maplev-imenu-generic-expression
-  `(("Procedures" ,maplev--top-defun-begin-re 1)
+  `(("Procedures" ,maplev--defun-begin-re 1)
     ("Variables" ,(concat "^\\(" maplev--name-re "\\)"
                           "[ \t\n]*:=[ \t\n]*"
                           "\\([^ \t\np]\\|p\\([^r]\\|r\\([^o]\\|o\\([^c]\\|c[^ \t\n(]\\)\\)\\)\\)") 1)
@@ -1508,9 +1625,9 @@ Assigned to `fill-paragraph-function'.  If any of the current line is
 a comment, fill the comment or the paragraph of it that point is in,
 preserving the comment's indentation and initial comment symbol.
 Prefix JUSTIFY means justify as well."
-  (interactive "P")
-  (let (has-code             ; Non-nil if line contains code (possibly blank)
-        comment-fill-prefix) ; Appropriate fill-prefix for a comment.
+  (interactive "*P")
+  (let (has-code      ; Non-nil if line contains code (possibly blank)
+        comment-fill-prefix)  ; Appropriate fill-prefix for a comment.
 
     ;; Figure out what kind of comment we are looking at.
 
@@ -1597,7 +1714,9 @@ Prefix JUSTIFY means justify as well."
 ;;}}}
 
 ;;{{{ MapleV mode
+
 ;;{{{   Release
+
 (defsubst maplev--major-release ()
   "Integer variable assigned the selected release of Maple."
   (truncate (string-to-number maplev-release)))
@@ -1628,8 +1747,10 @@ RELEASE. If in `maplev-mode' also refontify the buffer."
   (when (eq major-mode 'maplev-mode)
     (maplev-reset-font-lock)
     (maplev-mode-name)))
+
 ;;}}}
 ;;{{{   definition
+
 (defun maplev-mode ()
   "Major mode for editing Maple code.
 
@@ -1639,6 +1760,8 @@ RELEASE. If in `maplev-mode' also refontify the buffer."
 
 \\[maplev-insert-assignment-operator] inserts `:=' with spaces at end of line.
 \\[maplev-template-proc] inserts a procedure template after querying for options.
+\\[maplev-template-module] inserts a module template after querying for options.
+\\[maplev-template-use-statement] inserts a use statement after querying for the expression sequence.
 
 There are functions and keys for indenting code, syntax checking \(via mint\),
 displaying Maple help pages and printing the source code of procedures from the
@@ -1667,6 +1790,9 @@ Maple libraries.
   (set (make-local-variable 'paragraph-ignore-fill-prefix) t)
   (set (make-local-variable 'adaptive-fill-mode)       nil)
   (set (make-local-variable 'auto-fill-inhibit-regexp) (concat "[ \t]*[^  \t#]"))
+
+  (set (make-local-variable 'beginning-of-defun-function) #'maplev-beginning-of-defun)
+  (set (make-local-variable 'end-of-defun-function)       #'maplev-end-of-defun)
 
   (set (make-local-variable 'require-final-newline) t)
 
@@ -1703,12 +1829,9 @@ Maple libraries.
 
   ;; aligning rules
 
-  (setq align-mode-rules-list maplev-align-rules-list)
-  (setq align-mode-exclude-rules-list maplev-align-exclude-rules-list)
-
-  ;; completion
-
-  (set (make-local-variable 'complete-symbol-function) 'maplev-complete-symbol)
+  (when (featurep 'align)
+    (setq align-mode-rules-list maplev-align-rules-list)
+    (setq align-mode-exclude-rules-list maplev-align-exclude-rules-list))
 
   ;; Font lock support: make these variables buffer-local
   ;; so that we can change the decoration level
@@ -1720,12 +1843,10 @@ Maple libraries.
   (make-local-variable 'maplev-mint--code-end)
 
   ;; Is this what one wants??
-  (set (make-local-variable 'beginning-of-defun-function)
-       #'(lambda () (maplev-proc-beginning 1 t)))
-  (set (make-local-variable 'end-of-defun-function)
-       #'(lambda () (maplev-proc-end 1 t)))
+  ;; (set (make-local-variable 'beginning-of-defun-function) #'(lambda () (maplev-proc-beginning 1 t)))
+  ;; (set (make-local-variable 'end-of-defun-function)       #'(lambda () (maplev-proc-end 1 t)))
   ;; (set (make-local-variable 'add-log-current-defun-function)
-  ;;      #'maplev-current-proc-name) ;; not yet available
+  ;;      #'maplev-current-defun-name) ;; not yet available
 
   ;; Release support
   (maplev-set-release)
@@ -1745,7 +1866,9 @@ Maple libraries.
 (defun maplev-mode-name ()
   "Set `mode-name' in `maplev-mode' according to `maplev-release'."
   (setq mode-name (concat "Maple R" maplev-release)))
+
 ;;}}}
+
 ;;}}}
 
 ;;{{{ Electric functions
@@ -1757,7 +1880,7 @@ whitespace."
   (interactive "*")
   (or (maplev--comment-line-indentation) ; nil if a comment
       (maplev-indent-line))
-  (delete-horizontal-space)              ; remove trailing whitespace
+  (delete-horizontal-space)             ; remove trailing whitespace
   (newline)
   (maplev-indent-line))
 
@@ -1805,194 +1928,136 @@ Optionally move N lines forward before testing.  Point is not affected."
 ;;}}}
 ;;{{{ Interactive functions
 
-;; maplev-beginning-of-proc and maplev-end-of-proc are the low-level
-;; functions that are doing all the work.
-;; maplev-proc-beginning and maplev-proc-end are smarter high-level
-;; functions that jump over nested procedures according to the value
-;; of LEVEL.
-;; Would it make sense to replace the keybindings for
-;; maplev-beginning-of-proc and maplev-end-of-proc by keybindings
-;; for maplev-proc-beginning and maplev-proc-end?
-
-(defun maplev-beginning-of-proc (&optional top move n)
-  "Character position of beginning of defun before point.
-If optional arg TOP is non-nil search for beginning of top level defun.
-If optional arg MOVE is non-nil move point \(t when called interactively\).
-With argument N, search the Nth beginning of a defun before point.
-Negative argument -N means beginning of defun after point.
-Return point \(or nil if search failed\)."
-  (interactive (list nil t (prefix-numeric-value current-prefix-arg)))
-  (let ((regexp (if top maplev--top-defun-begin-re maplev--defun-re))
-        pos case-fold-search)
+(defun maplev--beginning-of-defun-pos (&optional top n)
+  "Return character position of beginning of previous defun.  If
+optional argument TOP is non-nil, search for top level defun.  With
+optional argument N, do it that many times.  Negative argument -N
+means search forward to Nth preceding end of defun.  Return nil if
+search fails."
+  (let ((regexp (if top maplev--top-defun-begin-re maplev--defun-begin-re))
+        pos)
     (setq n (or n 1))
     (save-excursion
-      (if (or (< n 0)
-              ;; If point possibly inside what we want to match, then
-              ;; go forward to end of line. This is not always enough:
-              ;; If the procedure name and the ``proc'' are on
-              ;; separate lines and the point is between the two, it
-              ;; will not find the beginning of this function.
-              (not (looking-at regexp)))
-          (end-of-line))
-      (if (maplev--re-search-backward regexp nil t n)
-          (setq pos (match-beginning 0))))
-    (if (and move pos) (goto-char pos))
-    pos))
+      (cond ((> n 0)
+             (and (setq pos 
+                        ;; Assign pos the position of the previous beginning statement.
+                        ;; Because point could be in the middle of the statement,
+                        ;; first search backwards, then forwards.  If the beginning position
+                        ;; of the forwards search is before the original point (orig),
+                        ;; then use it, otherwise use the beginning position of the backwards search.
+                        (let* ((orig (point))
+                               (beg (maplev--re-search-backward regexp nil 'move)))
+                          (if beg (goto-char (match-end 0)))
+                          (or (and (maplev--re-search-forward regexp nil t)
+                                   (< (setq pos (match-beginning 0)) orig)
+                                   pos)
+                              beg)))
+                  ;; If n=1 then pos is the character position,
+                  (if (= n 1)
+                      pos
+                    ;; otherwise, search backwards n-1 times.  
+                    ;; Because we are starting at the end of a defun,
+                    ;; we don't have to do the backwards search.
+                    (goto-char pos)
+                    (maplev--re-search-backward regexp nil t (1- n)))))
+            ((< n 0)
+             (and (maplev--re-search-backward regexp nil t n)
+                  (match-beginning 0)))
+            ((point))))))
 
-(defun maplev-end-of-proc (&optional top move n)
-  "Character position of end of defun before point.
-If optional arg TOP is non-nil search for end of top level defun.
-If optional arg MOVE is non-nil move point \(t when called interactively\).
-With argument N, search the Nth end of a defun before point.
-Negative argument -N means end of defun after point.
-Return point \(or nil if search failed\)."
-  ;; This function looks for one of two conditions:
-  ;; (1) the end statement is flush left
-  ;; (2) the end statement is on the same line as the proc statement
-  ;;     that begins a procedure.
-  (interactive (list nil t (prefix-numeric-value current-prefix-arg)))
+(defun maplev--end-of-defun-pos (&optional top n)
+  "Return character position of next end of defun.  If optional
+argument TOP is non-nil, search for top level defun.  With optional
+argument N, do it that many times.  Negative argument -N means search
+back to Nth preceding end of defun.  Return nil if search fails."
+
+  ;; The search algorithm is asymmetric with respect to direction.
+  ;; Searching backwards (-N) for an end of defun is easy, just search
+  ;; and move to the end of the match.  Searching forward is more
+  ;; complicated because point could lie within an end statement.
+
   (let ((regexp (if top maplev--top-defun-end-re maplev--defun-end-re))
         pos)
     (setq n (or n 1))
     (save-excursion
-      (if (or (< n 0)
-              ;; If point possibly inside what we want to match,
-              ;; then go backwards to beginning of line (not always enough).
-              (not (or (bobp) (string-match "[:;]" (string (char-before))))))
-          (beginning-of-line))
-      (if (maplev--re-search-forward regexp nil t n)
-          (setq pos (match-end 0))))
-    (if (and move pos) (goto-char pos))
-    pos))
+      (cond ((> n 0)
+             (and (setq pos 
+                        ;; Assign pos the position of the next end statement.
+                        ;; Because point could be in the middle of the statement,
+                        ;; first search forward, then backwards.  If the end position
+                        ;; of the backwards search is past the original point (orig),
+                        ;; then use it, otherwise use the end position of the forward search.
+                        (let* ((orig (point))
+                               (end (maplev--re-search-forward regexp nil 'move)))
+                          (if end (goto-char (match-beginning 0)))
+                          (or (and (maplev--re-search-backward regexp nil t)
+                                   (> (setq pos (match-end 0)) orig)
+                                   pos)
+                              end)))
+                  ;; If n=1 then pos is the character position,
+                  (if (= n 1)
+                      pos
+                    ;; otherwise, search forward n-1 times.  
+                    ;; Because we are starting at the end of a defun,
+                    ;; we don't have to do the backwards search.
+                    (goto-char pos)
+                    (maplev--re-search-forward regexp nil t (1- n)))))
+            ((< n 0)
+             (and (maplev--re-search-forward regexp nil t n)
+                  (match-end 0)))
+            ((point))))))
 
-(defun maplev-scan-proc (from count depth)
-  "Scan maple procedures. FROM, COUNT, and DEPTH are like in `scan-lists'.
-Returns the character number of the position thus found.
-If no such position is found, it returns a list \(POSITION COUNT DEPTH\)
-which corresponds to the last successful step before the search failed.
-Return value is nil if there was not a single successful step."
-  (let ((dir (if (> count 0) 1 -1))
-        beg end pos err)
-    (save-excursion
-      (goto-char from)
-      (while (progn (setq beg (maplev-beginning-of-proc nil nil (- dir))
-                          end (maplev-end-of-proc nil nil dir))
-                    (cond ((or (and beg (not end))
-                               (and beg end (> (* dir (- end beg)) 0)))
-                           (setq depth (+ depth dir))
-                           (goto-char beg))
-                          (end
-                           (setq depth (- depth dir))
-                           (goto-char end))
-                          ((setq err t)))
-                    (if (= 0 depth)
-                        (setq count (- count dir)))
-                    (if (not err) (setq pos (list (point) count depth)))
-                    (and (not err) (/= 0 count))))
-      (if (not err)
-          (point)
-        pos))))
+(defun maplev-beginning-of-defun (&optional n)
+  "Move point backward to the beginning of defun.  With optional
+argument N, move to the beginning of the Nth preceding defun.
+Negative argument -N means move forward to the end of the Nth
+following defun."
+  (interactive)
+  (setq n (or n 1))
+  (goto-char (or (maplev--beginning-of-defun-pos nil n)
+                 (if (> n 0) (point-min) (point-max)))))
+       
+(defun maplev-end-of-defun (&optional n)
+  "Move point forward to the end of defun.  With optional argument N,
+move to the end of the Nth following defun.  Negative argument -N
+means move backwards to the end of the Nth preceding defun."
+  (interactive)
+  (setq n (or n 1))
+  (goto-char (or (maplev--end-of-defun-pos nil n)
+                 (if (> n 0) (point-max) (point-min)))))
 
-(defun maplev-proc-beginning (&optional level move)
-  "Character position of beginning of defun before point.
-LEVEL defaults to 1. If LEVEL <= 0 find top level procedure.
-If optional arg MOVE is non-nil move point (t when called interactively).
-Return point \(or nil if search failed\)."
-  (interactive (list (prefix-numeric-value current-prefix-arg) t))
-  (maplev-proc-bounds -1 level move))
+(defun maplev-mark-defun ()
+  "Put mark at end of this defun, point at beginning.
+The defun marked is the one that contains point."
+  (interactive)
+  (push-mark (point))
+  (beginning-of-line)
+  (if (looking-at maplev--defun-begin-re) (goto-char (match-end 0)))
+  (let ((count 1)
+        (regexp (concat "\\(" maplev--defun-begin-re "\\)\\|\\(?:" maplev--defun-end-re "\\)")))
+    (while (and (/= count 0)
+                (re-search-forward regexp nil 'move))
+      (setq count (+ count (if (match-beginning 1) 1 -1))))
+    (forward-line)
+    (push-mark (point) nil t)
+    (when (= count 0)
+      (goto-char (match-beginning 0))
+      (setq count -1))
+    (while (and (/= count 0)
+                (re-search-backward regexp nil 'move))
+      (setq count (+ count (if (match-beginning 1) 1 -1))))))
 
-(defun maplev-proc-end (&optional level move)
-  "Character position of end of defun at point.
-LEVEL defaults to 1. If LEVEL <= 0 find top level procedure.
-If optional arg MOVE is non-nil move point \(t when called interactively\).
-Return point \(or nil if search failed\)."
-  (interactive (list (prefix-numeric-value current-prefix-arg) t))
-  (maplev-proc-bounds 1 level move))
+(defun maplev-current-defun ()
+  "Return a list with buffer positions of begin and end of current defun."
+  (save-excursion
+    (maplev-mark-defun)
+    (list (point) (mark))))
 
-(defun maplev-proc-bounds (dir &optional level move)
-  "Character position of boundary of defun at point.
-If DIR equals -1 search beginning, if DIR equals 1 search end.
-LEVEL defaults to 1. If LEVEL <= 0 find top level procedure.
-If optional arg MOVE is non-nil move point.
-Return point \(or nil if search failed\)."
-  (if (not level) (setq level 1))
-  (let ((pnt (point)) beg)
-    (if (< level 0)
-        ;; Old algorithm.
-        (if (< dir 0)
-            (setq beg (maplev-beginning-of-proc t))
-          (setq beg (maplev-end-of-proc t)))
-      ;; Test the new algorithm.
-      (if (= level 0) (setq level 10000))
-      (setq beg (maplev-scan-proc pnt dir level))
-      (when (and (listp beg) (nth 2 beg))
-        ;; We try to calculate the top level
-        (setq level (- level (nth 2 beg)))
-        (if (> level 0)
-            (setq beg (maplev-scan-proc pnt dir level))))
-      (if (not (number-or-marker-p beg))
-          (error "Current defun ill-defined"))
-      (if (< dir 0)
-          ;; If the current procedure is assigned to a variable,
-          ;; the assignment is included in the `current procedure'.
-          (save-excursion
-            (goto-char beg)
-            (if (re-search-backward (concat maplev--assignment-re "\\=") nil t)
-                (setq beg (match-beginning 0))))))
-    (if move (goto-char beg))
-    beg))
-
-(defun maplev-current-proc (&optional level)
-  "The current Maple procedure.
-LEVEL defaults to 1. If LEVEL <= 0 find top level procedure.
-Return list with buffer positions of begin and end."
-  ;; This is under development:
-  ;; Do we always find the top level with maplev-scan-proc and
-  ;; maplev-current-proc? So for testing this, we use the old
-  ;; algorithm if level=-1 and the new algorithm if level=0.
-  (if (not level) (setq level 1))
-  (let ((pnt (point)) beg end)
-    (if (< level 0)
-        ;; Old algorithm.
-        (setq beg (maplev-beginning-of-proc t)
-              end (maplev-end-of-proc t))
-      ;; Test the new algorithm.
-      (if (= level 0) (setq level 10000))
-      (setq beg (maplev-scan-proc pnt -1 level)
-            end (maplev-scan-proc pnt 1 level))
-      (when (and (listp beg) (listp end)
-                 (nth 2 beg) (nth 2 end))
-        ;; We try to calculate the top level
-        (setq level (- level (min (nth 2 beg) (nth 2 end))))
-        (if (> level 0)
-            (setq beg (maplev-scan-proc pnt -1 level)
-                  end (maplev-scan-proc pnt 1 level))))
-      (if (or (not (number-or-marker-p beg))
-              (not (number-or-marker-p end)))
-          (error "Current defun ill-defined"))
-      ;; If the current procedure is assigned to a variable,
-      ;; the assignment is included in the `current procedure'.
-      (save-excursion
-        (goto-char beg)
-        (if (re-search-backward (concat maplev--assignment-re "\\=") nil t)
-            (setq beg (match-beginning 0)))))
-    (list beg end)))
-
-(defun maplev-mark-proc (&optional level)
-  "Mark the current Maple procedure.
-This puts the mark at the end, and point at the beginning.
-LEVEL defaults to 1. If LEVEL <= 0 find top level procedure."
-  (interactive "p")
-  (let ((reg (maplev-current-proc level)))
-    (push-mark (point) t)
-    (goto-char (car reg))
-    (set-mark (nth 1 reg))))
-
-(defun maplev-narrow-to-proc (&optional level)
-  "Make text outside current procedure invisible.
-LEVEL defaults to 1. If LEVEL <= 0 find top level procedure."
-  (interactive "p")
-  (let ((reg (maplev-current-proc level)))
+(defun maplev-narrow-to-defun ()
+  "Make text outside current defun invisible."
+  (interactive)
+  (widen)
+  (let ((reg (maplev-current-defun)))
     (narrow-to-region (car reg) (nth 1 reg))))
 
 ;;; stuff used by mint
@@ -2001,28 +2066,38 @@ LEVEL defaults to 1. If LEVEL <= 0 find top level procedure."
   "Search forward from point for regular expression REGEXP.
 This function is like re-search-forward, but comments are ignored.
 Optional arguments BOUND, NOERROR, and COUNT have the same meaning
-like in re-search-forward."
+as in `re-search-forward'."
   ;; This approach gets confused by a comment inside the match
   ;; (e.g., when REGEXP can match more than one line).
   ;; Therefore it's better to break complex REGEXP's apart
   ;; and handle the items seperately.
-  (let (found case-fold-search)
-    (setq found (re-search-forward regexp bound noerror count))
-    (while (and (nth 4 (parse-partial-sexp (maplev-safe-position) (point)))
-                (setq found (re-search-forward regexp bound noerror count))))
-    found))
-
+  (if (not count) (setq count 1))
+  (let ((dir (if (< count 0) -1 1))
+        (pos (point))
+        case-fold-search)
+    (while (and (not (zerop count)) pos)
+      (setq pos (re-search-forward regexp bound noerror dir))
+      (while (and (nth 4 (parse-partial-sexp (maplev-safe-position) (point)))
+                  (setq pos (re-search-forward regexp bound noerror dir))))
+      (setq count (- count dir)))
+    pos))
+      
 (defun maplev--re-search-backward (regexp &optional bound noerror count)
   "Search backward from point for regular expression REGEXP.
 This function is like re-search-backward, but comments are ignored.
 Optional arguments BOUND, NOERROR, and COUNT have the same meaning
-like in re-search-backward."
+as in `re-search-backward'."
   ;; See maplev--re-search-forward.
-  (let (found case-fold-search)
-    (setq found (re-search-backward regexp bound noerror count))
-    (while (and (nth 4 (parse-partial-sexp (maplev-safe-position) (point)))
-                (setq found (re-search-backward regexp bound noerror count))))
-    found))
+  (if (not count) (setq count 1))
+  (let ((dir (if (< count 0) -1 1))
+        (pos (point))
+        case-fold-search)
+    (while (and (not (zerop count)) pos)
+      (setq pos (re-search-backward regexp bound noerror dir))
+      (while (and (nth 4 (parse-partial-sexp (maplev-safe-position) (point)))
+                  (setq pos (re-search-backward regexp bound noerror dir))))
+      (setq count (- count dir)))
+    pos))
 
 (defun maplev-safe-position (&optional to)
   "Search for safe buffer position before point \(a position not in a comment\).
@@ -2068,7 +2143,8 @@ Return nil if there no such statement.  Point must be to the right of
 the closing parenthesis in the formal parameter list."
   (let ((bound (save-excursion
                  (maplev--re-search-forward maplev--defun-re
-                                            (maplev-end-of-proc) 'move)
+                                            ;; (maplev-end-of-proc) 'move)
+                                            (maplev--end-of-defun-pos) 'move)
                  (point))))
     (if (save-excursion
           (maplev--re-search-forward
@@ -2094,10 +2170,10 @@ parenthesis of the procedure's argument list."
         ;; Position point and text in preparation for inserting a
         ;; declaration statement.
         (if (not (looking-at "[ \t]*\\(#.*\\)?$")) ; More code on line?
-            (just-one-space)         ; Then insert declaration inbetween.
-          (forward-line)             ; Else move to the next code line.
-          (unless stay                     ; Keep moving if we not already
-            (while (looking-at "[ \t]*#")  ; have a declaration.
+            (just-one-space)      ; Then insert declaration inbetween.
+          (forward-line)            ; Else move to the next code line.
+          (unless stay                 ; Keep moving if we not already
+            (while (looking-at "[ \t]*#") ; have a declaration.
               (forward-line)))))
       ;; Insert the declaration statement KEYWORD VAR ; at point.
       ;; If point is at beginning of line, insert a newline at end.
@@ -2109,37 +2185,31 @@ parenthesis of the procedure's argument list."
           (forward-line -1)))
       (maplev-indent-line))))
 
-(defun maplev-add-local-variable (var &optional level)
+(defun maplev-add-local-variable (var)
   "Add VAR to the current procedure's local statement.
-Interactively, VAR defaults to identifier point is on.
-LEVEL is the prefix arg."
+Interactively, VAR defaults to identifier point is on."
   (interactive (list (maplev-ident-around-point-interactive
-                      "Local variable")
-                     (prefix-numeric-value current-prefix-arg)))
-  (maplev-add-variable "local" var level))
+                      "Local variable")))
+  (maplev-add-variable "local" var))
 
-(defun maplev-add-global-variable (var &optional level)
+(defun maplev-add-global-variable (var)
   "Add VAR to the current procedure's local statement.
-Interactively, VAR defaults to identifier point is on.
-LEVEL is the prefix arg."
+Interactively, VAR defaults to identifier point is on."
   (interactive (list (maplev-ident-around-point-interactive
-                      "Global variable")
-                     (prefix-numeric-value current-prefix-arg)))
-  (maplev-add-variable "global" var level))
+                      "Global variable")))
+  (maplev-add-variable "global" var))
 
-(defun maplev-add-export-variable (var &optional level)
+(defun maplev-add-export-variable (var)
   "Add VAR to the current module's export statement.
-Interactively, VAR defaults to identifier point is on.
-LEVEL is the prefix arg."
+Interactively, VAR defaults to identifier point is on."
   (interactive (list (maplev-ident-around-point-interactive
-                      "Exported variable")
-                     (prefix-numeric-value current-prefix-arg)))
-  (maplev-add-variable "export" var level))
+                      "Exported variable")))
+  (maplev-add-variable "export" var))
 
-(defun maplev-add-variable (keyword var &optional level)
+(defun maplev-add-variable (keyword var)
   "To the current procedure's KEYWORD declaration add VAR."
   (save-excursion
-    (maplev-proc-beginning level t)
+    (maplev-beginning-of-defun)
     (goto-char (maplev--scan-lists 1))
     (maplev-add-declaration keyword var)))
 
@@ -2158,11 +2228,42 @@ The entire statement is deleted if it is left with no variables."
           (delete-region (match-beginning 0) (match-end 0))
           (maplev-delete-whitespace t))))))
 
-(defun maplev-delete-vars (start end vars &optional leave-one)
+(defun maplev-delete-vars-old (start end vars &optional leave-one)
   "In region between START and END delete occurrences of VARS.
-VARS must be eiter a string or a list of strings. If optional
+VARS must be either a string or a list of strings. If optional
 argument LEAVE-ONE is non-nil, then one occurrence of VARS is left."
   (let (case-fold-search lo)
+    (save-excursion
+      (save-restriction
+        (narrow-to-region start end)
+        (if (stringp vars) (setq vars (list vars)))
+        (while vars
+          (setq lo leave-one)
+          (goto-char (point-min))
+          (while (maplev--re-search-forward
+                  (concat "\\<" (car vars) "\\>"
+                          ;; Add optional type declarations.  I don't know
+                          ;; how to make this robust, a type
+                          ;; declaration can have commas and closing
+                          ;; parentheses.
+                          "\\(\\s-*::\\s-*[^,:;)]+\\)?")
+                  nil t)
+            (if lo
+                (setq lo nil)
+              (delete-region (match-beginning 0) (match-end 0))
+              (maplev-delete-whitespace)
+              (when (or (maplev--re-search-forward  "," nil t)
+                        (maplev--re-search-backward "," nil t))
+                (delete-region (match-beginning 0) (match-end 0))
+                (maplev-delete-whitespace))))
+          (setq vars (cdr vars)))))))
+
+(defun maplev-delete-vars (start end vars &optional leave-one)
+  "In region between START and END delete occurrences of VARS.
+VARS must be either a string or a list of strings. If optional
+argument LEAVE-ONE is non-nil, then one occurrence of VARS is left."
+  (let ((parse-sexp-ignore-comments)
+        case-fold-search lo )
     (save-excursion
       (save-restriction
         (narrow-to-region start end)
@@ -2177,8 +2278,29 @@ argument LEAVE-ONE is non-nil, then one occurrence of VARS is left."
                 (setq lo nil)
               (delete-region (match-beginning 0) (match-end 0))
               (maplev-delete-whitespace)
-              (when (or (maplev--re-search-forward  "," nil t)
-                        (maplev--re-search-backward "," nil t))
+
+              ;; Remove optional type declaration
+              
+              (when (looking-at "::\\s-*") 
+                ;; Skip past type declaration operator (::)
+                ;; so looking-at won't match them.
+                (goto-char (match-end 0)) 
+                (delete-region (match-beginning 0)
+                               (progn 
+                                 ;; Unless looking at an argument separator,
+                                 ;; statement terminator, or closing
+                                 ;; parenthesis, or at end of buffer, move
+                                 ;; forward over a balanced expression.
+                                 ;;
+                                 ;; This nees modification to handle comments,
+                                 ;; esp. with leading commas.
+                                 (while (and (not (looking-at "[ \t\f\n]*[,;:#)]"))
+                                             (/= (point) (point-max)))
+                                   (forward-sexp))
+                                 (point))))
+              ;; Remove separating comma
+              (when (or (maplev--re-search-backward "," nil t)
+                        (maplev--re-search-forward  "," nil t))
                 (delete-region (match-beginning 0) (match-end 0))
                 (maplev-delete-whitespace))))
           (setq vars (cdr vars)))))))
@@ -2186,7 +2308,7 @@ argument LEAVE-ONE is non-nil, then one occurrence of VARS is left."
 ;;}}}
 ;;{{{ Templates
 
-(defun maplev-template (function name args description)
+(defun maplev--template-proc-module (function name args description)
   "Insert a template for a Maple FUNCTION \(\"proc\" or \"module\"\).
 Use NAME, ARGUMENTS, and DESCRIPTION. Move point to body of FUNCTION.
 
@@ -2212,7 +2334,7 @@ end statement.  Point is moved to the start of the function body."
       (insert name " := "))
     (insert function
             (make-string maplev-variable-spacing ?\ )
-            "(" args ")")            ; Insert function, with formal args
+            "(" args ")")          ; Insert function, with formal args
 
     ;; Copyright notice
     (when (and maplev-insert-copyright-flag
@@ -2231,22 +2353,222 @@ end statement.  Point is moved to the start of the function body."
       (insert ":")
       (if maplev-comment-end-flag
           (insert maplev-template-end-comment name)))
-    (forward-line -1)             ; Move point to start of body
-    ;; bug in maplev-current-proc:
+    (forward-line -1)                   ; Move point to start of body
+    ;; bug in maplev-current-defun:
     ;; it doesn't work yet with anonymous procedures
     (when fname (maplev-indent-procedure))))
 
 (defun maplev-template-proc (name args description)
   "Insert a template for a Maple procedure and move point to its body.
-Prompt for the NAME, ARGS, and DESCRIPTION. See `maplev-template'."
+Prompt for the NAME, ARGS, and DESCRIPTION.  See `maplev-template'."
   (interactive "*sName (return for anonymous) \nsArguments: \nsDescription: ")
-  (maplev-template "proc" name args description))
+  (maplev--template-proc-module "proc" name args description))
 
 (defun maplev-template-module (name args description)
   "Insert a template for a Maple module and move point to its body.
-Prompt for the NAME, ARGUMENTS, and DESCRIPTION. See `maplev-template'."
+Prompt for the NAME, ARGUMENTS, and DESCRIPTION.  See `maplev-template'."
   (interactive "*sName (return for anonymous) \nsArguments: \nsDescription: ")
-  (maplev-template "module" name args description))
+  (maplev--template-proc-module "module" name args description))
+
+(defun maplev-template-use-statement (exprseq)
+  "Insert a template for a Maple use statement and move point to its 
+first statement.  Prompt fo the EXPRSEQ."
+  (interactive "*sExpression Sequence: ")
+  (insert "use " exprseq " in")
+  (maplev-indent-newline)
+  (insert "\nend use")
+  (maplev-indent-line)
+  (forward-line -1)
+  (maplev-indent-line))
+  
+
+;;}}}
+;;{{{ Completion
+
+;; Define functions for completing Maple symbols.
+;;
+;; It is easy enough to collect all the symbols defined in
+;; ?index/functions and ?index/packages.  However, we would really
+;; like to complete on the exports of particular Maple modules.  It is
+;; not practical, nor useful, to complete on all exports of all
+;; modules, not is it straightforward to provide intelligent
+;; completion, that is, inside a `use <module>' statement complete on
+;; the exports of <module>.  A reasonable workaround is to provide a
+;; function that allows the user to add the exports of selected
+;; modules to the completion list.
+
+(defun maplev-add-exports-of-module-at-point (module)
+  "Add the exports of MODULE at point to `maplev-completion-alist'.
+The real work is done by `maplev-complete-on-module-exports'."
+  (interactive (list (maplev-ident-around-point-interactive
+                      "Complete on Maple exports of module")))
+  (maplev-complete-on-module-exports module))
+
+(defun maplev-complete-on-module-exports (module)
+  "Add the exports of MODULE to `maplev-completion-alist'."
+
+  ;; First, ensure that `maplev-completion-alist' is assigned.
+  (maplev--generate-initial-completion-alist)
+  (save-current-buffer
+    (set-buffer (maplev--cmaple-buffer))
+    (save-restriction
+      ;; Print each export of module on a separate line in a narrowed buffer.
+      (narrow-to-region (point-max) (point-max))
+      (maplev-cmaple--send-string 
+       (maplev--cmaple-process)
+       (concat "seq(lprint(e),e=exports(" module "));"))
+      (maplev-cmaple--wait 3)
+      ;; (while (maplev-cmaple--locked-p) (maplev--short-delay))
+      ;; Delete the input line.
+      (delete-region 
+       (goto-char (point-min))
+       (progn (forward-line) (point)))
+      ;; Check that no Maple error occurred.
+      ;; If so, assume that module is not an actual Maple module
+      ;; and print a temporary message at the bottom of the screen.
+      (if (looking-at "Error")
+          (progn
+            (ding)
+            (message "The argument `%s' is not a Maple module" module)
+            (sit-for 2))
+        ;; Initialize completions to those previously assigned
+        (let ((completions (car (cdr (assoc maplev-release maplev-completion-alist)))))
+          ;; Goto end of buffer and read upwards, a line at a time,
+          ;; adding it to the exports list.
+          (goto-char (point-max))
+          (while (zerop (forward-line -1))
+            (setq completions
+                  (cons (cons (buffer-substring-no-properties
+                               (point) (line-end-position))
+                              nil)
+                        completions)))
+          ;; Replace the completion alist.
+          (setcar (cdr (assoc maplev-release maplev-completion-alist)) 
+                  (remove-duplicates
+                   (sort completions (lambda (a b) (string< (car a) (car b))))
+                   :test (lambda (a b) (string= (car a) (car b)))))))
+      ;; Delete the output from the cmaple buffer.
+      (delete-region (point-min) (point-max)))))
+
+;; (setq maplev-completion-alist nil)
+
+(defun maplev--generate-initial-completion-alist ()
+  "Generate `maplev-completion-alist' from the index/function and
+index/package help pages.  If it already exists, do nothing."
+  (unless (assoc maplev-release maplev-completion-alist)
+
+    ;; To make it easy to pick out the package names from the
+    ;; index/package help page, set the interface variable
+    ;; `screenwidth' to infinity and save the original value in the
+    ;; elisp variable screenwidth.
+        
+    (let ((screenwidth (maplev-cmaple-direct 
+                        "lprint(interface('screenwidth'=infinity));" t))
+          completions)
+      (unwind-protect
+          (save-current-buffer
+            (set-buffer (get-buffer-create (maplev--help-buffer)))
+
+            ;; Process help node "index/function".
+            (maplev-cmaple--wait 3)
+            ;; (while (maplev-cmaple--locked-p) (maplev--short-delay))
+            (maplev-help-show-topic "index/function" t)
+            (maplev-cmaple--wait 3)
+            ;; (while (maplev-cmaple--locked-p) (maplev--short-delay))
+            (save-restriction
+              (narrow-to-region 
+               (re-search-forward "^    ")
+               (save-excursion (goto-char (point-max))
+                               (re-search-backward "See Also")))
+              (goto-char (point-max))
+              (while (forward-word -1)
+                (setq completions
+                      (cons (cons (buffer-substring-no-properties
+                                   (point)
+                                   (save-excursion (forward-word 1) (point)))
+                                  nil)
+                            completions))))
+
+            ;; Process help node "index/package".
+            ;; (while (maplev-cmaple--locked-p) (maplev--short-delay))
+            (maplev-cmaple--wait 3)
+            (maplev-help-show-topic "index/package" t)
+            ;; (while (maplev-cmaple--locked-p) (maplev--short-delay))
+            (maplev-cmaple--wait 3)
+            (save-restriction
+              (narrow-to-region 
+               (progn (re-search-forward "^    \\w" nil t) 
+                      (goto-char (match-beginning 0))) ; first package
+               (progn (re-search-forward "^-" nil t)
+                      (goto-char (match-beginning 0)))) ; bullets after packages
+              (goto-char (point-max))
+              ;; Assign a regular expression to match each package name;
+              ;; the name is matched by the first group in regexp.
+              (let ((regexp (concat 
+                             "^\\s-+"   ; whitespace at start of line
+                             "\\(" maplev--name-re "\\)"))) ; package name (first group)
+                (while (re-search-backward regexp nil 'move)
+                  (setq completions
+                        (cons (cons (buffer-substring-no-properties 
+                                     (match-beginning 1) (match-end 1))
+                                    nil)
+                              completions)))))
+            ;; Delete both help pages.
+            (maplev-history-delete-item)
+            ;; (while (maplev-cmaple--locked-p) (maplev--short-delay))
+            (maplev-cmaple--wait 3)
+            (maplev-history-delete-item))
+
+        ;; Assign `maplev-completion-alist'.  Sort the completions.
+        (setq completions (sort completions (lambda (a b) (string< (car a) (car b))))
+              maplev-completion-alist
+              (cons (cons maplev-release (list completions))
+                    maplev-completion-alist)))
+      ;; Restore the original interface screenwidth.
+      (maplev-cmaple-direct (concat "interface('screenwidth'=" screenwidth ");") t))))
+
+
+(defun maplev--completion (word predicate mode)
+  "Generate minibuffer completion using maple function names.
+For the meaning of args see Info node `(elisp)Programmed Completion'."
+  ;; Make sure we are using the correct value of maplev-release.
+  ;; (Inside the minibuffer maplev-release equals maplev-default-release.)
+  (let ((maplev-release maplev-completion-release))
+    (maplev--generate-initial-completion-alist)
+    (let ((possibilities (cadr (assoc maplev-release maplev-completion-alist))))
+      (cond ((eq mode t)
+             (all-completions word possibilities predicate))
+            ((not mode)
+             (try-completion word possibilities predicate))
+            ((eq mode 'lambda)
+             (assoc word possibilities))))))
+
+(defun maplev-complete-symbol (&optional prefix)
+  "Perform completion on maple symbol preceding point.
+Compare that symbol against `maplev-completion-alist'."
+  ;; Code borrowed from lisp-complete-symbol.
+  (interactive)
+  (let* ((end (point))
+	 (beg (save-excursion
+                (backward-sexp 1)
+                (point)))
+	 (pattern (buffer-substring-no-properties beg end))
+         (maplev-completion-release maplev-release)
+	 (completion (try-completion pattern 'maplev--completion)))
+    (cond ((eq completion t))
+	  ((null completion)
+	   (message "Can't find completion for \"%s\"" pattern)
+	   (ding))
+	  ((not (string= pattern completion))
+	   (delete-region beg end)
+	   (insert completion))
+	  (t
+	   (message "Making completion list...")
+	   (let ((list (sort (all-completions pattern 'maplev--completion)
+                             'string<)))
+	     (with-output-to-temp-buffer "*Completions*"
+	       (display-completion-list list)))
+	   (message "Making completion list...%s" "done")))))
 
 ;;}}}
 
@@ -2322,6 +2644,26 @@ Prompt for the NAME, ARGUMENTS, and DESCRIPTION. See `maplev-template'."
           "options" "or"        "proc"   "quit"   "read"
           "return"  "save"      "stop"   "subset" "then"
           "to"     "try"        "union"  "use"    "while"
+          "xor"))
+    (10 . ("and"     "assuming"  "break"  "by"     "catch"
+          "description" "do"    "done"   "elif"   "else"
+          "end"     "error"     "export" "fi"     "finally"
+          "for"     "from"      "global" "if"     "implies"
+          "in"      "intersect" "local"  "minus"  "mod"
+          "module"  "next"      "not"    "od"     "option"
+          "options" "or"        "proc"   "quit"   "read"
+          "return"  "save"      "stop"   "subset" "then"
+          "to"     "try"        "union"  "use"    "uses" "while"
+          "xor"))
+    (11 . ("and"     "assuming"  "break"  "by"     "catch"
+          "description" "do"    "done"   "elif"   "else"
+          "end"     "error"     "export" "fi"     "finally"
+          "for"     "from"      "global" "if"     "implies"
+          "in"      "intersect" "local"  "minus"  "mod"
+          "module"  "next"      "not"    "od"     "option"
+          "options" "or"        "proc"   "quit"   "read"
+          "return"  "save"      "stop"   "subset" "then"
+          "to"     "try"        "union"  "use"    "uses" "while"
           "xor"))
     )
   "Alist of Maple reserved words.  The key is the major release.")
@@ -2558,42 +2900,113 @@ Prompt for the NAME, ARGUMENTS, and DESCRIPTION. See `maplev-template'."
           "traperror" "trunc" "type" "typematch" "unames" "unbind"
           "union" "userinfo" "writeto" "xor" ))
     (9 . ("`$`" "`*`" "`**`" "`+`" "`..`" "`<`" "`<=`" "`<>`" "`=`" "`>`" "`>=`" 
-         "ASSERT" "Array" "ArrayOptions" "CopySign" 
-         "DEBUG" "Default0" "DefaultOverflow" "DefaultUnderflow" 
-         "ERROR" "EqualEntries" "EqualStructure" "FromInert" 
-         "Im" "MPFloat" "MorrBrilCull" "NextAfter" "Normalizer" 
-         "NumericClass" "NumericEvent" "NumericEventHandler" "NumericStatus" 
-         "OrderedNE" "RETURN" "Re" "SFloatExponent" "SFloatMantissa" 
-         "Scale10" "Scale2" "SearchText" "TRACE" "ToInert" 
-         "Unordered" "UpdateSource" "^" 
-         "_jvm" "_maplet" "_treeMatch" "_unify" "_xml" 
-         "abs" "add" "addressof" "alias" "anames" "and" "andmap" 
-         "appendto" "array" "assemble" "assigned" "attributes" 
-         "bind" "call_external" "callback" "cat" "coeff" "coeffs" 
-         "conjugate" "convert" "crinterp" "debugopts" "define_external" 
-         "degree" "denom" "diff" "disassemble" "divide" "dlclose" "done" 
-         "entries" "eval" "evalb" "evalf" "`evalf/hypergeom/kernel`" 
-         "evalgf1" "evalhf" "evaln" "expand" "exports" "factorial" "frem" 
-         "frontend" "gc" "genpoly" "gmp_isprime" "goto" "has" "hastype" "hfarray" 
-         "icontent" "if" "igcd" "ilog10" "ilog2" "implies" "indets" 
-         "indices" "inner" "`int/series`" "intersect" "iolib" "iquo" "irem" 
-         "is_gmp" "isqrt" "`kernel/transpose`" "lcoeff" "ldegree" "length" 
-         "lexorder" "lhs" "lprint" "macro" "map" "map2" "max" "maxnorm" 
-         "member" "min" "minus" "mod" "modp" "modp1" "modp2" "mods" 
-         "mul" "mvMultiply" "negate" "nops" "normal" "not" "numboccur" 
-         "numer" "op" "or" "order" "ormap" "parse" "piecewise" 
-         "pointto" "print" "quit" "readlib" "reduce_opr" "remove" 
-         "rhs" "rtable" "rtableInfo" "rtable_eval" "rtable_indfns" 
-         "rtable_is_zero" "rtable_normalize_index" "rtable_num_dims" 
-         "rtable_num_elems" "rtable_options" "rtable_scanblock" 
-         "rtable_sort_indices" "rtable_zip" "searchtext" "select" 
-         "selectremove" "seq" "series" "setattribute" "sign" "sort" 
-         "ssystem" "stop" "streamcall" "subs" "subset" "subsop" 
-         "substring" "system" "table" "taylor" "tcoeff" "time" 
-         "timelimit" "traperror" "trunc" "type" "typematch" 
-         "unames" "unbind" "union" "userinfo" "writeto" "xor" "||"))
-    )
-  "Alist of Maple builtin funtions.  The key is the major release.")
+          "ASSERT" "Array" "ArrayOptions" "CopySign" 
+          "DEBUG" "Default0" "DefaultOverflow" "DefaultUnderflow" 
+          "ERROR" "EqualEntries" "EqualStructure" "FromInert" 
+          "Im" "MPFloat" "MorrBrilCull" "NextAfter" "Normalizer" 
+          "NumericClass" "NumericEvent" "NumericEventHandler" "NumericStatus" 
+          "OrderedNE" "RETURN" "Re" "SFloatExponent" "SFloatMantissa" 
+          "Scale10" "Scale2" "SearchText" "TRACE" "ToInert" 
+          "Unordered" "UpdateSource" "`^`" 
+          "_jvm" "_maplet" "_treeMatch" "_unify" "_xml" 
+          "abs" "add" "addressof" "alias" "anames" "and" "andmap" 
+          "appendto" "array" "assemble" "assigned" "attributes" 
+          "bind" "call_external" "callback" "cat" "coeff" "coeffs" 
+          "conjugate" "convert" "crinterp" "debugopts" "define_external" 
+          "degree" "denom" "diff" "disassemble" "divide" "dlclose" "done" 
+          "entries" "eval" "evalb" "evalf" "`evalf/hypergeom/kernel`" 
+          "evalgf1" "evalhf" "evaln" "expand" "exports" "factorial" "frem" 
+          "frontend" "gc" "genpoly" "gmp_isprime" "goto" "has" "hastype" "hfarray" 
+          "icontent" "if" "igcd" "ilog10" "ilog2" "implies" "indets" 
+          "indices" "inner" "`int/series`" "intersect" "iolib" "iquo" "irem" 
+          "is_gmp" "isqrt" "`kernel/transpose`" "lcoeff" "ldegree" "length" 
+          "lexorder" "lhs" "lprint" "macro" "map" "map2" "max" "maxnorm" 
+          "member" "min" "minus" "mod" "modp" "modp1" "modp2" "mods" 
+          "mul" "mvMultiply" "negate" "nops" "normal" "not" "numboccur" 
+          "numer" "op" "or" "order" "ormap" "parse" "piecewise" 
+          "pointto" "print" "quit" "readlib" "reduce_opr" "remove" 
+          "rhs" "rtable" "rtableInfo" "rtable_eval" "rtable_indfns" 
+          "rtable_is_zero" "rtable_normalize_index" "rtable_num_dims" 
+          "rtable_num_elems" "rtable_options" "rtable_scanblock" 
+          "rtable_sort_indices" "rtable_zip" "searchtext" "select" 
+          "selectremove" "seq" "series" "setattribute" "sign" "sort" 
+          "ssystem" "stop" "streamcall" "subs" "subset" "subsop" 
+          "substring" "system" "table" "taylor" "tcoeff" "time" 
+          "timelimit" "traperror" "trunc" "type" "typematch" 
+          "unames" "unbind" "union" "userinfo" "writeto" "xor" "`||`"))
+    (10 . ("`$`" "`*`" "`**`" "`+`" "`..`" "`<`" "`<=`" "`<>`" "`=`" "`>`" "`>=`" "`?()`" "`?[]`"
+           "ASSERT" "Array" "ArrayOptions" "CopySign" 
+           "DEBUG" "Default0" "DefaultOverflow" "DefaultUnderflow" 
+           "ERROR" "EqualEntries" "EqualStructure" "FromInert" 
+           "Im" "MPFloat" "MorrBrilCull" "NextAfter" "Normalizer" 
+           "NumericClass" "NumericEvent" "NumericEventHandler" "NumericStatus" 
+           "OrderedNE" "RETURN" "Re" "SDMPolynom" "SFloatExponent" "SFloatMantissa" 
+           "Scale10" "Scale2" "SearchText" "TRACE" "ToInert" 
+           "Unordered" "UpdateSource" "`[]`" "`^`"
+           "_jvm" "_maplet" "_treeMatch" "_unify" "_xml" 
+           "abs" "add" "addressof" "alias" "anames" "and" "andmap" 
+           "appendto" "array" "assemble" "assigned" "attributes" 
+           "bind" "call_external" "callback" "cat" "coeff" "coeffs" 
+           "conjugate" "convert" "crinterp" "debugopts" "define_external" 
+           "degree" "denom" "diff" "disassemble" "divide"
+           "dlclose" "done" "entries" "eval" "evalb" "evalf"
+           "evalf/hypergeom/kernel" "evalgf1" "evalhf" "evaln" "expand"
+           "exports" "factorial" "frem" "frontend" "gc" "genpoly" "gmp_isprime"
+           "goto" "has" "hastype" "hfarray" "icontent" "if" "igcd" "ilog10"
+           "ilog2" "implies" "indets" "indices" "inner" "int/series"
+           "intersect" "iolib" "iquo" "irem" "is_gmp" "isqrt"
+           "kernel/transpose" "kernelopts" "lcoeff" "ldegree" "length"
+           "lexorder" "lhs" "lprint" "macro" "map" "map2" "max" "maxnorm"
+           "member" "min" "minus" "mod" "modp" "modp1" "modp2" "mods" "mul"
+           "mvMultiply" "negate" "nops" "normal" "not" "numboccur" "numer"
+           "op" "or" "order" "ormap" "overload" "parse" "piecewise" "pointto"
+           "print" "quit" "readlib" "reduce_opr" "remove" "rhs" "rtable"
+           "rtableInfo" "rtable_convolution" "rtable_eval" "rtable_histogram"
+           "rtable_indfns" "rtable_is_zero" "rtable_normalize_index"
+           "rtable_num_dims" "rtable_num_elems" "rtable_options" "rtable_redim"
+           "rtable_scale" "rtable_scanblock" "rtable_sort_indices" "rtable_zip"
+           "savelib" "searchtext" "select" "selectremove" "seq" "series"
+           "setattribute" "sign" "sort" "ssystem" "stop" "streamcall" "subs"
+           "subset" "subsop" "substring" "system" "table" "taylor" "tcoeff"
+           "time" "timelimit" "traperror" "trunc" "type" "typematch" "unames"
+           "unbind" "union" "userinfo" "writeto" "xor" "`{}`" "`||`"))
+    (11 . ("`$`" "`*`" "`**`" "`+`" "`..`" "`<`" "`<=`" "`<>`" "`=`" "`>`" "`>=`" "`?()`" "`?[]`"
+           "ASSERT" "Array" "ArrayOptions" "CopySign" 
+           "DEBUG" "Default0" "DefaultOverflow" "DefaultUnderflow" 
+           "ERROR" "EqualEntries" "EqualStructure" "FromInert" 
+           "Im" "MPFloat" "MorrBrilCull" "NextAfter" "Normalizer" 
+           "NumericClass" "NumericEvent" "NumericEventHandler" "NumericStatus" 
+           "OrderedNE" "RETURN" "Re" "SDMPolynom" "SFloatExponent" "SFloatMantissa" 
+           "Scale10" "Scale2" "SearchText" "TRACE" "ToInert" 
+           "Unordered" "UpdateSource" "`[]`" "`^`"
+           "_jvm" "_maplet" "_treeMatch" "_unify" "_xml" 
+           "abs" "add" "addressof" "alias" "anames" "and" "andmap" 
+           "appendto" "array" "assemble" "assigned" "attributes" 
+           "bind" "call_external" "callback" "cat" "coeff" "coeffs" 
+           "conjugate" "convert" "crinterp" "debugopts" "define_external" 
+           "degree" "denom" "diff" "disassemble" "divide"
+           "dlclose" "done" "entries" "eval" "evalb" "evalf"
+           "evalf/hypergeom/kernel" "evalgf1" "evalhf" "evaln" "expand"
+           "exports" "factorial" "frem" "frontend" "gc" "genpoly" "gmp_isprime"
+           "goto" "has" "hastype" "hfarray" "icontent" "if" "igcd" "ilog10"
+           "ilog2" "implies" "indets" "indices" "inner" "int/series"
+           "intersect" "iolib" "iquo" "irem" "is_gmp" "isqrt"
+           "kernel/transpose" "kernelopts" "lcoeff" "ldegree" "length"
+           "lexorder" "lhs" "lprint" "macro" "map" "map2" "max" "maxnorm"
+           "member" "min" "minus" "mod" "modp" "modp1" "modp2" "mods" "mul"
+           "mvMultiply" "negate" "nops" "normal" "not" "numboccur" "numer"
+           "op" "or" "order" "ormap" "overload" "parse" "piecewise" "pointto"
+           "print" "quit" "readlib" "reduce_opr" "remove" "rhs" "rtable"
+           "rtableInfo" "rtable_convolution" "rtable_eval" "rtable_histogram"
+           "rtable_indfns" "rtable_is_zero" "rtable_normalize_index"
+           "rtable_num_dims" "rtable_num_elems" "rtable_options" "rtable_redim"
+           "rtable_scale" "rtable_scanblock" "rtable_sort_indices" "rtable_zip"
+           "savelib" "searchtext" "select" "selectremove" "seq" "series"
+           "setattribute" "sign" "sort" "ssystem" "stop" "streamcall" "subs"
+           "subset" "subsop" "substring" "system" "table" "taylor" "tcoeff"
+           "time" "timelimit" "traperror" "trunc" "type" "typematch" "unames"
+           "unbind" "union" "userinfo" "writeto" "xor" "`{}`" "`||`"))
+    "Alist of Maple builtin funtions.  The key is the major release."))
 
 (defun maplev--ditto-operators-re ()
   "Return a regexp that matches the ditto operators."
@@ -2629,7 +3042,7 @@ minimum decoration keywords."
 (defun maplev-font-lock-keywords-3 ()
   "Compute the maximum decoration `font-lock-keywords' for MapleV mode.
 Add builtin functions to the medium decoration keywords."
-  (let ((max-specpdl-size 10000)) ; default 600 is too small
+  (let ((max-specpdl-size 10000))       ; default 600 is too small
     (append (maplev-font-lock-keywords-2)
             (list (list (maplev--list-to-word-re
                          (cdr (assoc (maplev--major-release)
@@ -2638,7 +3051,7 @@ Add builtin functions to the medium decoration keywords."
                         '(0 font-lock-variable-name-face))))))
 (defun maplev--font-lock-keywords ()
   "Return a list of symbols for font locking MapleV mode buffers."
-  '(maplev-font-lock-keywords-3         ; default is maximum decoration
+  '(maplev-font-lock-keywords-3        ; default is maximum decoration
     maplev-font-lock-keywords-1
     maplev-font-lock-keywords-2
     maplev-font-lock-keywords-3))
@@ -2646,10 +3059,10 @@ Add builtin functions to the medium decoration keywords."
 (defun maplev--font-lock-syntax-alist ()
   "Return the syntax alist appropriate for font lock.
 It depends on `maplev--major-release'."
-  `((?_ . "w")          ; make `_' a word character
+  `((?_ . "w")                          ; make `_' a word character
     ,(if (< (maplev--major-release) 5)
-         '(?\" . "w")   ; make `"' a word character for R4 and down.
-       '(?% . "w"))))   ; make `%' a word character for R5 and up.
+         '(?\" . "w")     ; make `"' a word character for R4 and down.
+       '(?% . "w"))))       ; make `%' a word character for R5 and up.
 
 (defun maplev--syntax-begin ()
   "Move backwards to start of a Maple procedure.
@@ -2674,6 +3087,7 @@ If nil then `font-lock-maximum-decoration' selects the level."
 
 ;;}}}
 ;;{{{ Tags
+
 ;; I'm not sure about how tags should work.  Should it run on all
 ;; Maple files in the directory?  Running it on just one file makes
 ;; little sense.  The tags could be appended, but then the TAGS file
@@ -2702,6 +3116,7 @@ If nil then `font-lock-maximum-decoration' selects the level."
 ;;         maplev-tag-regexp
 ;;         " "
 ;;         (buffer-file-name))))
+
 ;;}}}
 
 ;;; Process Modes
@@ -2791,9 +3206,36 @@ It is local to the `maplev-help-mode' and `maplev-proc-mode' buffers.")
 
 ;;}}}
 ;;{{{ Maple
+
 ;;{{{   comm functions
+
 ;; Define the functions used for communicating with the command line
 ;; Maple process.
+;;
+;; A useful feature is having independent Maple processes associated
+;; with particular (source) buffers.  Doing so will require rewriting
+;; the access control, however, it should result in a more robust
+;; design.  Is it worth it? 
+;;
+;; One method to accomplish this is the following:
+;;
+;;  - Create a (source) buffer-local variable that stores the process.
+;;  - Create an (output) buffer-local flag variable that stores the lock status.
+;;
+;; To check whether the process is locked, make the output buffer the
+;; current buffer and check its flag variable.  When a second source
+;; buffer (first) requires a Maple process, the user should be queried
+;; (dependent on a configuration variation)  whether it should use an
+;; existing Maple process, provided it is of the proper release.
+;; Independent Maple output buffers should be numbered sequentially.
+;;
+;; A difficulty, or at least a nusiance, is handling the help and proc
+;; modes.  Ideally all source buffers that have the same Maple release
+;; would use a common help or proc buffer.  However, because proc may
+;; depend on the state of Maple, its buffer must be associated with a
+;; specific Maple process.  The straightforward solution is to have a
+;; separate help or proc buffer associated with each independent Maple
+;; process.  It leads to more buffers than I'd like.  
 
 (defun maplev--cmaple-process ()
   "Return the cmaple process associated with the current buffer.
@@ -2803,9 +3245,6 @@ Start one, if necessary."
         process
       (maplev-cmaple--start-process))))
 
-(defsubst maplev--short-delay ()
-  "Pause for a brief duration."
-  (sleep-for 0.1))
 
 (defun maplev-cmaple--start-process ()
   "Start a cmaple process associated with the current buffer.
@@ -2815,7 +3254,9 @@ restart it."
          (cmaple (nth 0 (cdr (assoc release maplev-executable-alist))))
          (inifile (nth 1 (cdr (assoc release maplev-executable-alist))))
          (buffer (get-buffer-create (maplev--cmaple-buffer)))
-         (process (get-buffer-process buffer)))
+         (process (get-buffer-process buffer))
+         ;; Just testing this.  Is there an advantage to a PTY process?
+         (process-connection-type 'pty)) 
     (with-current-buffer buffer
       (message "Starting Maple R%s..." release)
       (if process (delete-process process))
@@ -2828,11 +3269,10 @@ restart it."
                             buffer
                             cmaple
                             (append (and inifile (list "-i" inifile))
-                                    maplev-start-options;; add include path to argument list
+                                    maplev-start-options ;; add include path to argument list
                                     (and maplev-include-path
                                          (list (concat "-I " 
-                                                       (mapconcat 'identity maplev-include-path ",")))))
-                            ))
+                                                       (mapconcat 'identity maplev-include-path ",")))))))
        'maplev--cmaple-filter)
       (maplev-cmaple-mode release)
       (maplev-cmaple--lock-access t)
@@ -2842,11 +3282,22 @@ restart it."
       ;; Wait until cmaple is unlocked, that is, it has responded.
       ;; The time step, 100 milliseconds, should be customizable, some OSs
       ;; do not support fractions of seconds.
-      (while (maplev-cmaple--locked-p) (maplev--short-delay))
+      ;; (while (maplev-cmaple--locked-p) (maplev--short-delay))
+      (maplev-cmaple--wait)
       (message "Maple R%s started" release)
       process)))
 
 ;; Access control
+
+;; JR: Are the lines marked "hieida" the original or his suggested
+;; correction?  I don't see the point of using a fixed symbol,
+;; maplev-release as the property in which to store the lock status.
+;; Using the value of maplev-release makes sense.  Alas, I no longer
+;; have his email.  A better way to handle this might be to attach the
+;; property to a buffer local variable.  However, I don't think that
+;; that is possible.  Possibly the correct technique is to create a
+;; flag variable that is local to the Maple output buffer and assign
+;; to it.
 
 (defun maplev-cmaple--lock-access (&optional no-error)
   "Lock access to cmaple.
@@ -2854,33 +3305,51 @@ If access is already locked, generate an error
 unless optional arg NO-ERROR is non-nil."
   (if (and (not no-error) (maplev-cmaple--locked-p))
       (error "Maple busy")
-;hieida:
-;    (put 'maplev-cmaple-state maplev-release 'locked)))
+;;hieida:
+;;    (put 'maplev-cmaple-state maplev-release 'locked)))
     (put 'maplev-cmaple-state 'maplev-release 'locked)))
 
 (defun maplev-cmaple--unlock-access ()
   "Unlock access to cmaple.
 Interactively use \\[maplev-cmaple-interrupt]."
-;hieida:
-;  (put 'maplev-cmaple-state maplev-release nil))
+;;hieida:
+;;  (put 'maplev-cmaple-state maplev-release nil))
   (put 'maplev-cmaple-state 'maplev-release nil))
 
 (defun maplev-cmaple--locked-p ()
   "Return non-nil if the Maple process is locked."
-;hieida:
-;  (eq (get 'maplev-cmaple-state maplev-release) 'locked))
+;;hieida:
+;;  (eq (get 'maplev-cmaple-state maplev-release) 'locked))
   (eq (get 'maplev-cmaple-state 'maplev-release) 'locked))
 
 (defun maplev-cmaple-status ()
   "Status of Maple process."
   (interactive)
-;hieida:
-;  (let ((status (get 'maplev-cmaple-state maplev-release)))
+;;hieida:
+;;  (let ((status (get 'maplev-cmaple-state maplev-release)))
   (let ((status (get 'maplev-cmaple-state 'maplev-release)))
     (message "Maple R%s %s" maplev-release
              (cond ((eq status 'locked) "locked")
                    ((not status) "unlocked")
                    (status)))))
+
+(defun maplev-cmaple--wait (&optional max-cnt no-err)
+  "Wait for cmaple to become available.  
+If optional argument MAX-CNT is non-nil, wait at most that many
+seconds; otherwise wait indefinitly.  If optional argument NO-ERR is
+nil, generate an error if time out occurs; if non-nil, do not generate
+an error."
+  (message "Maple busy, waiting...")
+  (let ((cnt (* 10 (or max-cnt 0))))
+    (while (and (maplev-cmaple--locked-p)
+                (or (null max-cnt)
+                    (< 0 (setq cnt (1- cnt)))))
+      ;; Should sit-for be used instead?  It permits interrupting
+      ;; via user input (keystrokes).
+      (sleep-for 0.1))
+    (and (not no-err)
+         (maplev-cmaple--locked-p)
+         (error "Maple busy."))))
 
 ;; Functions that send stuff to cmaple
 
@@ -2893,7 +3362,7 @@ Interactively use \\[maplev-cmaple-interrupt]."
     ;; Only _new_ input is checked for typos, see comint-send-input.
     ;; We might need something smarter for comint-get-old-input.
     ;; Why does comint-send-input use (line-end-position) instead of
-    ;; (point-max)? To be consistent maplev-mint-region does the same.
+    ;; (point-max)?  To be consistent maplev-mint-region does the same.
     (if (or (< (point) (marker-position pmark))
             (equal 0 (maplev-mint-region pmark (line-end-position))))
         (comint-send-input))))
@@ -2920,7 +3389,7 @@ Interactively use \\[maplev-cmaple-interrupt]."
 If called interactively use the marked region.
 If called with a prefix the cmaple buffer is first cleared."
   (interactive "r")
-  (let ((maplev-mint-info-level maplev-mint-error-level))
+  (let ((maplev-mint-info-level maplev-mint-error-level)) ;; TODO: Change to -S for syntax only!
     (when (equal 0 (maplev-mint-region beg end))
       (and current-prefix-arg (maplev-cmaple--clear-buffer))
       (maplev-cmaple--send-string (maplev--cmaple-process)
@@ -2936,11 +3405,37 @@ If called with a prefix the cmaple buffer is first cleared."
   (interactive)
   (maplev-cmaple-send-region (point-min) (point-max)))
 
-(defun maplev-cmaple-send-procedure (&optional level)
+(defun maplev-cmaple-send-procedure ()
   "Send the current procedure to cmaple."
-  (interactive "p")
-  (apply 'maplev-cmaple-send-region (maplev-current-proc level)))
+  (interactive)
+  (apply 'maplev-cmaple-send-region (maplev-current-defun)))
 
+(defun maplev-cmaple-direct (input &optional delete)
+  "Send the string INPUT to cmaple and return the output.
+If optional argument DELETE is non-nil, delete the echoed Maple input
+from the output buffer.  This is a very simple function, it assumes
+that the input consists of one line and the output is on the following line."
+  ;; This may not work on a Windows box; there, the input is not echoed
+  ;; to the output buffer.
+  (interactive)
+  ;; (while (maplev-cmaple--locked-p) (maplev--short-delay))
+  (maplev-cmaple--wait)
+  (save-current-buffer
+    (let ((proc (maplev--cmaple-process))) ; ensure Maple is started
+      (set-buffer (maplev--cmaple-buffer))
+      (save-restriction
+        (narrow-to-region (point-max) (point-max))
+        (maplev-cmaple--send-string proc input)
+        ;; (while (maplev-cmaple--locked-p) (maplev--short-delay))
+        (maplev-cmaple--wait)
+        (goto-char (point-min))
+        (forward-line)
+        (let ((output (buffer-substring-no-properties
+                       (line-beginning-position) (line-end-position))))
+          (if delete
+              (delete-region (point-min) (point-max)))
+          output)))))
+      
 (defun maplev-cmaple--send-end-notice (process)
   "Send a command to PROCESS \(cmaple\) to print `maplev-cmaple-end-notice'."
   (comint-simple-send process (concat "lprint(" maplev-cmaple-end-notice ");")))
@@ -3030,6 +3525,7 @@ PROCESS is the Maple process, STRING its output."
 
 ;;}}}
 ;;{{{   mode map
+
 (defvar maplev-cmaple-map nil
   "Keymap used in Maple cmaple mode.")
 
@@ -3062,6 +3558,7 @@ PROCESS is the Maple process, STRING its output."
 
 ;;}}}
 ;;{{{   mode
+
 (defconst maplev-input-line-keyword
   `((,(concat "^" maplev-cmaple-prompt ".*$") . maplev-input-face))
   "Keyword for font locking input lines in cmaple mode.")
@@ -3098,6 +3595,7 @@ cmaple.
   (run-hooks 'maplev-cmaple-mode-hook))
 
 ;;}}}
+
 ;;}}}
 
 ;;{{{ Help mode
@@ -3109,14 +3607,15 @@ cmaple.
 
 (unless maplev-help-mode-map
   (let ((map (make-sparse-keymap)))
-    (define-key map [(space>)]     'scroll-up)
-    (define-key map [(backspace)]  'scroll-down)
+;;    (define-key map [(SPC)]                      'scroll-up)
+    (define-key map (read-kbd-macro "SPC")       'scroll-up)
+    (define-key map [(backspace)]                'scroll-down)
     (define-key map [?q]                         'quit-window)
     (define-key map [?s]                         'isearch-forward)
-    (define-key map [?r]                         'maplev-redo-item)
-    (define-key map [?p]                         'maplev-prev-item)
-    (define-key map [?n]                         'maplev-next-item)
-    (define-key map [?d]                         'maplev-delete-item)
+    (define-key map [?r]                         'maplev-history-redo-item)
+    (define-key map [?p]                         'maplev-history-prev-item)
+    (define-key map [?n]                         'maplev-history-next-item)
+    (define-key map [?d]                         'maplev-history-delete-item)
     (define-key map [?P]                         'maplev-help-parent)
     (define-key map [?\?]                        'maplev-help-at-point)
     (define-key map [(control ?\?)]              'maplev-help-at-point)
@@ -3149,13 +3648,13 @@ cmaple.
     `("MapleV"
       ["Parent"         maplev-help-parent
        :included (eq major-mode 'maplev-help-mode)]
-      ["Previous"       maplev-prev-item t]
-      ["Next"           maplev-next-item t]
-      ["Redraw"         maplev-redo-item t]
-      ["Delete"         maplev-delete-item t]
+      ["Previous"       maplev-history-prev-item t]
+      ["Next"           maplev-history-next-item t]
+      ["Redraw"         maplev-history-redo-item t]
+      ["Delete"         maplev-history-delete-item t]
       ["Goto help node" maplev-help-at-point t]
       ["Goto proc node" maplev-proc-at-point t]
-      ["Clear history"  maplev-clear-history t]
+      ["Clear history"  maplev-history-clear t]
       "---"
       ["Separate frame" maplev-tear-off-window
        :active (not (one-window-p t 'here))]
@@ -3165,6 +3664,7 @@ cmaple.
 
 ;;}}}
 ;;{{{   mode definition
+
 (defun maplev-help-mode (&optional release)
   "Major mode for displaying Maple help pages.
 RELEASE is the Maple release, if nil, `maplev-default-release' is used.
@@ -3179,8 +3679,8 @@ RELEASE is the Maple release, if nil, `maplev-default-release' is used.
   (set (make-local-variable 'maplev--process-item)
        (function maplev--help-process))
 
-  (make-local-variable 'maplev--history-stack)  ; set up the stack
-  (maplev-clear-history)
+  (make-local-variable 'maplev--history-stack) ; set up the stack
+  (maplev-history-clear)
 
   ;; for maplev--activate-hyperlinks
   (set (make-local-variable 'parse-sexp-lookup-properties) t)
@@ -3191,14 +3691,15 @@ RELEASE is the Maple release, if nil, `maplev-default-release' is used.
 
 ;;}}}
 ;;{{{   mode functions
+
 (defun maplev-help-follow-mouse (click)
   "Display the Maple help page of the topic at the mouse CLICK."
   (interactive "e")
   (set-buffer (window-buffer (event-window click)))
   (goto-char (event-point click))
-  (maplev-help-show-topic (maplev-ident-around-point)))
+  (maplev-help-show-topic (maplev--ident-around-point)))
 
-(defun maplev-ident-around-point (&optional default)
+(defun maplev--ident-around-point (&optional default)
   "Return the identifier around the point as a string.
 If it is empty use DEFAULT.
 If choice is empty, an error is signaled, unless DEFAULT equals \"\" or t."
@@ -3227,7 +3728,7 @@ Minibuffer completion is used if COMPLETE is non-nil."
   ;; Suppress error message
   (if (not default) (setq default t))
   (let ((enable-recursive-minibuffers t)
-        (ident (maplev-ident-around-point default))
+        (ident (maplev--ident-around-point default))
         (maplev-completion-release maplev-release)
         choice)
     (setq prompt (concat prompt (unless (string-equal ident "")
@@ -3264,16 +3765,21 @@ Interactively, default is word point is on."
   "Display Maple help for TOPIC \(a string\).
 Push TOPIC onto the local stack, unless it is already on the top.
 If optional arg HIDE is non-nil do not display buffer."
-  (save-current-buffer       ; maybe should be deeper (NEW!!!!!)
+  (save-current-buffer             ; maybe should be deeper (NEW!!!!!)
     (let ((release maplev-release)) ;; we switch buffers!
       (set-buffer (get-buffer-create (maplev--help-buffer)))
       (unless (eq major-mode 'maplev-help-mode)
         (maplev-help-mode release))
+      ;; Push TOPIC onto history stack
       (maplev--history-stack-process topic hide))))
+
+;;(setq maplev-cmaple-screenheight 24)
 
 (defun maplev--help-process (topic)
   "Display Maple help for TOPIC in `maplev--help-buffer'."
   (let ((process (maplev--cmaple-process)))
+    ;; TODO this doesn't quite work, it echos in the cmaple buffer
+;;    (maplev-cmaple-direct "interface('screenheight'='infinity'):")
     (maplev-cmaple--lock-access)
     (set-process-filter process 'maplev--help-filter)
     (set-buffer (maplev--help-buffer))
@@ -3282,6 +3788,10 @@ If optional arg HIDE is non-nil do not display buffer."
       (delete-region (point-min) (point-max)))
     (comint-simple-send process (concat "?" topic))
     (maplev-cmaple--send-end-notice process)))
+;;    ;; TODO this doesn't quite work, it echos in the cmaple buffer
+;;     (maplev-cmaple-direct (concat "interface('screenheight'="
+;;                                (number-to-string maplev-cmaple-screenheight)
+;;                                "):"))))
 
 (defun maplev--help-filter (process string)
   "Pipe the output of a help command into `maplev--help-buffer'.
@@ -3308,75 +3818,6 @@ PROCESS calls this filter.  STRING is the output."
   (maplev-help-fontify-node)
   (set-buffer-modified-p nil))
 
-(defun maplev--completion (word predicate mode)
-  "Generate minibuffer completion using maple function names.
-For the meaning of args see Info node `(elisp)Programmed Completion'."
-  ;; Make sure we are using the correct value of maplev-release.
-  ;; (Inside the minibuffer maplev-release equals maplev-default-release.)
-  (let ((maplev-release maplev-completion-release))
-    (unless (assoc maplev-release maplev-completion-alist)
-      ;; processing node "index/function"
-      (let (possibilities)
-        (save-excursion
-          (maplev-help-show-topic "index/function" t)
-          (set-buffer (maplev--help-buffer))
-          (while (maplev-cmaple--locked-p) (maplev--short-delay))
-          (save-restriction
-            ;; does this work with all releases?
-            (narrow-to-region (save-excursion (goto-line 7) (point))
-                              (save-excursion (goto-char (point-max))
-                                              (forward-line -3) (point)))
-            (goto-char (point-max))
-            (while (forward-word -1)
-              (setq possibilities
-                    (cons (cons (buffer-substring-no-properties
-                                 (point)
-                                 (save-excursion (forward-word 1) (point)))
-                                nil)
-                        possibilities))))
-          (maplev-delete-item))
-        ;; processing node "index[package]" -- suggestions welcome!
-        (setq maplev-completion-alist
-              (cons (cons maplev-release (list possibilities))
-                    maplev-completion-alist))))
-    (let ((possibilities (cadr (assoc maplev-release maplev-completion-alist))))
-      (cond ((eq mode t)
-             (all-completions word possibilities predicate))
-            ((not mode)
-             (try-completion word possibilities predicate))
-            ((eq mode 'lambda)
-             (assoc word possibilities))))))
-
-(defun maplev-complete-symbol (&optional prefix)
-  "Perform completion on maple symbol preceding point.
-Compare that symbol against `maplev-completion-alist'."
-  ;; Code borrowed from lisp-complete-symbol.
-  (interactive)
-  (let* ((end (point))
-         ;; The following probably can be improved
-	 (beg (save-excursion
-                (backward-sexp 1)
-                (while (= (char-syntax (following-char)) ?\')
-                  (forward-char 1))
-                (point)))
-	 (pattern (buffer-substring-no-properties beg end))
-         (maplev-completion-release maplev-release)
-	 (completion (try-completion pattern 'maplev--completion)))
-    (cond ((eq completion t))
-	  ((null completion)
-	   (message "Can't find completion for \"%s\"" pattern)
-	   (ding))
-	  ((not (string= pattern completion))
-	   (delete-region beg end)
-	   (insert completion))
-	  (t
-	   (message "Making completion list...")
-	   (let ((list (sort (all-completions pattern 'maplev--completion)
-                             'string<)))
-	     (with-output-to-temp-buffer "*Completions*"
-	       (display-completion-list list)))
-	   (message "Making completion list...%s" "done")))))
-
 (defun maplev-switch-buffer-help ()
   "Switch to help buffer, if it exists."
   (interactive)
@@ -3398,8 +3839,10 @@ Compare that symbol against `maplev-completion-alist'."
     (if buf
         (switch-to-buffer buf)
       (message "No buffer \"%s\"." buffer))))
+
 ;;}}}
 ;;{{{   history mechanism
+
 (defun maplev-help-parent ()
   "Display the parent node of the current help page.
 The parent node is extracted from the context of the help page, not
@@ -3409,8 +3852,10 @@ from the parent defined in the Maple help system."
   (if (looking-at "\\(Function: ?\\)?\\([a-zA-Z0-9]*\\)\\[")
       (maplev-help-show-topic (match-string 2))
     (maplev-help-show-topic "index")))
+
 ;;}}}
 ;;{{{   fontify
+
 ;;{{{     fonts
 
 (defcustom maplev-help-function-face 'font-lock-function-name-face
@@ -3475,14 +3920,15 @@ The title is the phrase following the function name."
 
 ;;}}}
 ;;{{{     regular expressions
-; (defconst maplev--help-section-re
-;   (concat "^[A-Z]"                      ; Must start with a capital.
-;           "\\([^\n]*:\\|\\("            ; If it ends with a colon (and whitespace) it matches.
-;           "\\([a-z]+ ?\\)?"             ; If it consists of no more than three alphabetic words,
-;           "\\([A-Za-z][a-z]* ?\\)?"     ; possibly with capitals, then it matches.
-;           "\\([A-Za-z][a-z]* ?\\)?\\)"
-;           "\\)[ \t]*$")
-;   "Regular expression for sections in a Maple help page.")
+
+;; (defconst maplev--help-section-re
+;;   (concat "^[A-Z]"                      ; Must start with a capital.
+;;           "\\([^\n]*:\\|\\("            ; If it ends with a colon (and whitespace) it matches.
+;;           "\\([a-z]+ ?\\)?"             ; If it consists of no more than three alphabetic words,
+;;           "\\([A-Za-z][a-z]* ?\\)?"     ; possibly with capitals, then it matches.
+;;           "\\([A-Za-z][a-z]* ?\\)?\\)"
+;;           "\\)[ \t]*$")
+;;   "Regular expression for sections in a Maple help page.")
 
 (defconst maplev--help-section-re
   (concat "^\\(Calling Sequences?"
@@ -3490,6 +3936,8 @@ The title is the phrase following the function name."
           "\\|Description"
           "\\|Examples"
           "\\|See Also"
+          "\\|References"
+          "\\|\\(?:List of \\([][a-zA-Z_]+ \\)?\\(Package\\|Subpackage\\|Module\\) Commands\\)"
           "\\):?")
   "Regular expression for sections in a Maple help page.")
 
@@ -3498,8 +3946,14 @@ The title is the phrase following the function name."
           "\\([A-Za-z][a-z-]*\\)?:?[ \t]*$"
           "\\)")
   "Regular expression for subsections in a Maple help page.")
+
+(defconst maplev--help-definition-re
+  "([ \t\n]*\\(Definition/[^) \t\n]+\\)[ \t\n]*)"
+  "Regular expression for dictionary hyperlinks")
+
 ;;}}}
 ;;{{{     functions
+
 (defun maplev-help-fontify-node ()
   "Fontify a Maple help page buffer. Does not use font-lock mode."
   (save-excursion
@@ -3562,17 +4016,29 @@ The title is the phrase following the function name."
         (put-text-property (match-beginning 0) (match-end 0)
                            'face 'maplev-input-face))
 
-      ;; Activate hyperlinks following "See Also:".  R4 does not
-      ;; insert a carriage return so font-lock the section title,
-      ;; which would not have matched `maplev-help-section-face'.
+
+      ;; Activate hyperlinks following "See Also".
+      ;; Stop when encountering a blank line.
       (goto-char (point-max))
       (and (re-search-backward "^See Also:?" nil 'move)
-           (maplev--activate-hyperlinks (match-end 0) (point-max)))
+           (maplev--activate-hyperlinks 
+            (match-end 0) 
+            (progn
+              (re-search-forward "^[ \t\n]*$" nil 'move)
+              (point))))
 
-      ;; Activate hyperlinks forllowing "Multiple matches:".
+      ;; Activate hyperlinks following "Multiple matches:".
       (goto-char (point-min))
       (and (re-search-forward "^Multiple matches found:" nil 'move)
-           (maplev--activate-hyperlinks (match-end 0) (point-max))))))
+           (maplev--activate-hyperlinks (match-end 0) (point-max)))
+
+      ;; Active dictionary hyperlinks
+      (goto-char (point-min))
+      (while (re-search-forward maplev--help-definition-re nil 'move)
+        (let ((beg (match-beginning 1))
+              (end (match-end 1)))
+          (put-text-property beg end 'mouse-face 'highlight)
+          (put-text-property beg end 'face maplev-help-function-face))))))
 
 (defun maplev--activate-hyperlinks (beg end)
   "Font lock and activate Maple keywords in the region from BEG to END."
@@ -3600,12 +4066,19 @@ The title is the phrase following the function name."
 
 ;;{{{   mode map
 
+;; The mode map for maplev-proc-map is identical to that for
+;; maplev-help-mode, with one exception: the parent function is not
+;; needed, so its key is redefined to self-insert (which generates an
+;; error, as does any other insertion, because the buffer if
+;; read-only).
+
 (defvar maplev-proc-mode-map nil
   "Keymap used in `maplev-proc-mode'.")
 
 (unless maplev-proc-mode-map
-  (setq maplev-proc-mode-map (copy-keymap maplev-help-mode-map))
-  (define-key maplev-proc-mode-map [?P] 'self-insert-command))
+  (let ((map (copy-keymap maplev-help-mode-map)))
+    (define-key map [?P] 'self-insert-command)
+    (setq maplev-proc-mode-map map)))
 
 ;;}}}
 ;;{{{   mode definition
@@ -3626,8 +4099,8 @@ RELEASE is the Maple release, if nil, `maplev-default-release' is used.
   (set (make-local-variable 'maplev--process-item)
        (function maplev--proc-process))
 
-  (make-local-variable 'maplev--history-stack)  ; set up the stack
-  (maplev-clear-history)
+  (make-local-variable 'maplev--history-stack) ; set up the stack
+  (maplev-history-clear)
 
   ;; Mint support
   (make-local-variable 'maplev-mint--code-beginning)
@@ -3643,6 +4116,7 @@ RELEASE is the Maple release, if nil, `maplev-default-release' is used.
 
 ;;}}}
 ;;{{{   functions
+
 ;;; Define functions for displaying a Maple procedure from the Maple
 ;;; library in a buffer.
 
@@ -3651,7 +4125,7 @@ RELEASE is the Maple release, if nil, `maplev-default-release' is used.
   (interactive "e")
   (set-buffer (window-buffer (event-window click)))
   (goto-char (event-point click))
-  (maplev--proc-show-topic (maplev-ident-around-point)))
+  (maplev--proc-show-topic (maplev--ident-around-point)))
 
 (defun maplev-proc-at-point (proc)
   "Display the Maple procedure PROC.
@@ -3686,7 +4160,8 @@ If optional arg HIDE is non-nil do not display buffer."
     (let (buffer-read-only)
       (delete-region (point-min) (point-max))
       (goto-char (point-min))
-      (insert proc " := "))
+      ;;(insert proc " := ")
+      )
     (comint-simple-send process (concat "maplev_print(" proc ");"))
     (maplev-cmaple--send-end-notice process)))
 
@@ -3719,7 +4194,8 @@ PROCESS calls this filter.  STRING is the Maple procedure."
     ;; terminate with `;'
     (goto-char (point-max))
     (skip-chars-backward " \t\n")
-    (insert ";"))
+;;    (insert ";")
+    )
   (maplev-indent-buffer)
   (set-buffer-modified-p nil)
   (font-lock-fontify-buffer))
@@ -3746,6 +4222,13 @@ PROCESS calls this filter.  STRING is the Maple procedure."
   :type 'boolean
   :group 'maplev-mint)
 
+(defcustom maplev-mint-include-dir nil
+  "*Directory of mint include files.
+This should probably be a list of directories."
+  :type 'string
+  :group 'maplev-mint)
+  
+
 ;;}}}
 ;;{{{   syntax table
 
@@ -3754,7 +4237,7 @@ PROCESS calls this filter.  STRING is the Maple procedure."
 (unless maplev-mint-mode-syntax-table
   (let ((table (make-syntax-table)))
     (modify-syntax-entry ?[  "w"  table)
-    (modify-syntax-entry ?]  "w"  table)
+                         (modify-syntax-entry ?]  "w"  table)
     (modify-syntax-entry ?_  "w"  table)
     (modify-syntax-entry ?/  "w"  table)
     (modify-syntax-entry ?\` "\"" table) ; string quotes
@@ -3786,7 +4269,7 @@ PROCESS calls this filter.  STRING is the Maple procedure."
 (easy-menu-define maplev-mint-mode-menu maplev-mint-mode-map
   "Menu for Mint buffer."
   '("Mint"
-    ["Fix errors" maplev-mint-fix-errors :visible nil]  ; not yet defined
+    ["Fix errors" maplev-mint-fix-errors :visible nil] ; not yet defined
     ["Rerun mint" maplev-mint-rerun t]
     ["Quit"       quit-window t]))
 
@@ -3811,17 +4294,20 @@ CODE-BUFFER is the buffer that contains the source code.
 ;;}}}
 ;;{{{   mode functions
 
-(defun maplev-mint-goto-source-pos (l c)
-  "Move to position in `maplev-mint--code-buffer' relative to `maplev-mint--code-beginning'.
-The source code buffer is popped up and point is moved L lines forward
-and then C columns forward from the origin. Return position of point."
-  (pop-to-buffer maplev-mint--code-buffer)
-  (goto-char maplev-mint--code-beginning)
+(defun maplev-mint--goto-source-pos (l c &optional file)
+  "Move to position in source file and return position.
+If FILE is nil, use buffer `maplev-mint--code-buffer'.
+Pop up the buffer, move to either `point-min', if FILE is non-nil,
+or `maplev-mint--code-beginning' otherwise,
+and move forward L lines and C columns."
+  (pop-to-buffer (if file (find-file-noselect file)
+                   maplev-mint--code-buffer))
+  (goto-char (if file (point-min)  maplev-mint--code-beginning))
   (if (> l 0) (forward-line l))
   (forward-char c)
   (point))
 
-(defun maplev-mint-goto-error (pos)
+(defun maplev-mint--goto-error (pos)
   "Go to error in Maple source according to Mint message at position POS.
 Return position of error in Maple source."
   (let (line col)
@@ -3835,12 +4321,14 @@ Return position of error in Maple source."
         (re-search-forward  "[0-9]+")
         (setq line (1- (string-to-number (match-string 0)))
               col  (- col (current-column) 2))))
-    (maplev-mint-goto-source-pos line col)))
+    (maplev-mint--goto-source-pos line col)))
 
-(defun maplev-mint--goto-source-proc (pos)
-  "According to Mint buffer position POS, move point after closing
-parenthesis of argument list of a source procedure. Return non-nil
-if this is a procedure, nil if an operator.
+(defun maplev-mint--goto-source-proc-old (pos)
+  "According to Mint buffer position POS, move point to the end of the
+initial assignment statement of a source procedure/module.  This would
+be either the closing parenthesis of the formal parameter list, or the
+terminating semicolon or colon of an optional procedure/module type
+declaration.  Return non-nil if this is a procedure, nil if an operator.
 
 THIS NEEDS WORK TO HANDLE OPERATORS."
   ;; This function uses a fairly complicated regexp in an attempt to
@@ -3860,18 +4348,21 @@ THIS NEEDS WORK TO HANDLE OPERATORS."
   ;; Mint, alas, considers indexed names to be anonymous procedures so
   ;; their frequency is greater than should be.
 
-  (let (name args-re line case-fold-search)
+  (let (name-re args-re line case-fold-search)
     (save-excursion
       (goto-char pos)
       (re-search-backward "^\\(Nested \\)?\\(Anonymous \\)?\\(Procedure\\|Operator\\|Module\\)")
-      ;; Get the procedure name
-      (setq name (if (nth 4 (match-data)) ; t if anonymous procedure
-                     ""
-                   (save-excursion
-                     ;; Use `(' to terminate proc-name
-                     (re-search-forward "\\(Procedure\\|Module\\)[ \t]*\\([^(]*\\)")
-                     (concat "`?" (match-string-no-properties 2) "[ \t\n]*:=[ \t\n]*")))
-            ;; Return a regular expression that matches the argument
+      ;; Assign name-re the procedure/module name.
+      (setq name-re (if (nth 4 (match-data)) ; t if anonymous procedure
+                        ""
+                      (save-excursion
+                        ;; Use `(' to terminate proc-name
+                        ;; (re-search-forward "\\(Procedure\\|Module\\)[ \t]*\\([^(]*\\)")
+                        (re-search-forward "\\(Procedure\\|Module\\)\\s-*\\([^[(]*\\)")
+                        (concat "`?" (match-string-no-properties 2)
+                                "\\([ \t\f\n]*\\[[^]]*\\]\\)*" ; optional indices
+                                "[ \t\n]*:=[ \t\n]*")))
+            ;; Assign a regular expression that matches the argument
             ;; list in the source. The generated regexp does not
             ;; match an argument list with duplicate arguments; this
             ;; because Mint does not print the duplicate arguments.
@@ -3885,21 +4376,78 @@ THIS NEEDS WORK TO HANDLE OPERATORS."
                          ("[ \t\n]+" . "[ \t\n]*")
                          ("," . ,(concat "\\([ \t]*\\(#.*\\)?\n\\)*[ \t]*"
                                          ","
-                                         "\\([ \t]*\\(#.*\\)?\n\\)*[ \t]*"))))))
-
+                                         "\\([ \t]*\\(#.*\\)?\n\\)*[ \t]*")))))
+            ;; Assign a regular expression that matches any argument
+            ;; list.  This may be tougher than I envisioned.  How are
+            ;; optional type declarations handled?  The difficulty is
+            ;; that they could have commas and closing parentheses.
+            
+            ;;            args-re (concat "\\s-*\\<\\w+\\>\\(\\s-*::\\s-*[^
+            )
       (re-search-forward "on\\s-*lines?\\s-*\\([0-9]+\\)")
       (setq line (1- (string-to-number (match-string 1)))))
+    
+    ;; move point in source to beginning of line where procedure/module assignment begins.
 
-    (maplev-mint-goto-source-pos line 0)
-    (unless (re-search-forward (concat name
+    (maplev-mint--goto-source-pos line 0)
+
+    ;; move forward to end of assignment.
+
+    (unless (re-search-forward (concat name-re
                                        "\\(proc\\|module\\)[ \t\n*]*"
                                        "(\\([ \t]*\\(#.*\\)?\n\\)*"
                                        args-re
-                                       "\\([ \t\n]*#.*$\\)*[ \t\n]*)")
+                                       "\\([ \t\n]*#.*$\\)*[ \t\n]*)"
+                                       "\\(\\s-*::\\s-*\\<\\w+\\>\\s-*[;:]\\)?" ; optional procedure type
+                                       )
                                nil t)
       ;; If search failed (possibly because of duplicate arguments,
-      ;; try again with out explicitly specifying the argument list.
+      ;; try again without explicitly specifying the argument list.
       (goto-char (maplev--scan-lists 1)))))
+
+
+
+(defun maplev-mint--goto-source-proc (pos)
+  "According to Mint buffer position POS, move point to the end of the
+initial assignment statement of a source procedure/module.  This would
+be either the closing parenthesis of the formal parameter list, or the
+terminating semicolon or colon of an optional procedure/module type
+declaration.  Return non-nil if this is a procedure, nil if an operator."
+
+  ;; find the line number of the source buffer at which the defun starts
+  (goto-char pos)
+  (re-search-backward "^\\(Nested \\)?\\(Anonymous \\)?\\(Procedure\\|Operator\\|Module\\)")
+  (re-search-forward "on\\s-*lines?\\s-*\\([0-9]+\\)")
+  ;; move point to the beginning of that line in the source
+  (maplev-mint--goto-source-pos 
+   (1- (string-to-number (match-string 1)))
+   0
+   ;; Optional file name, if applicable.
+   ;; If looking at something like " to 123 in filename", then
+   ;; the source is in filename, which is relative to the
+   ;; mint includedir.  Search for that file, using first the current
+   ;; directory, then maplev-mint-include-dir.
+   (when (looking-at "\\s-+to\\s-+\\(?:[0-9]+\\)\\s-+of\\s-+\\(.*\\)$")
+     (let* ((base (match-string 1))
+            (file (if (file-exists-p base) 
+                      base
+                    (concat (file-name-as-directory maplev-mint-include-dir) base))))
+       (if (not (file-readable-p file))
+           (error (concat "File " file " does not exist or is unreadable"))
+         file))))
+  ;; move to the end of the defun opening statement
+  (re-search-forward ":=")
+  (goto-char (maplev--scan-lists 1))
+  (if (looking-at "\\s-*::[^;:]+[;:]") (goto-char (match-end 0))))
+
+(defun maplev-mint--goto-source-line (pos)
+  "Find the line number in the Mint buffer at position POS, then move
+point to that line in the source buffer."
+  (goto-char pos)
+  (beginning-of-line)
+  (re-search-forward "line \\([0-9]+\\)" (line-end-position))
+  (maplev-mint--goto-source-pos (1- (string-to-number (match-string 1))) 0))
+
 
 (defun maplev--replace-string (string replace)
   "In STRING replace as specified by REPLACE.
@@ -3945,37 +4493,28 @@ REPLACE is an alist with elements \(OLD . NEW\)."
 (defconst maplev-mint-variables-re
   "[ \t\n]*\\(\\(.*,[ \t]*\n\\)*.*\\)[ \t]*$"
   "Regexp used to match the argument list of procedures in Mint output.")
+
 (defconst maplev-mint-fontify-alist
-  '(("^on line[ \t]*[0-9]+:" 0 maplev-mint-note-face)
-    ("^[ \t]*\\(\\^.*$\\)"
-     1 maplev-mint-error-face 'error)
-    ("^\\(Nested \\)?\\(Procedure\\|Operator\\)[ ]*\\([^(]*\\)"
-     3 maplev-mint-proc-face 'proc)
-    ("^\\(Nested \\)?Anonymous \\(Procedure\\|Operator\\)[ ]*\\(proc([^)]*)\\)"
-     3 maplev-mint-proc-face 'proc)
-    ("These parameters were never used\\( explicitly\\)?:"
-     2 maplev-mint-warning-face 'unused-arg t)
-    ("These names appeared more than once in the parameter list:"
-     1 maplev-mint-warning-face 'repeat-arg t)
-    ("These local variables were not declared explicitly:"
-     1 maplev-mint-warning-face 'undecl-local t)
-    ("These local variables were never used:"
-     1 maplev-mint-warning-face 'unused-local t)
-    ("These names were declared more than once as a local variable:"
-     1 maplev-mint-warning-face 'repeat-local t)
-    ("These names were used as global names but were not declared:"
-     1 maplev-mint-warning-face 'undecl-global t)
+  '(("\\(^on line[ \t]*[0-9]+:\\)" maplev-mint-note-face)
+    ("^[ \t]*\\(\\^.*$\\)" maplev-mint-error-face 'error)
+    ("^\\(?:Nested \\)?\\(?:Procedure\\|Operator\\|Module\\)[ ]*\\([^(]*\\)" maplev-mint-proc-face 'proc)
+    ("^\\(?:Nested \\)?Anonymous \\(?:Procedure\\|Operator\\)[ ]*\\(proc([^)]*)\\)" maplev-mint-proc-face 'proc)
+    ("These parameters were never used\\(?: explicitly\\)?:" maplev-mint-warning-face 'unused-arg t)
+    ("These names appeared more than once in the parameter list:" maplev-mint-warning-face 'repeat-arg t)
+    ("These local variables were not declared explicitly:" maplev-mint-warning-face 'undecl-local t)
+    ("These local variables were never used:" maplev-mint-warning-face 'unused-local t)
+    ("These names were declared more than once as a local variable:" maplev-mint-warning-face 'repeat-local t)
+    ("These names were used as global names but were not declared:" maplev-mint-warning-face 'undecl-global t)
+    ("\\(on line [0-9]+\\)" maplev-mint-note-face 'goto-line)
     ;; Could we make the following optional?
     ;; ("Global names used in this procedure:"
     ;;  1 maplev-mint-warning-face 'undecl-global t)
     )
-  "Alist for fontification in a Mint buffer. Each element is a list
-of the form \(REGEXP SUBEXP FACE PROP VAR\), where REGEXP is to be
-matched, SUBEXP, a number, specifies which parenthesized expression
-in REGEXP is picked up, and FACE is a face. Optional fourth element
-PROP is a symbol used for marking the category of SUBEXP. Optional
-fifth element VAR is non-nil if REGEXP is concatenated with
-`maplev-mint-variables-re'.")
+  "Alist for fontification in a Mint buffer. Each element is a list of
+the form \(REGEXP FACE PROP VAR\), where REGEXP is to be matched and
+FACE is a face.  Optional third element PROP is a symbol used for
+marking the category of SUBEXP.  Optional fourth element VAR is
+non-nil if REGEXP is concatenated with `maplev-mint-variables-re'.")
 
 (defun maplev-mint-fontify-buffer ()
   "Fontify the mint buffer. Does not use font-lock mode."
@@ -3986,26 +4525,29 @@ fifth element VAR is non-nil if REGEXP is concatenated with
     (while (setq mel (car mlist))
       (goto-char (point-min))
       (setq regexp (concat (nth 0 mel)
-                           (if (nth 4 mel) maplev-mint-variables-re)))
+                           (if (nth 3 mel) maplev-mint-variables-re)))
       (while (re-search-forward regexp nil t)
-        (let ((beg (match-beginning (nth 1 mel)))
-              (end (match-end (nth 1 mel))))
+        (let ((beg (match-beginning 1))
+              (end (match-end 1)))
           ;; Here we are working with variables whose values are symbols
           ;; with a face property.
-          (put-text-property beg end 'face (eval (nth 2 mel)))
-          (when (nth 3 mel)
+          (put-text-property beg end 'face (eval (nth 1 mel)))
+          (when (nth 2 mel)
             ;; We use a text property `maplev-mint' to store in the text
             ;; what kind of info we have from Mint.
-            (put-text-property beg end 'maplev-mint (eval (nth 3 mel)))
-            (if (and (nth 4 mel)
+            (put-text-property beg end 'maplev-mint (eval (nth 2 mel)))
+            (if (and (nth 3 mel)
                      (not maplev-mint-process-all-vars)) ; then we do highlighting word-wise
                 (save-excursion
                   (goto-char beg)
                   ;; Slightly simpler algorithm than the one used by
-                  ;; maplev-ident-around-point to pick up the word
+                  ;; maplev--ident-around-point to pick up the word
                   ;; where point is. Does it matter for highlighting?
-                  (while (re-search-forward "\\<\\w+\\>" end t)
-                    (put-text-property (match-beginning 0) (match-end 0)
+                  ;;                   (while (re-search-forward "\\<\\w+\\>" end t)
+                  ;;                     (put-text-property (match-beginning 0) (match-end 0)
+                  ;;                                        'mouse-face 'highlight)))
+                  (while (re-search-forward "\\<\\(\\w+\\)\\>" end t)
+                    (put-text-property (match-beginning 1) (match-end 1)
                                        'mouse-face 'highlight)))
               (put-text-property beg end 'mouse-face 'highlight)))))
       (setq mlist (cdr mlist)))
@@ -4044,7 +4586,7 @@ When called interactively, POS is position where point is."
                         str (substring str (match-end 0)))))
             (setq string (save-excursion
                            (goto-char pos)
-                           (maplev-ident-around-point))
+                           (maplev--ident-around-point))
                   vars (list string)))
           ;;
           (cond
@@ -4054,7 +4596,7 @@ When called interactively, POS is position where point is."
            ;;
            ;; Jump to the location of an error in the source code.
            ((equal prop 'error)
-            (maplev-mint-goto-error pos))
+            (maplev-mint--goto-error pos))
            ;;
            ;; Remove unused args from argument list.
            ((equal prop 'unused-arg)
@@ -4091,6 +4633,10 @@ When called interactively, POS is position where point is."
             (when (maplev-mint-query "Add `%s' to global statement? " string)
               (maplev-mint--goto-source-proc pos)
               (maplev-add-declaration "global" string)))
+           ;;
+           ;; Goto line
+           ((equal prop 'goto-line)
+            (maplev-mint--goto-source-line pos))
            )))))
 
 (defun maplev-mint-query (form &rest vars)
@@ -4162,7 +4708,7 @@ Return exit code of mint."
       ;; locate position of error
       (goto-char (point-min))
       (if (re-search-forward "^[ \t]*\\^" nil t)
-          (setq errpos (maplev-mint-goto-error (point)))))
+          (setq errpos (maplev-mint--goto-error (point)))))
     ;; If there is an error in the maple source and a window displays it,
     ;; move point in this window
     (if (and code-window errpos)
@@ -4176,17 +4722,17 @@ Return exit code of mint."
     (widen)
     (maplev-mint-region (point-min) (point-max))))
 
-(defun maplev-mint-procedure (&optional level)
+(defun maplev-mint-procedure ()
   "Run Mint on the current procedure."
-  (interactive "p")
-  (apply 'maplev-mint-region (maplev-current-proc level)))
+  (interactive)
+  (apply 'maplev-mint-region (maplev-current-defun)))
 
 (defun maplev-mint-rerun ()
   "Rerun Mint on the previously executed region.
 If no region has been selected, run Mint on the buffer."
   (interactive)
   (save-current-buffer
-    (if maplev-mint--code-buffer ; we are in mint buffer
+    (if maplev-mint--code-buffer        ; we are in mint buffer
         (set-buffer maplev-mint--code-buffer))
     (if (not maplev-mint--code-beginning)
         (maplev-mint-buffer)
@@ -4220,7 +4766,9 @@ If no region has been selected, run Mint on the buffer."
 (defvar maplev--history-stack nil
   "List containing history of previous `commands'.
 The car of the list is an integer that indexes a particular element in
-the list, it is used to scroll through the stack.")
+the list, it is used to scroll through the stack.  This is a
+buffer-local variable associated with the Maple Help and Maple Proc
+output buffers.")
 
 (defun maplev--history-stack-insert (item)
   "Put ITEM into `maplev--history-stack'."
@@ -4267,34 +4815,35 @@ Do not change the pointer."
       (funcall maplev--process-item item)
     (message "End of stack")))
 
-(defun maplev-next-item ()
+(defun maplev-history-next-item ()
   "Process the next item on `maplev--history-stack'."
   (interactive)
   (maplev--process-item-func (maplev--history-stack-next)))
 
-(defun maplev-prev-item ()
+(defun maplev-history-prev-item ()
   "Process the previous item on `maplev--history-stack'."
   (interactive)
   (maplev--process-item-func (maplev--history-stack-prev)))
 
-(defun maplev-redo-item ()
+(defun maplev-history-redo-item ()
   "Process the current item on `maplev--history-stack'."
   (interactive)
   (maplev--process-item-func (maplev--history-stack-current)))
 
-(defun maplev-delete-item ()
+(defun maplev-history-delete-item ()
   "Delete current item from `maplev--history-stack'."
   (interactive)
-  (let ((pos (car maplev--history-stack)))
-    (setcdr (nthcdr pos maplev--history-stack)
-            (nthcdr (+ 2 pos) maplev--history-stack))
-    (unless (nth pos (cdr maplev--history-stack))
-      (setcar maplev--history-stack (setq pos (1- pos))))
-    (if (>= pos 0)
-        (maplev--process-item-func (maplev--history-stack-current))
-      (kill-buffer nil))))
+  (when maplev--history-stack
+    (let ((pos (car maplev--history-stack)))
+      (setcdr (nthcdr pos maplev--history-stack)
+              (nthcdr (+ 2 pos) maplev--history-stack))
+      (unless (nth pos (cdr maplev--history-stack))
+        (setcar maplev--history-stack (setq pos (1- pos))))
+      (if (>= pos 0)
+          (maplev--process-item-func (maplev--history-stack-current))
+        (kill-buffer nil)))))
 
-(defun maplev-clear-history ()
+(defun maplev-history-clear ()
   "Assign `maplev--history-stack' an empty stack."
   (interactive)
   (setq maplev--history-stack (list 0)))

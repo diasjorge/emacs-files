@@ -1,4 +1,4 @@
-;;; @(#) joc-toggle-buffer.el --- flips back and forth between two buffers
+;;; @(#) toggle-buffer.el --- flips back and forth between two buffers
 
 ;; Copyright (C) 2001 by Joseph L. Casadonte Jr.
 
@@ -62,7 +62,7 @@
 ;;  Put this file on your Emacs-Lisp load path and add the following to your
 ;;  ~/.emacs startup file
 ;;
-;;     (require 'joc-toggle-buffer)
+;;     (require 'toggle-buffer)
 
 ;;; Usage:
 ;;
@@ -99,18 +99,13 @@
 ;;  Any comments, suggestions, bug reports or upgrade requests are welcome.
 ;;  Please send them to Joe Casadonte (emacs@northbound-train.com).
 ;;
-;;  This version of joc-toggle-buffer was developed and tested with NTEmacs 20.5.1
+;;  This version of toggle-buffer was developed and tested with NTEmacs 20.5.1
 ;;  and 2.7 under Windows NT 4.0 SP6 and Emacs 20.7.1 under Linux (RH7).
 ;;  Please, let me know if it works with other OS and versions of Emacs.
 
 ;;; Change Log:
 ;;
 ;;  see http://www.northbound-train.com/emacs/toggle-buffer.log
-;;
-;;  2003-11-23 Peter S Galbraith <psg@debian.org>
-;;   This version, distributed in the Debian package `emacs-goodies-el',
-;;   was renamed from toggle-buffer.el to joc-toggle-buffer.el.  The prefix
-;;   was also added to a few variables.
 
 ;;; **************************************************************************
 ;;; **************************************************************************
@@ -156,7 +151,7 @@ may use Advise if Provided (in which case swbuff must be
   :group 'joc-toggle-buffer)
 
 ;; ---------------------------------------------------------------------------
-(defcustom joc-toggle-buffer-load-hook nil
+(defcustom toggle-buffer-load-hook nil
   "Hook to run when package is loaded."
   :type 'hook
   :group 'joc-toggle-buffer)
@@ -186,12 +181,10 @@ may use Advise if Provided (in which case swbuff must be
 (defvar joc-toggle-buffer-last-buffer nil
   "Contains the name of the previous buffer.")
 
-;;;###autoload
 (defun joc-toggle-buffer ()
   "Switch to previous active buffer."
   (interactive)
-  (if (or (not (boundp 'joc-toggle-buffer-last-buffer))
-          (not joc-toggle-buffer-last-buffer))
+  (if (not (boundp 'joc-toggle-buffer-last-buffer))
 	  (error "No previous buffer to switch to (yet)"))
   (let ((buff (get-buffer joc-toggle-buffer-last-buffer)))
 	(if (not buff)
@@ -238,8 +231,9 @@ may use Advise if Provided (in which case swbuff must be
 ;;; **************************************************************************
 ;;; ***** we're done
 ;;; **************************************************************************
-(run-hooks 'joc-toggle-buffer-load-hook)
-
-(provide 'joc-toggle-buffer)
+(provide 'toggle-buffer)
+(run-hooks 'toggle-buffer-load-hook)
 
 ;;; toggle-buffer.el ends here
+;;; **************************************************************************
+;;;; *****  EOF  *****  EOF  *****  EOF  *****  EOF  *****  EOF  *************

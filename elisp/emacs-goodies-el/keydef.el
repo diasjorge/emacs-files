@@ -6,7 +6,7 @@
 ;; Created: 2001/01/18
 ;; Keywords: convenience lisp customization keyboard keys
 ;; Version: 1.16
-;; $Revision: 1.1.1.1 $ $Date: 2003/04/04 20:16:06 $
+;; $Revision: 1.1.1.1 $ $Date: 2003-04-04 20:16:06 $
 
 ;; This program was placed in the public domain on 2001/01/18 by the
 ;; Author. The program is distributed in the hope that it will be

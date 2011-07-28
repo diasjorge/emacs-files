@@ -1,6 +1,6 @@
 ;;; boxquote.el --- Quote text with a semi-box.
-;; Copyright 1999-2008 by Dave Pearson <davep@davep.org>
-;; $Revision: 1.3 $
+;; Copyright 1999-2009 by Dave Pearson <davep@davep.org>
+;; $Revision: 1.4 $
 
 ;; boxquote.el is free software distributed under the terms of the GNU
 ;; General Public Licence, version 2 or (at your option) any later version.
@@ -38,7 +38,8 @@
 ;; function.
 ;;
 ;; Reiner Steib for suggesting `boxquote-where-is' and the idea of letting
-;; `boxquote-describe-key' describe key bindings from other buffers.
+;; `boxquote-describe-key' describe key bindings from other buffers. Also
+;; thanks go to Reiner for suggesting `boxquote-insert-buffer'.
 
 ;;; Code:
 
@@ -114,6 +115,18 @@
 
 (defcustom boxquote-file-title-function #'file-name-nondirectory
   "*Function to apply to a file's name when using it to title a box."
+  :type  'function
+  :group 'boxquote)
+
+(defcustom boxquote-title-buffers t
+  "*Should a `boxquote-insert-buffer' title the box with the buffer name?"
+  :type '(choice
+          (const :tag "Title the box with the buffer name" t)
+          (const :tag "Don't title the box with the buffer name" nil))
+  :group 'boxquote)
+
+(defcustom boxquote-buffer-title-function #'identity
+  "*Function to apply to a buffer's name when using it to title a box."
   :type  'function
   :group 'boxquote)
 
@@ -310,7 +323,7 @@ be formatted using `boxquote-title-format'."
   "Insert the contents of a file, boxed with `boxquote-region'.
 
 If `boxquote-title-files' is non-nil the boxquote will be given a title that
-is the result applying `boxquote-file-title-funciton' to FILENAME."
+is the result of applying `boxquote-file-title-function' to FILENAME."
   (interactive "fInsert file: ")
   (insert (with-temp-buffer
             (insert-file-contents filename nil)
@@ -319,6 +332,19 @@ is the result applying `boxquote-file-title-funciton' to FILENAME."
             (when boxquote-title-files
               (boxquote-title (funcall boxquote-file-title-function filename)))
             (buffer-string))))
+
+;;;###autoload
+(defun boxquote-insert-buffer (buffer)
+  "Insert the contents of a buffer, boxes with `boxquote-region'.
+
+If `boxquote-title-buffers' is non-nil the boxquote will be given a title that
+is the result of applying `boxquote-buffer-title-function' to BUFFER."
+  (interactive "bInsert Buffer: ")
+  (boxquote-text
+   (with-current-buffer buffer
+     (buffer-substring-no-properties (point-min) (point-max))))
+  (when boxquote-title-buffers
+    (boxquote-title (funcall boxquote-buffer-title-function buffer))))
 
 ;;;###autoload
 (defun boxquote-kill-ring-save ()
@@ -402,7 +428,7 @@ ITEM is a function for retrieving the item to get help on."
      (save-window-excursion
        (funcall help-call)
        (with-current-buffer (boxquote-help-buffer-name (funcall item))
-         (buffer-string))))
+         (buffer-substring-no-properties (point-min) (point-max)))))
     (boxquote-title (format title-format (funcall item)))
     (when one-window-p
       (delete-other-windows))))

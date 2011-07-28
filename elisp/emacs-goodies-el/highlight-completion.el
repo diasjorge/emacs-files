@@ -5,7 +5,7 @@
 ;; Author: John Palmieri <palmieri@math.washington.edu>
 ;; URL: http://www.math.washington.edu/~palmieri/Emacs/hlc.html
 ;; Keywords: completion
-;; Version:  0.06 of Thu Jun 21 20:32:40 PDT 2001
+;; Version:  0.08 of Fri Sep 30 12:59:03 PDT 2005
 ;;
 ;; This file is not part of GNU Emacs.
 ;;
@@ -81,7 +81,7 @@
 ;; 2. Put 
 ;;      (require 'highlight-completion)
 ;;    in your .emacs file (or your .xemacs/init.el file)
-;; 3. Turn on highlight completion by either: running
+;; 3. Turn on highlight completion by either running
 ;;       M-x highlight-completion-mode
 ;;    or putting this in your .emacs file:
 ;;       (highlight-completion-mode 1)
@@ -90,20 +90,42 @@
 ;;    Then turn on "Highlight completion mode".
 ;;    You may want to modify some of the entries in "Highlight completion list".
 ;; 4. You can also run the functions
-;;      hc-completing-insert-file-name       to complete file names
-;;      hc-completing-insert-lisp-function               lisp functions
-;;      hc-completing-insert-lisp-variable               lisp variables
-;;      hc-completing-insert-kill                        contents of kill ring
-;;      hc-completing-insert-buffer-contents             buffer contents
-;;      hc-ispell-complete-word                          words, using ispell
+;;      hc-complete-file-name       to complete file names
+;;      hc-complete-lisp-function               lisp functions
+;;      hc-complete-lisp-variable               lisp variables
+;;      hc-complete-kill-ring                   contents of kill ring
+;;      hc-complete-buffer-contents             buffer contents
+;;      hc-complete-word                        words, using ispell
 ;;    These functions can be used anywhere, not just in the
-;;    minibuffer.
+;;    minibuffer.  If the variable hc-ctrl-x-c-is-completion is
+;;    non-nil, then these functions are bound to keys, with prefix
+;;    `C-x c' (not to be confused with `C-x C-c', of course).  See the
+;;    documentation of that customizable variable for more
+;;    information.
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+;; In case you want to write a function that uses highlight completion
+;; in some other setting, you will want to base your function on the
+;; all-purpose completion function
+;;
+;;   hc-completing-insert
+;; 
+;; See its documentation string for a description.  The function
+;; hc-ispell-complete-word provides a good example of how to use
+;; this when there is an easily available list of possible
+;; completions.  The ispell package provides the function lookup-words
+;; which does this.  To use this with lightning completion, one only
+;; has to write a function that acts as a wrapper for lookup-words and
+;; is suitable for use as the TABLE argument in hc-completing-insert.
+;;
+;; Completion on buffer contents is another, more involved, example.
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 ;; Lightning completion, on which this is based, works with a package
 ;; called Ultra-TeX to provide dynamic completion of TeX commands.  I
-;; will work on adding this new completion as an option for
+;; will work on adding highlight completion as an option for
 ;; Ultra-TeX mode.
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -117,10 +139,13 @@
 ;; 0.05 (21-Jun-2001) add function hc-ispell-complete-word
 ;; 0.06 (21-Jun-2001) new customization procedure.  see above.  some
 ;;                    bug fixes, too.
+;; 0.07 (22-Jun-2001) renamed `hc-completing-insert-BLAH' to `hc-complete-BLAH'.
+;;                    also added a bit more documentation.
+;; 0.08 (30-Sep-2005) bug fix for GNU Emacs version 22.
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defconst hc-version-string "0.06"
+(defconst hc-version-string "0.07"
   "Version of highlighting completion package.")
 
 (defconst hc-version hc-version-string
@@ -149,15 +174,15 @@
 (defconst hc-emacs-21-p
   (and (boundp 'emacs-major-version)
        (not hc-xemacs-p)
-       (= emacs-major-version 21))
-  "Non-nil if using GNU Emacs 21.")
+       (>= emacs-major-version 21))
+  "Non-nil if using GNU Emacs 21 or later.")
 
 (defcustom highlight-completion-mode nil
   "Toggle whether `highlighting' is on.
 If on, you may want to customize highlight-completion-list to specify
 contexts in which to use highlighting.  If off, you can still
-run functions like hc-completing-insert-file-name or
-hc-completing-insert-according-to-mode to use this completion."
+run functions like hc-complete-file-name or
+hc-complete-a-la-mode to use this completion."
   :type '(boolean)
   :set (lambda (symbol value)
 	 (highlight-completion-mode (if value 1 -1)))
@@ -304,12 +329,14 @@ highlight completion.")
   "Toggle whether `C-x c' is the prefix key for the various highlight
 completion commands.  If on,
 
-  C-x c f   runs   hc-completing-insert-lisp-function
-  C-x c v   runs   hc-completing-insert-lisp-variable
-  C-x c F   runs   hc-completing-insert-file-name
-  C-x c k   runs   hc-completing-insert-kill
-  C-x c y   runs   hc-completing-insert-buffer-contents
-  C-x c i   runs hc-ispell-complete-word
+  C-x c b   runs   hc-complete-buffer-name
+  C-x c f   runs   hc-complete-lisp-function
+  C-x c F   runs   hc-complete-file-name
+  C-x c i   runs   hc-complete-word
+  C-x c k   runs   hc-complete-kill-ring
+  C-x c u   runs   hc-complete-a-la-mode
+  C-x c v   runs   hc-complete-lisp-variable
+  C-x c y   runs   hc-complete-buffer-contents
   C-x c C-h   lists all of the key bindings starting with C-x c
 
 These functions do completion on the appropriate thing in any buffer,
@@ -324,18 +351,18 @@ If turned off, `C-x c' does nothing."
 	 (set symbol value))
   :group 'highlight-completion)
 
-(define-key hc-completions-map "f" 'hc-completing-insert-lisp-function)
-(define-key hc-completions-map "v" 'hc-completing-insert-lisp-variable)
-(define-key hc-completions-map "o" 'hc-completing-insert-lisp-object)
-(define-key hc-completions-map "F" 'hc-completing-insert-file-name)
-(define-key hc-completions-map "u" 'hc-completing-insert-according-to-mode)
-(define-key hc-completions-map "b" 'hc-completing-insert-buffer-name)
-(define-key hc-completions-map "k" 'hc-completing-insert-kill)
-(define-key hc-completions-map "y" 'hc-completing-insert-buffer-contents)
-(define-key hc-completions-map "i" 'hc-ispell-complete-word)
+(define-key hc-completions-map "f" 'hc-complete-lisp-function)
+(define-key hc-completions-map "v" 'hc-complete-lisp-variable)
+(define-key hc-completions-map "o" 'hc-complete-lisp-object)
+(define-key hc-completions-map "F" 'hc-complete-file-name)
+(define-key hc-completions-map "u" 'hc-complete-a-la-mode)
+(define-key hc-completions-map "b" 'hc-complete-buffer-name)
+(define-key hc-completions-map "k" 'hc-complete-kill-ring)
+(define-key hc-completions-map "y" 'hc-complete-buffer-contents)
+(define-key hc-completions-map "i" 'hc-complete-word)
 
 (defcustom hc-ctrl-backslash-completes-a-la-mode nil
-  "Toggle whether `C-\\' runs the `hc-completing-insert-according-to-mode'.
+  "Toggle whether `C-\\' runs the `hc-complete-a-la-mode'.
 If turned on, `C-\\' runs this function, which turns on highlighting
 completion.  This is helpful in the minibuffer, for instance, if the
 completion process has stopped and you want to start it up
@@ -344,7 +371,7 @@ If turned off, `C-\\' does nothing."
   :type '(boolean)
   :set (lambda (symbol value)
 	 (if value
-	     (global-set-key "\C-\\" 'hc-completing-insert-according-to-mode)
+	     (global-set-key "\C-\\" 'hc-complete-a-la-mode)
 	   (global-set-key "\C-\\" nil))
 	 (set symbol value))
   :group 'highlight-completion)
@@ -1093,32 +1120,32 @@ chars, and then run <hook> (if non-nil)."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; entry points for completion on various things.  see also
-;; completing-insert-buffer-contents below.
+;; hc-complete-buffer-contents below.
 ;;
 
-(defun hc-completing-insert-lisp-object nil
+(defun hc-complete-lisp-object nil
   "Complete lisp object in buffer at point."
   (interactive)
   (hc-completing-insert obarray nil (word-grabber) nil "lisp objects"))
 
-(defun hc-completing-insert-lisp-function nil
+(defun hc-complete-lisp-function nil
   "Complete lisp object in buffer at point."
   (interactive)
   (hc-completing-insert obarray 'fboundp (word-grabber) nil "functions"))
 
-(defun hc-completing-insert-lisp-variable nil
+(defun hc-complete-lisp-variable nil
   "Complete lisp object in buffer at point."
   (interactive)
   (hc-completing-insert obarray 'boundp (word-grabber) nil "variables"))
 
-(defun hc-completing-insert-buffer-name nil
+(defun hc-complete-buffer-name nil
   "Complete buffer name in buffer at point."
   (interactive)
   (hc-completing-insert (mapcar (function (lambda (x) (list (buffer-name x))))
 			     (buffer-list))
 		     nil (word-grabber) nil "buffer names"))
 
-(defun hc-completing-insert-kill nil
+(defun hc-complete-kill-ring nil
   "Complete something from the kill ring in buffer at point."
   (interactive)
   (hc-completing-insert
@@ -1132,12 +1159,7 @@ chars, and then run <hook> (if non-nil)."
 		   kill-ring)))
    nil 0 nil "recent kills"))
 
-(defvar hc-completing-insert-function nil
-  "Function to be called by M-x completing-insert-according-to-mode, 
-if non-nil")
-(make-variable-buffer-local 'completing-insert-function)
-
-(defun hc-ispell-complete-word nil
+(defun hc-complete-word nil
   "Complete the current word using ispell."
   (interactive)
   (hc-completing-insert 'hc-lookup-words nil
@@ -1175,15 +1197,25 @@ equals the unique completion, return t."
 				 0 (1+ (length guess)))))
 	  guess)))))
 
+(defalias 'hc-completing-insert-lisp-object 'hc-complete-lisp-object)
+(defalias 'hc-completing-insert-lisp-function 'hc-complete-lisp-function)
+(defalias 'hc-completing-insert-lisp-variable 'hc-complete-lisp-variable)
+(defalias 'hc-completing-insert-buffer-name 'hc-complete-buffer-name)
+(defalias 'hc-completing-insert-kill 'hc-complete-kill-ring)
+(defalias 'hc-completing-insert-file-name 'hc-complete-file-name)
+(defalias 'hc-completing-insert-buffer-contents 'hc-complete-buffer-contents)
+(defalias 'hc-ispell-complete-word 'hc-complete-word)
+(defalias 'hc-completing-insert-according-to-mode 'hc-complete-a-la-mode)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; completion a la mode
 ;;
 
-(defun hc-completing-insert-according-to-mode nil
+(defun hc-complete-a-la-mode nil
   "Start highlighting completion.  If possible, resumes stopped completion.  
 Otherwise, in the minibuffer, uses its table and predicate (slightly
 modified for file name reading).  Failing that, calls
-`hc-completing-insert-function' if the mode has it set.  Final default
+`hc-default-completion-function' if the mode has it set.  Final default
 is lisp-object completion."
   (interactive)
   (cond ((hc-completing-insert hc-table hc-predicate -1 hc-hook) nil)
@@ -1227,9 +1259,14 @@ is lisp-object completion."
 	;; -- Nick Reingold 5/24/92
 	((hc-completing-insert hc-table hc-predicate -1
 			    hc-hook hc-display-filter) nil)
-	(hc-completing-insert-function
-	 (call-interactively hc-completing-insert-function))
-	(t (hc-completing-insert-lisp-object))))
+	(hc-default-completion-function
+	 (call-interactively hc-default-completion-function))
+	(t (hc-complete-lisp-object))))
+
+(defvar hc-default-completion-function nil
+  "Function to be called by M-x hc-complete-a-la-mode, 
+if non-nil")
+(make-variable-buffer-local 'hc-default-completion-function)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; turning on highlighting
@@ -1328,7 +1365,7 @@ as determined by the value of the variable highlight-completion-list."
 ;; file completion stuff
 ;;
 
-(defun hc-completing-insert-file-name (&optional dir init)
+(defun hc-complete-file-name (&optional dir init)
   "Complete file name in buffer at point.  Non-interactively, use directory
 DIR (nil for current default-directory); start with INIT chars before point."
   (interactive (list nil (word-grabber)))
@@ -1344,7 +1381,7 @@ DIR (nil for current default-directory); start with INIT chars before point."
   "Regexp for file names which get expanded before completion.")
 
 (defun hc-read-file-name-internal (str dir action)
-  "\"Internal\" subroutine for `completing-insert-file-name'. Do not
+  "\"Internal\" subroutine for `hc-complete-file-name'. Do not
 call this."
   (let (str-dir real-str)
     (cond ((and (null action) (string-match hc-literal-file-regexp str))
@@ -1397,10 +1434,10 @@ would return `bozo'."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; buffer completion stuff.
 ;;
-;; This section (which used to be the file bufcomp.el) adapts
-;; highlighting completion to complete on reasonably balanced substrings
-;; of a buffer.  The main entry point is
-;;   (hc-completing-insert-buffer-contents BUF)
+;; This section adapts highlighting completion to complete on
+;; reasonably balanced substrings of a buffer.  The main entry point
+;; is
+;;   (hc-complete-buffer-contents BUF)
 ;; where BUF is interactively the current buffer or, with arg, a buffer
 ;; specified by the user.
 
@@ -1426,7 +1463,7 @@ more than one non-blank line past END."
 (defvar hc-buf-comp-internal-last nil)	; last return of a try-type call
 
 (defun hc-buffer-completion-internal (str buf action)
-  "Internal subroutine for `hc-completing-insert-buffer-contents'.  Do
+  "Internal subroutine for `hc-complete-buffer-contents'.  Do
 not call this.
   Used like `read-file-name-internal' but for completing STR as a
 substring of buffer BUF.  Completing with space as last char matches
@@ -1498,7 +1535,7 @@ substring is ever considered complete)."
 	 ;; unhide:
 	 (if (eq buf obuf) (insert (car hc-stack))))))))
 
-(defun hc-completing-insert-buffer-contents  (&optional buf)
+(defun hc-complete-buffer-contents  (&optional buf)
   "Complete on substrings of BUF extending to sexp boundaries.  String is
 never complete, so exit with C-c.  Once unique, space means match more.
 Interactively, with arg, ask for the buffer, else current buffer."

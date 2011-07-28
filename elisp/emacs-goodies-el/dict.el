@@ -1,9 +1,9 @@
-;;; dict.el --- Emacs interface to dict client
+;; dict.el --- Emacs interface to dict client
 ;;
-;; $Id: dict.el,v 1.5 2005/09/28 01:16:23 psg Exp $
+;; $Id: dict.el,v 1.6 2009-09-04 01:50:58 psg Exp $
 ;;
 
-;; Copyright (c) 2002, 2003 Max Vasin
+;; Copyright (c) 2002, 2003, 2004 Max Vasin
 ;;
 ;; This program is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License
@@ -21,10 +21,13 @@
 
 ;;; Commentary
 ;;
-;; Emacs DICT Client is an Emacs wrapper around `dict' command to provide
-;; an easy and comfortable (from my point of view) access to the dictd server
-;; from the Emacs.  The package was written and tested under GNU Emacs 21 only
-;; but I hope it should work under other Emacs versions as well.
+;; dict.el is an Emacs wrapper around `dict' command to provide an easy and 
+;; comfortable (from my point of view) access to the dictd server from the Emacs.
+;; The package was written and tested under GNU Emacs 21 only but I hope it should
+;; work under other Emacs versions as well. dict.el depends on bash or compatible shell
+;; (I haven't tested it with other shells), cut, sed, awk, and dict. A coding convertion
+;; program can be used to use automatic recoding thus allowing databases in different
+;; codings.
 ;;
 ;; The package provides several key bindings, which are customisation variables,
 ;; so you can change them easily without recompiling the package:
@@ -33,153 +36,20 @@
 ;;     2. `C-c d r' for running dict on region as a single word.
 ;;     3. `C-c d m' for running dict on every word in the region.
 ;;     4. `C-c d s' for running dict to perform search on the given server.
+;;     5. `C-c d S' to view similar words for the last dict run.
 ;;
 ;; Descriptions of all customisation variables are given below in their
 ;; definitions, and of cause you can find them in the customisation buffer
-;; (External->Emacs Dict Client).
+;; (External->Dict).
 ;;
 ;; I hope you find the program usefull.  And also I would like to know your
 ;; opinion about the program, improvement suggestions and of cause bug reports.
 ;; Mail them to <max-appolo@mail.ru>
 
-;;; History:
-;;
-;;    $Log: dict.el,v $
-;;    Revision 1.5  2005/09/28 01:16:23  psg
-;;    dict.el: `current-word' can return nil", thanks to Jorgen Schaefer for the
-;;    report and patch. (Closes: #301293).
-;;
-;;    Revision 1.4  2003/10/06 14:01:21  psg
-;;    New upstream version, fixes initial enabling via defcustom.
-;;
-;;    Revision 1.33  2003/10/06 09:32:14  max
-;;    `:require 'dict' have been added to all defcustoms that have `:set' commands.
-;;    (Thanks to Peter S. Galbraith for bug report.)
-;;
-;;    Revision 1.32  2003/09/30 15:52:40  max
-;;    dict-generate-options: added "--pager -" option to
-;;    force pager non-usage.
-;;    dict-always-quote-terms: new customisation variable.
-;;    dict-quote: new function.
-;;    dict-get-answer: changed to quote terms (conditionally).
-;;
-;;    Revision 1.31  2003/09/29 11:39:39  max
-;;    dict-enable-key-bindings: set function updates key bindings.
-;;    dict-set-key-binding: forces `dict-enable-key-bindings' be t.
-;;
-;;    Revision 1.30  2003/09/29 11:27:54  max
-;;    1. Changed according to Emacs Coding Conventions (need more?).
-;;    2. Changed to be `checkdoc' clean.
-;;
-;;    Revision 1.29  2003/07/14 09:23:35  max
-;;    dict-buffer-coding-system: New customisation variable.
-;;    dict-get-answer: Changed to use `dict-buffer-coding-system'
-;;
-;;    Revision 1.28  2003/07/03 09:06:42  max
-;;    dict-mode, dict-mode-set-key-binding,
-;;    dict-mode-update-key-bindings: New function.
-;;    dict-mode-key-binding, dict-mode-region-key-binding,
-;;    dict-multiple-key-binding, dict-on-server-key-binding: New customisation variable.
-;;
-;;    Revision 1.27  2003/04/15 18:19:53  max
-;;    Names made coherent.
-;;
-;;    Revision 1.26  2003/01/01 13:11:24  max
-;;    dict-get-answer: Made to replace newlines and multiple
-;;    space with one space.
-;;
-;;    Revision 1.25  2002/11/21 16:36:11  max
-;;    - dict-set-key-binding: New function.
-;;    - dict-update-key-bindings: New function.
-;;    - Key binding customisation variable set
-;;      function chaged to dict-set-key-binding.
-;;
-;;    Revision 1.24  2002/10/10 10:33:04  max
-;;    Added functions to display revision number.
-;;
-;;    Revision 1.23  2002/10/01 15:05:08  max
-;;    dict-server: Changed customisation type.
-;;    Added a brief package description.
-;;
-;;    Revision 1.22  2002/09/30 14:44:12  max
-;;    dict-on-server: New function and key binding for it.
-;;    dict-get-answer: Changed to run dict asynchronously.
-;;
-;;    Revision 1.21  2002/09/25 13:34:20  max
-;;    Functions dict-databases and dict-strategies removed.
-;;
-;;    Revision 1.20  2002/09/25 13:30:05  max
-;;    Added forward declarations of dict-database and dict-strategy customisation
-;;    variables to preserve their relative position in the customisation buffer.
-;;    Later they are redefined to use generated sets of values.
-;;
-;;    Revision 1.19  2002/09/25 13:18:38  max
-;;    Changed customisation types for dict-strategy and dict-database.
-;;
-;;    Revision 1.18  2002/09/23 16:47:12  max
-;;    Type of dict-server and dict-database customisation variables
-;;    changed to the list of strings.
-;;
-;;    Revision 1.17  2002/09/22 15:24:22  max
-;;    dict-get-answer: Corrected to clear buffer before running dict
-;;    and to set point in that buffer to the beginning.
-;;
-;;    Revision 1.16  2002/09/22 10:36:42  max
-;;    - dict-process-key-binding: New function.
-;;    - Key bindings changed to work with dict-process-key-binding.
-;;    - Call to global-set-key changed to use dict-process-key-binding.
-;;
-;;    Revision 1.15  2002/09/22 06:44:27  max
-;;    - dict-get-answer: New function.
-;;    - dict: Changed to use dict-get-answer.
-;;    - Now the answer for the dict is stored in the buffer
-;;      named *DICT <word>*, where <word> is dict parameters.
-;;
-;;    Revision 1.14  2002/09/15 07:26:08  max
-;;    - dict-region function takes two params
-;;    - added dict-multiple function and bindings for it
-;;
-;;    Revision 1.13  2002/09/13 15:28:52  max
-;;    Added simple dict-region function
-;;    and a key binding for it.
-;;
-;;    Revision 1.12  2002/09/03 16:33:39  max
-;;    Group name changed to `Emacs Dict client'
-;;
-;;    Revision 1.11  2002/09/02 12:53:22  max
-;;    Customisation type string changed to sexp.
-;;    Customisation group moved to the external supergroup.
-;;
-;;    Revision 1.10  2002/09/02 09:14:04  max
-;;    Functions names prefix changed to dict.
-;;    Customisation group changed to dict.
-;;    Added customisation variables for key bindings.
-;;
-;;    Revision 1.9  2002/09/02 08:46:06  max
-;;    Name changed to emacs-dict-client.el
-;;
-;;    Revision 1.8  2002/08/30 07:18:53  max
-;;    Added documentation to functions
-;;
-;;    Revision 1.7  2002/08/25 12:54:25  max
-;;    Package now provides itself.
-;;
-;;    Revision 1.6  2002/08/25 12:41:41  max
-;;    Added key bindings for running edict and wordinspect.
-;;
-;;    Revision 1.5  2002/08/25 11:14:25  max
-;;    - Added customisation support.
-;;    - Removed dependency of man module.
-;;
-;;    Revision 1.4  2002/08/19 10:32:02  max
-;;    edict: Added default value for word.
-;;    edict-region: Removed.
-;;
-;;    Revision 1.3  2002/08/19 10:10:07  max
-;;    Log added
-;;
-
 ;;; Code:
+
+(require 'cl)
+
 (defgroup Dict nil
   "Browse DICT dictionaries."
   :prefix "dict-"
@@ -189,23 +59,20 @@
 ;;;; Definitions of dict client parameter variables
 ;;;;
 
-(defcustom dict-server ""
+(defcustom dict-servers '("dict.org" "alt0.dict.org" "alt1.dict.org" "alt2.dict.org")
   "Specifies the hostname for the  DICT  server.
-Server/port combinationscan be specified in the configuration file.
-If no servers are specified the default behavior is to try dict.org,
-alt0.dict.org, alt1.dict.org, and alt2.dict.org, in that order.  If IP
-lookup for a server expands to a list of IP addresses (as dict.org
+If IP lookup for a server expands to a list of IP addresses (as dict.org
 does currently), then each IP will be tried in the order listed."
-  :type 'string
+  :type '(repeat (string :tag "Server name"))
   :group 'Dict)
 
 ;; Forward declarations
-(defcustom dict-database nil
+(defcustom dict-databases nil
   "Foo."
   :type 'string
   :group 'Dict)
 
-(defcustom dict-strategy nil
+(defcustom dict-strategies nil
   "Bar."
   :type 'string
   :group 'Dict)
@@ -213,8 +80,7 @@ does currently), then each IP will be tried in the order listed."
 (defcustom dict-service ""
   "Specifies the port or service for connections.
 The default is 2628, as specified in the DICT Protocol
-RFC.  Server/port combinations can be specified in the configuration
-file."
+RFC."
   :type 'string
   :group 'Dict)
 
@@ -223,21 +89,13 @@ file."
   :type 'boolean
   :group 'Dict)
 
-(defcustom dict-nocorrect ""
+(defcustom dict-nocorrect nil
   "Disable spelling correction.
 Usually, if a definition is requested and the word cannot be found,
 spelling correction is requested from the server, and a list of
 possible words are provided.  This option disables the generation of
 this list."
-  :type 'string
-  :group 'Dict)
-
-(defcustom dict-config-file ""
-  "Specify the configuration file.
-The default is to try ~/.dictrc and /etc/dict.conf, using the first
-file that exists.  If a specific configuration file is specified, then
-the defaults will not be tried."
-  :type 'string
+  :type 'boolean
   :group 'Dict)
 
 (defcustom dict-noauth nil
@@ -255,22 +113,12 @@ the defaults will not be tried."
   :type 'string
   :group 'Dict)
 
-(defcustom dict-verbose nil
-  "Be verbose."
-  :type 'boolean
-  :group 'Dict)
-
-(defcustom dict-raw nil
-  "Be very verbose: show the raw client/server interaction."
-  :type 'boolean
-  :group 'Dict)
-
 (defcustom dict-pipesize 256
   "Specify the buffer size for pipelineing commands.
 The default is 256, which should be sufficient for general tasks and
 be below the MTU for most transport media.  Larger values may provide
 faster or slower throughput, depending on MTU.  If the buffer is too
-small, requests will be serialized.  Values less than 0 and greater
+small, requests will be serialised.  Values less than 0 and greater
 than one million are silently changed to something more reasonable."
   :type 'integer
   :group 'Dict)
@@ -286,8 +134,24 @@ than one million are silently changed to something more reasonable."
   :group 'Dict)
 
 (defcustom dict-always-quote-terms nil
-  "If t dict will always quote terms."
+  "If t dict.el will always quote terms."
   :type 'boolean
+  :group 'Dict)
+
+(defcustom dict-show-one-window nil
+  "If t dict.el will show one window (i.e. without splitting)."
+  :type 'boolean
+  :group 'Dict)
+
+(defcustom dict-character-recoding-map nil
+  "Specifies recoding command for given dictionary."
+  :tag "DICT Character Recoding Map"
+  :type '(repeat (list :tag "Dict servers"
+		  (string :tag "Server name")
+		  (repeat :tag "Database recoding mappings" 
+			  (list :tag "Database"
+			   (regexp :tag "Database name")
+			   (string :tag "Recoding command")))))
   :group 'Dict)
 
 ;;;;
@@ -345,6 +209,14 @@ server and display the results in the Emacs buffer."
   :set 'dict-set-key-binding
   :require 'dict)
 
+(defcustom dict-similar-words-key-binding "\\C-cdS"
+  "Specifies a key binding to show similar words."
+  :tag "Show similar words"
+  :type 'string
+  :group 'Dict-Mode
+  :set 'dict-set-key-binding
+  :require 'dict)
+
 (defgroup Dict-Mode nil
   "DICT-mode key bindings"
   :tag "DICT-mode"
@@ -367,7 +239,7 @@ server and display the results in the Emacs buffer."
   :set 'dict-mode-set-key-binding
   :require 'dict)
 
-(defcustom dict-multiple-key-binding "m"
+(defcustom dict-mode-multiple-key-binding "m"
   "Run dict on every word in region.
 Specifies a key binding to run dict on every word from the region and
 display the results in the Emacs buffer."
@@ -377,9 +249,17 @@ display the results in the Emacs buffer."
   :set 'dict-mode-set-key-binding
   :require 'dict)
 
-(defcustom dict-on-server-key-binding "s"
+(defcustom dict-mode-on-server-key-binding "s"
   "Specifies a key binding to run dict to search word on the given server and display the results in the Emacs buffer."
   :tag "DICT on server"
+  :type 'string
+  :group 'Dict-Mode
+  :set 'dict-mode-set-key-binding
+  :require 'dict)
+
+(defcustom dict-mode-similar-words-key-binding "S"
+  "Specifies a key binding to show similar words."
+  :tag "Show similar words"
   :type 'string
   :group 'Dict-Mode
   :set 'dict-mode-set-key-binding
@@ -388,46 +268,72 @@ display the results in the Emacs buffer."
 (defcustom dict-buffer-coding-system nil
   "Specifies coding system to use in dict buffer."
   :tag "Input coding system for DICT buffer"
-  :type 'sexp
+  :type 'string
   :group 'Dict-Mode)
+
+(defvar dict-similar-buffer nil)
 
 ;;;;
 ;;;; Service functions
 ;;;;
 
-(defun dict-get-databases ()
+(defun dict-get-databases (host)
   "Get a list of available databases."
-  (let ((dbs (shell-command-to-string "dict -D | tail -n $(expr $(dict -D | wc -l) - 1) | cut -f 3 -d ' '")))
-    (sort (read (concat "(" dbs ")")) 'string<)))
+  (let* ((dbinfo-string (shell-command-to-string (format "dict -h %s -D 2> /dev/null | awk 'BEGIN { print \"(\"; } \
+/^[ ]+/ { match($0, /^[ ]+([a-z0-9]+)[ ]+(.+)/, r); print \"(\\\"\" r[1] \"\\\"\" \" \\\"\" r[2]\"\\\")\"; } \
+END { print \")\" }'" host)))
+	 (dbinfo (read dbinfo-string))
+	 (dbnames (mapcar 'car dbinfo))
+	 (dbdecss (mapcar 'cadr dbinfo)))
+    `(,dbnames ,dbdecss)))
 
-(defun dict-get-stategies ()
+(defun dict-get-strategies (host)
   "Get a list of strategies."
-  (let ((strats (shell-command-to-string "dict -S | tail -n $(expr $(dict -S | wc -l) - 1) | cut -f 3 -d ' '")))
-    (sort (read (concat "(" strats ")")) 'string<)))
+  (let* ((stratsinfo-string (shell-command-to-string (format "dict -h %s -S 2> /dev/null | awk 'BEGIN { print \"(\"; } \
+/^[ ]+/ { match($0, /^[ ]+([a-z0-9]+)[ ]+(.+)/, r); print \"(\\\"\" r[1] \"\\\"\" \" \\\"\" r[2]\"\\\")\"; } \
+END { print \")\" }'" host)))
+	 (stratsinfo (read stratsinfo-string))
+	 (stnames (mapcar 'car stratsinfo))
+	 (stdecss (mapcar 'cadr stratsinfo)))
+    `(,stnames ,stdecss)))
 
-(defun dict-generate-consts (values)
-  "Generate a list of constants for customisation types of VALUES."
-  (if (null values)
-      nil
-    (cons `(const ,(car values)) (dict-generate-consts (cdr values)))))
+(defun dict-generate-constant (value tag)
+  "Generate constant for customisation type of VALUE with TAG."
+  `(const :tag ,tag ,value))
 
-(defcustom dict-strategy nil
+(defun dict-get-database-names (host)
+  "Get a list of available database names."
+  (mapcar 'symbol-name
+	  (read (concat "(" (shell-command-to-string 
+			     (format "dict -h %s -D 2> /dev/null | cut -f 2 -d ' ' | sed -e '1 d'" host host)) ")"))))
+
+(defcustom dict-strategies  (mapcar (lambda (h) (list h nil)) dict-servers)
   "Specify a matching strategy.
 By default, the server default match strategy is used.  This is
 usually \"exact\" for definitions, and some form of
 spelling-correction strategy for matches (\".\" fromthe DICT
 protocol). The available strategies are dependent on the server
 implemenation."
-  :type `(choice ,@(dict-generate-consts (dict-get-stategies)) (const :tag "default" nil))
+  :type `(list :tag "Server" ,@(mapcar
+		  (lambda (h) 
+		    `(list (const ,h)
+			   (choice :tag "Strategies" ,@(apply 'mapcar* 'dict-generate-constant (dict-get-strategies h)) 
+				   (const :tag "default" nil))))
+		  dict-servers))
   :group 'Dict)
 
-(defcustom dict-database nil
+(defcustom dict-databases (mapcar (lambda (h) (list h (dict-get-database-names h))) dict-servers)
   "Specifies a specific database to search.
 The default is to search all databases (a * from the DICT
 protocol).  Note that a ! in the DICT protocol means to search all of
 the databases until a match is found, and then stop searching."
-  :type  `(set ,@(dict-generate-consts (dict-get-databases)))
-  :group 'Dict) ;"
+  :type `(list :tag "Server" ,@(mapcar
+				(lambda (h)
+				  `(list (const ,h)
+					 (set :tag "Databases" ,@(apply 'mapcar* 'dict-generate-constant 
+									(dict-get-databases h)))))
+				dict-servers))
+  :group 'Dict)
 
 (defun dict-generate-options-list (prefix seq)
   "Generate a list of options of the form `PREFIX SEQ[0] PREFIX SEQ[1] ...'."
@@ -435,32 +341,25 @@ the databases until a match is found, and then stop searching."
       ""
       (concat prefix (car seq) (dict-generate-options-list prefix (cdr seq)))))
 
-(defun dict-mkseq (string)
-  "Make a list from a STRING."
-  (read (concat "(\"" string "\")")))
-
 (defsubst dict-nes (string)
   "T if STRING is not empty."
   (not (string= string "")))
 
-(defun dict-generate-options ()
-  "Generate dict's command line options based on the parameter variables' values."
+(defun dict-generate-options (database host)
+  "Generate dict's command line options based on the parameter variables' values, DATABASE and HOST"
   (concat
-   (if (dict-nes dict-server) (dict-generate-options-list " --host " (dict-mkseq dict-server)) "")
    (if (dict-nes dict-service) (concat " --port " dict-service) "")
-   (if dict-database (dict-generate-options-list " --database " (dict-mkseq dict-database)) "")
    (if dict-match " --match" "")
-   (if dict-strategy (concat " --strategy " dict-strategy) "")
-   (if dict-nocorrect " --nocorrect " "")
-   (if (dict-nes dict-config-file)  (concat " --config " dict-config-file) "")
+   (if (cadr (assoc host dict-strategies)) (concat " --strategy " (cadr (assoc host dict-strategies)) ""))
+   (if dict-nocorrect " --nocorrect ")
    (if dict-noauth " --noauth" "")
    (if (dict-nes dict-user) (concat " --user " dict-user) "")
    (if (dict-nes dict-key) (concat " --key " dict-key) "")
-   (if dict-verbose " --verbose" "")
-   (if dict-raw " --raw" "")
    (if (not (= dict-pipesize 256)) (concat " --pipesize " (number-to-string dict-pipesize)) "")
    (if (dict-nes dict-client) (concat " --client " dict-client) "")
-   " --pager -"
+   (concat " --database " database)
+   (concat " --host " host)
+   " --pager -" ; force dict to not use pager
    " "))
 
 (defun dict-newline-to-space (string)
@@ -476,7 +375,7 @@ the databases until a match is found, and then stop searching."
       string
     (dict-reduce-spaces (replace-match " " t "\\&" string nil))))
 
-(defun dict-normalise-request (request)
+(defsubst dict-normalise-request (request)
   "Replace newlines and multiple spaces with one space in the REQUEST."
   (dict-reduce-spaces (dict-newline-to-space request)))
 
@@ -491,40 +390,104 @@ the databases until a match is found, and then stop searching."
 	(concat "'" word "'"))
     word))
 
+(defun dict-generate-command (word database host)
+  "Generate dict command to search in the given DATABASE and HOST."
+  (let ((recoding-command (or 
+			   (cadr (assoc database (cadr (assoc host dict-character-recoding-map))))
+			   (cadr (assoc "*"  (cadr (assoc host dict-character-recoding-map)))))))
+    (if recoding-command
+	(format "dict %s %s | %s" (dict-generate-options database host) (dict-quote word) recoding-command)
+    (format "dict %s %s" (dict-generate-options database host) (dict-quote word)))))
+
 (defun dict-get-answer (what)
   "Recieve the answer for WHAT from the dict and insert in ther buffer."
   (let* ((word (dict-normalise-request what))
 	 (buffer-name (concat "*DICT " word "*"))
+	 (similar-buffer-name (concat "*DICT " word " (similar) *"))
 	 (buffer (or (get-buffer buffer-name) (generate-new-buffer buffer-name)))
+	 (similar-buffer (or (get-buffer similar-buffer-name) (generate-new-buffer similar-buffer-name)))
 	 (coding-system-for-read dict-buffer-coding-system)
 	 (coding-system-for-write dict-buffer-coding-system))
-    (save-excursion
+    (setq dict-similar-buffer similar-buffer)
+    (save-current-buffer
+      (set-buffer similar-buffer)
+      (kill-region (point-min) (point-max))
       (set-buffer buffer)
       (kill-region (point-min) (point-max))
+      (make-local-variable 'dict-similar-buffer)
+      (setq dict-similar-buffer similar-buffer)
       (dict-mode))
     (message "Invoking dict %s in the background" word)
-    (set-process-sentinel
-     (start-process "dict" buffer "sh" "-c" (format "dict %s %s" (dict-generate-options) (dict-quote word)))
-     'dict-bgproc-sentinel)))
+    (mapcar (lambda (host)
+	      (mapcar (lambda (database)
+			(set-process-sentinel
+			 (start-process "dict" (generate-new-buffer "dict") "sh" "-c" 
+					(dict-generate-command word database host))
+			 (dict-make-sentinel-with-buffer buffer)))
+		      (if (cadr (assoc host dict-databases)) (cadr (assoc host dict-databases)) 
+			(dict-get-database-names host))))
+	    dict-servers)))
 
-(defun dict-bgproc-sentinel (process msg)
-  "Dict background PROCESS sentinel (handling MSG)."
-  (let ((buffer (process-buffer process)))
-    (cond
-     ((string= "finished\n" msg)
-      (save-excursion (set-buffer buffer)
-		      (goto-char (point-min))
-		      (display-buffer buffer)))
-     ((string-match "exited abnormally with code" msg)
-      (message msg)))))
+(defun dict-add-result-to-buffer (result-buffer output-buffer)
+  "Add dict's answer from RESULT-BUFFER to OUTPUT-BUFFER."
+  ;; Preformat data in the result buffer
+  (set-buffer result-buffer)
+  (goto-char (point-min))
+  (kill-line 2)
+
+  ;; Insert answer into the output buffer
+  (set-buffer output-buffer)
+  (goto-char (point-max))
+  (insert-buffer-substring result-buffer)
+  (kill-buffer result-buffer)
+  (goto-char (point-min))
+  (display-buffer output-buffer)
+  (when dict-show-one-window 
+    (switch-to-buffer output-buffer)
+    (delete-other-windows)))
+
+(defun dict-get-error-message (string)
+  "Returns error message, cutting ', perhaps you mean:' from the STRING."
+  (if (char-equal (elt string (- (length string) 1)) ?:)
+      (substring string 0 (- (length string) (length ", perhaps you mean:")))
+    string))
+
+(defun dict-make-sentinel-with-buffer (buffer)
+  "Make process sentinel to write result to BUFFER."
+  (lexical-let ((output-buffer buffer))
+    (lambda (process msg)
+      (let ((process-buffer (process-buffer process)))
+	(cond
+	 ((string= "finished\n" msg)
+	  (save-excursion
+	    (set-buffer process-buffer)
+	    (set-buffer-modified-p nil)
+	    (beginning-of-buffer)
+	    (if (string= (buffer-substring-no-properties (point-min) 25) "No definitions found for")
+
+		;; dict didn't find word in the given database
+		(let ((error-message (dict-get-error-message 
+				      (buffer-substring-no-properties (point-min) (- (search-forward "\n") 1)))))
+		  (let ((similar-words (buffer-substring-no-properties (point) (- (point-max) 1))))
+		    (kill-buffer (current-buffer))
+		    (set-buffer output-buffer)
+		    (set-buffer dict-similar-buffer)
+		    (insert similar-words)
+		    (message error-message)))
+
+	      ;; ok we've got an answer
+	      (dict-add-result-to-buffer process-buffer output-buffer))))
+	 ((string-match "exited abnormally with code" msg)
+	  (message msg)))))))
 
 (defsubst dict-default-dict-entry ()
   "Make a guess at a default dict entry.
 This guess is based on the text surrounding the cursor."
-  (let ((word (or (current-word)
-                  "")))
-    (if (string-match "[._]+$" word)
-        (substring word 0 (match-beginning 0))
+  (let (word)
+    (save-excursion
+      (setq word (current-word))
+      (if (string-match "[._]+$" word)
+	  (setq word (substring word 0 (match-beginning 0))))
       word)))
 
 ;;;;
@@ -570,9 +533,15 @@ This guess is based on the text surrounding the cursor."
 			  (error "No dict args given") default-entry) input))
 		(read-string "DICT server: " nil)))
   (if (not (string= server ""))
-      (let ((dict-server server))
+      (let ((dict-servers `(,server)))
 	(dict word))
     (dict word)))
+
+(defun dict-show-similar ()
+  "Show list of similar words."
+  (interactive)
+  (when (bufferp dict-similar-buffer)
+    (display-buffer dict-similar-buffer)))
 
 (defun dict-set-key-binding (key value)
   "Set KEY binding customisation variable to VALUE."
@@ -599,7 +568,7 @@ This guess is based on the text surrounding the cursor."
     (dict-mode-update-key-bindings)
     result))
 
-(defun dict-mode()
+(defun dict-mode ()
   (interactive)
   (use-local-map dict-mode-keymap)
   (setq mode-name "DICT")
@@ -614,15 +583,24 @@ This guess is based on the text surrounding the cursor."
     (global-set-key (dict-process-key-binding dict-region-key-binding) 'dict-region)
     ;; ... `C-c d m' for running dict on every word in the region...
     (global-set-key (dict-process-key-binding dict-multiple-key-binding) 'dict-multiple)
-    ;; ... `C-c d s' for running dict to perform search on the given server...
-    (global-set-key (dict-process-key-binding dict-on-server-key-binding) 'dict-on-server)))
+    ;; ... `C-c d s' for running dict to perform search on the given server.
+    (global-set-key (dict-process-key-binding dict-on-server-key-binding) 'dict-on-server)
+    ;; ... `S' to show similar words.
+    (global-set-key (dict-process-key-binding dict-similar-words-key-binding) 'dict-show-similar)))
+
 
 (defun dict-mode-update-key-bindings ()
   "Update dict key bindings for DICT-mode."
   ;; Setup DICT-mode key binding `d' for running dict...
   (define-key dict-mode-keymap (dict-process-key-binding dict-mode-key-binding) 'dict)
   ;; ... `r' for running dict on the region...
-  (define-key dict-mode-keymap (dict-process-key-binding dict-mode-region-key-binding) 'dict-region))
+  (define-key dict-mode-keymap (dict-process-key-binding dict-mode-region-key-binding) 'dict-region)
+  ;; ... `m' for running dict on every word in the region...
+  (define-key dict-mode-keymap (dict-process-key-binding dict-mode-multiple-key-binding) 'dict-multiple)
+  ;; ... `s' for running dict to perform search on the given server...
+  (define-key dict-mode-keymap (dict-process-key-binding dict-mode-on-server-key-binding) 'dict-on-server)
+  ;; ... `S' to show similar words.
+  (define-key dict-mode-keymap (dict-process-key-binding dict-mode-similar-words-key-binding) 'dict-show-similar))
 
 ;;;;
 ;;;; Informational functions
@@ -634,7 +612,7 @@ This guess is based on the text surrounding the cursor."
   (shell-command "dict --version"))
 
 (defconst dict-version
-  "$Revision: 1.5 $"
+  "$Revision: 1.6 $"
   "Version number for 'dict' package.")
 
 (defun dict-version-number ()
@@ -643,14 +621,12 @@ This guess is based on the text surrounding the cursor."
   (match-string 0 dict-version))
 
 (defun dict-display-version ()
-  "Display 'dict' version."
+  "Display 'dict.el' version."
   (interactive)
-  (message "Emacs DICT client version <%s>." (dict-version-number)))
+  (message "dict.el version <%s>." (dict-version-number)))
 
 (dict-update-key-bindings)
 (dict-mode-update-key-bindings)
-
-; LocalWords:  dict dictd wordinspect appolo ru
 
 (provide 'dict)
 

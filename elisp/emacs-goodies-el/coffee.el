@@ -69,6 +69,7 @@
     ("Sweetener" . ,coffee-sweetener-types)
     ("Alcohol"   . ,coffee-alcohol-types)))
 
+;;;###autoload
 (defun coffee ()
   "Submit a BREW request to an RFC2324-compliant coffee device"
   (interactive)

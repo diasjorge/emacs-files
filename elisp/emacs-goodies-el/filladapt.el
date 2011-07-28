@@ -72,7 +72,7 @@
 
 (provide 'filladapt)
 
-(defvar filladapt-version "2.12debian"
+(defvar filladapt-version "2.12"
   "Version string for filladapt.")
 
 ;; BLOB to make custom stuff work even without customize
@@ -620,7 +620,6 @@ paragraphs are used."
 
 (defun turn-on-filladapt-mode ()
   "Unconditionally turn on Filladapt mode in the current buffer."
-  (interactive)
   (filladapt-mode 1))
 
 (defun turn-off-filladapt-mode ()

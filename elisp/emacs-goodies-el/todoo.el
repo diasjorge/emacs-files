@@ -57,21 +57,6 @@
 
 ;;; ChangeLog:
 
-;; 2007-08-29 Peter S Galbraith <psg@debian.org>
-
-;;  outline-font-lock-level is void, so define a similar one to historical
-;;  version from outline.el.  Call it todoo-outline-font-lock-level.
-;;  (Closes #438964)
-
-;; 2007-05-14 Peter S Galbraith <psg@debian.org>
-;;  Comment out clobbering of outline-mode-menu-bar-map key entries.
-;;  This is far too aggressive.  A much better fix would be to undefine the
-;;  keys for todoo-mode-map.  Thanks to Simon Pepping (Closes #144781).
-
-;; 2004-11-24 Peter S Galbraith <psg@debian.org>
-;;  Debian bug 267637 fix: changes to outline-regexp should be buffer-local.
-;;  Thanks to Daniel Skarda <0rfelyus@hobitin.ucw.cz> for pointing it out.
-
 ;; 1.2 - Fixed bug in menu (todoo-show->todoo)
 ;;       Fixed bug when deleting window in todoo-save-and-exit
 ;;       Added early sub-item support (might be buggy, but still
@@ -216,17 +201,10 @@
     (define-key map "\C-c\C-n" 'outline-next-visible-heading)
     (define-key map "\C-c\M-p" 'todoo-raise-item)
     (define-key map "\C-c\M-n" 'todoo-lower-item)
-    (cond
-     ((string-match "XEmacs\\|Lucid" emacs-version)
-      (define-key map '(control up) 'outline-previous-visible-heading)
-      (define-key map '(control down) 'outline-next-visible-heading)
-      (define-key map '(control shift up) 'todoo-raise-item)
-      (define-key map '(control shift down) 'todoo-lower-item))
-     (t
-      (define-key map [C-up] 'outline-previous-visible-heading)
-      (define-key map [C-down] 'outline-next-visible-heading)
-      (define-key map [C-S-up] 'todoo-raise-item)
-      (define-key map [C-S-down] 'todoo-lower-item)))
+    (define-key map [C-up] 'outline-previous-visible-heading)
+    (define-key map [C-down] 'outline-next-visible-heading)
+    (define-key map [C-S-up] 'todoo-raise-item)
+    (define-key map [C-S-down] 'todoo-lower-item)
     (setq todoo-mode-map map)))
 
 ;; Menu
@@ -395,21 +373,11 @@ asking."
   (backward-char))
 
 
-(defun todoo-outline-font-lock-level ()
-  (let ((count 1))
-    (save-excursion
-      (outline-back-to-heading t)
-      (while (and (not (bobp))
-		  (not (eq (funcall outline-level) 1)))
-	(outline-up-heading 1)
-	(setq count (1+ count)))
-      count)))
-
 (defun todoo-insert-sub-item () 
   "Insert a new todoo-sub-item."
   (interactive)
   (goto-char (- (todoo-item-end) 1))
-  (insert (concat "\n" (make-string (* (- (todoo-outline-font-lock-level) 2)
+  (insert (concat "\n" (make-string (* (- (outline-font-lock-level) 2)
 			       todoo-indent-column) ? )
 		  todoo-sub-item-marker " \n"))
   (backward-char))
@@ -420,7 +388,7 @@ asking."
   (interactive)
   (beginning-of-line)
 
-  (let ((indent-column (* (- (todoo-outline-font-lock-level) 1)
+  (let ((indent-column (* (- (outline-font-lock-level) 1)
 			  todoo-indent-column)))
     (if (eq (point) (point-at-eol))
 	(insert (make-string indent-column ? )))
@@ -537,17 +505,16 @@ todo-items in an 'outline-mode' fashion.\n\n\\{todoo-mode-map}"
   (make-local-variable 'font-lock-defaults)
   (setq font-lock-defaults '(todoo-font-lock-keywords t))
 
-  (set (make-local-variable 'outline-regexp)
-        (concat "^\\(" (regexp-quote todoo-item-marker) " \\|"
-                (regexp-quote todoo-item-marker-assigned) 
-                " \\|[ ]*" (regexp-quote todoo-sub-item-marker)
-                " \\)"))
+  (setq outline-regexp (concat "^\\(" (regexp-quote todoo-item-marker) " \\|"
+			       (regexp-quote todoo-item-marker-assigned) 
+			       " \\|[ ]*" (regexp-quote todoo-sub-item-marker)
+			       " \\)"))
 
   (outline-minor-mode 1)
 
-  ;;(define-key outline-mode-menu-bar-map [headings] 'undefined)
-  ;;(define-key outline-mode-menu-bar-map [hide] 'undefined)
-  ;;(define-key outline-mode-menu-bar-map [show] 'undefined)
+  (define-key outline-mode-menu-bar-map [headings] 'undefined)
+  (define-key outline-mode-menu-bar-map [hide] 'undefined)
+  (define-key outline-mode-menu-bar-map [show] 'undefined)
 
   (if todoo-collapse-items
       (hide-body))

@@ -4,7 +4,7 @@
 
 ;; Author: Eric Crampton <eric@atdesk.com>
 ;; Maintainer: Eric Crampton <eric@atdesk.com>
-;; Version: 1.1.0
+;; Version: 1.0.0
 ;; Keywords: dedicated, buffer
 
 ;; This file is not part of GNU Emacs.
@@ -34,30 +34,16 @@
 ;;
 ;; Dedicated buffers will have "D" shown in the mode line.
 
-;;; History:
-;; 
-;; 2003-11-12 Peter S Galbraith <psg@debian.org>
-;;  V1.0.0 found on gnu.emacs.sources archives for 2000/04/12:
-;;   http://groups.google.com/groups?selm=izn1mzrs60.fsf%40elmo.atdesk.com
-;;  V1.1.0 made `dedicated-mode' a true toggle; added autoload tag and made
-;;   minor checkdoc edits.
-
 ;;; Code:
 
 (defvar dedicated-mode nil
-  "Mode variable for dedicated minor mode.
-Use the command `dedicated-mode' to toggle or set this variable.")
+  "Mode variable for dedicated minor mode.")
 (make-variable-buffer-local 'dedicated-mode)
 
-;;;###autoload
 (defun dedicated-mode (&optional arg)
-  "Toggle dedicated minor mode.
-With ARG, turn minor mode on if ARG is positive, off otherwise."
+  "Dedicated minor mode."
   (interactive "P")
-  (setq hs-headline nil
-	dedicated-mode (if (null arg)
-                           (not dedicated-mode)
-                         (> (prefix-numeric-value arg) 0)))
+  (setq dedicated-mode (not dedicated-mode))
   (set-window-dedicated-p (selected-window) dedicated-mode)
   (if (not (assq 'dedicated-mode minor-mode-alist))
       (setq minor-mode-alist
@@ -65,5 +51,3 @@ With ARG, turn minor mode on if ARG is positive, off otherwise."
                   minor-mode-alist))))
 
 (provide 'dedicated)
-
-;;; dedicated.el ends here

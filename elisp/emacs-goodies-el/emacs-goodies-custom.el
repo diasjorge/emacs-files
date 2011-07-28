@@ -22,6 +22,13 @@
   :load 'ascii
   :group 'emacs-goodies-el)
 
+;; auto-fill-inhibit.el
+(defgroup auto-fill-inhibit '((auto-fill-inhibit-list custom-variable))
+  "Finer grained control over auto-fill-mode (de)activation."
+  :load 'auto-fill-inhibit
+  :link '(custom-manual "(emacs-goodies-el)auto-fill-inhibit")
+  :group 'emacs-goodies-el)
+
 ;; bar-cursor
 (defgroup bar-cursor nil
   "switch block cursor to a bar."
@@ -29,6 +36,16 @@
   :group 'convenience
   :load 'bar-cursor
 ;;:require 'bar-cursor
+  :group 'emacs-goodies-el)
+
+(defgroup bm nil
+  "Visible, buffer local bookmarks."
+  :link '(emacs-library-link :tag "Source Lisp File" "bm.el")
+  :group 'faces
+  :group 'editing
+  :prefix "bm-"
+  :link '(custom-manual "(emacs-goodies-el)bm")
+  :load 'bm
   :group 'emacs-goodies-el)
 
 ;; boxquote
@@ -59,7 +76,7 @@ and face definitions."
   :version "20.6"
   :group 'faces
   :link '(custom-manual "(emacs-goodies-el)color-theme")
-  :load 'color-theme
+  :load 'color-theme_seldefcustom
   :group 'emacs-goodies-el)
 
 ;; csv-mode
@@ -76,19 +93,6 @@ and face definitions."
   :group 'programming
   :link '(custom-manual "(emacs-goodies-el)ctypes")
   :load 'ctypes
-  :group 'emacs-goodies-el)
-
-;; cua
-(defgroup CUA-mode nil
-  "Emulate CUA key bindings including C-x and C-c."
-  :prefix "CUA-mode"
-  :group 'editing-basics
-  :group 'convenience
-  :group 'emulations
-  :link '(emacs-commentary-link :tag "Commentary" "cua.el")
-  :link '(emacs-library-link :tag "Lisp File" "cua.el")
-  :link '(custom-manual "(emacs-goodies-el)cua")
-  :load 'cua
   :group 'emacs-goodies-el)
 
 ;; cwebm
@@ -128,6 +132,15 @@ and face definitions."
 ;;:require 'diminish
   :group 'emacs-goodies-el)
 
+;; dir-locals
+(defgroup dir-locals ()
+  "Directory-wide file-local variables"
+  :link '(emacs-commentary-link "dir-locals")
+  :group 'files
+  :link '(custom-manual "(emacs-goodies-el)dir-locals")
+  :load 'dir-locals
+  :group 'emacs-goodies-el)
+
 ;; egocentric
 (defgroup egocentric nil
   "Highlight your name in arbitrary buffers."
@@ -136,6 +149,17 @@ and face definitions."
   :link '(custom-manual "(emacs-goodies-el)egocentric")
   :load 'egocentric
 ;;:require 'egocentric
+  :group 'emacs-goodies-el)
+
+;; eproject
+(defgroup eproject nil
+  "Eproject; provide support for grouping files and buffers into projects"
+  :prefix "eproject-"
+  :group 'convenience
+  :link '(emacs-commentary-link :tag "Commentary" "eproject.el")
+  :link '(emacs-library-link :tag "Optional extras" "eproject-extras.el")
+  :link '(url-link :tag "Github wiki" "http://wiki.github.com/jrockway/eproject")
+  :load 'eproject
   :group 'emacs-goodies-el)
 
 ;; ff-paths
@@ -187,6 +211,14 @@ and face definitions."
 ;;:require 'framepop
   :group 'emacs-goodies-el)
 
+;; graphviz-dot-mode.el
+(defgroup graphviz nil
+  "Major mode for editing Graphviz Dot files"
+  :group 'tools
+  :link '(custom-manual "(emacs-goodies-el)graphviz-dot-mode")
+  :load 'graphviz-dot-mode
+  :group 'emacs-goodies-el)
+
 ;; highlight-beyond-fill-column
 (defgroup highlight-beyond-fill-column nil
   "Fontify beyond the fill-column."
@@ -225,32 +257,6 @@ and face definitions."
   :link '(custom-manual "(emacs-goodies-el)htmlize")
   :load 'htmlize
 ;;:require 'htmlize
-  :group 'emacs-goodies-el)
-
-;; ibuffer
-(when (not (featurep 'xemacs))
-  (defgroup ibuffer nil
-    "An advanced replacement for `buffer-menu'.
-
-Ibuffer allows you to operate on buffers in a manner much like Dired.
-Operations include sorting, marking by regular expression, and
-selectable views (limits)."
-    :link '(url-link "http://web.verbum.org/~walters")
-    :group 'convenience
-    :link '(custom-manual "(emacs-goodies-el)ibuffer")
-    :load 'ibuffer
-  ;;:require 'ibuffer
-    :group 'emacs-goodies-el))
-
-;; ido.el
-(defgroup ido nil
-  "Switch between files using substrings."
-  :group 'extensions
-  :group 'convenience
-  :link '(emacs-commentary-link :tag "Commentary" "ido.el")
-  :link '(emacs-library-link :tag "Lisp File" "ido.el")
-  :link '(custom-manual "(emacs-goodies-el)ido")
-  :load 'ido
   :group 'emacs-goodies-el)
 
 ;; initsplit
@@ -318,8 +324,8 @@ selectable views (limits)."
   "Markdown mode."
   :prefix "markdown-"
   :group 'languages
-  :link '(custom-manual "(emacs-goodies-el)markdown")
-  :load 'markdown
+  :link '(custom-manual "(emacs-goodies-el)markdown-mode")
+  :load 'markdown-mode
   :group 'emacs-goodies-el)
 
 ;; minibuffer-complete-cycle
@@ -330,6 +336,26 @@ selectable views (limits)."
   :load 'minibuffer-complete-cycle
 ;;:require 'minibuffer-complete-cycle
   :group 'emacs-goodies-el)
+
+(defgroup miniedit nil
+  "Miniedit"
+  :group 'applications
+  :link '(custom-manual "(emacs-goodies-el)miniedit")
+  :load 'miniedit
+;;:require 'miniedit
+  :group 'emacs-goodies-el)
+
+(defcustom miniedit-install-p nil
+  "Whether to setup miniedit for use."
+  :type 'boolean
+  :set (lambda (symbol value)
+         (set-default symbol value)
+         (when value
+           (if (string-match "XEmacs" emacs-version)
+               (miniedit-install-for-xemacs)
+             (miniedit-install))))
+  :require 'miniedit
+  :group 'miniedit)
 
 ;; mutt-alias
 (defgroup mutt-alias nil
@@ -351,25 +377,6 @@ selectable views (limits)."
 ;;:require 'muttrc-mode
   :group 'emacs-goodies-el)
 
-;; newsticker
-(defgroup newsticker nil
-  "Newsticker settings. Some of these changes do not have an immediate
-effect.  Therefore it is recommended to `newsticker-stop' and then
-`newsticker-start' again after you have changed any of these settings."
-  :link '(custom-manual "(emacs-goodies-el)newsticker")
-  :load 'newsticker
-;;:require 'newsticker
-  :group 'emacs-goodies-el)
-
-;; nuke-trailing-whitespace
-(defgroup nuke-trailing-whitespace nil
-  "Strip trailing whitespace from buffers."
-  :group 'editing
-  :link '(custom-manual "(emacs-goodies-el)nuke-trailing-whitespace")
-  :load 'nuke-trailing-whitespace
-;;:require 'nuke-trailing-whitespace
-  :group 'emacs-goodies-el)
-
 ;; pack-windows
 (defgroup pack-windows nil
   "Resize all windows to display as much info as possible."
@@ -385,6 +392,24 @@ effect.  Therefore it is recommended to `newsticker-stop' and then
   :link '(custom-manual "(emacs-goodies-el)perldoc")
   :load 'perldoc
 ;;:require 'perldoc
+  :group 'emacs-goodies-el)
+
+;; pp-c-l.el
+(defgroup Pretty-Control-L nil
+  "Options to define pretty display of Control-l (`^L') characters."
+  :prefix "pp^L-" :group 'convenience :group 'wp
+  :link `(url-link :tag "Send Bug Report"
+          ,(concat "mailto:" "drew.adams" "@" "oracle" ".com?subject=pp-c-l.el bug: \
+&body=Describe bug here, starting with `emacs -q'.  \
+Don't forget to mention your Emacs and library versions."))
+  :link '(url-link :tag "Other Libraries by Drew"
+          "http://www.emacswiki.org/cgi-bin/wiki/DrewsElispLibraries")
+  :link '(url-link :tag "Download" "http://www.emacswiki.org/cgi-bin/wiki/pp-c-l.el")
+  :link '(url-link :tag "Description"
+          "http://www.emacswiki.org/cgi-bin/wiki/PrettyControlL")
+  :link '(emacs-commentary-link :tag "Commentary" "pp-c-l")
+  :link '(custom-manual "(emacs-goodies-el)pp-c-l")
+  :load 'pp-c-l
   :group 'emacs-goodies-el)
 
 ;; projects
@@ -404,6 +429,26 @@ effect.  Therefore it is recommended to `newsticker-stop' and then
   :load 'protbuf
 ;;:require 'protbuf
   :group 'emacs-goodies-el)
+
+;; quack
+(defgroup quack nil
+  "Enhanced support for editing and running Scheme code."
+  :group  'scheme
+  :prefix "quack-"
+  :link   '(url-link "http://www.neilvandyke.org/quack/")
+  :load 'quack
+  :link '(custom-manual "(emacs-goodies-el)quack")
+  :group 'emacs-goodies-el)
+
+(defcustom quack-install nil
+  "Whether to setup quack for use."
+  :type 'boolean
+  :set (lambda (symbol value)
+         (set-default symbol value)
+         (when value
+           (quack-install)))
+  :require 'quack
+  :group 'quack)
 
 ;; rfcview
 (defgroup rfcview nil
@@ -487,21 +532,6 @@ Don't forget to mention your Emacs and library versions."))
   :load 'tabbar
   :group 'emacs-goodies-el)
 
-;; table
-(defgroup table nil
-  "Text based table manipulation utilities.
-See `table-insert' for examples about how to use."
-  :tag "Table"
-  :prefix "table-"
-  :group 'editing
-  :group 'wp
-  :group 'paragraphs
-  :group 'fill
-  :link '(custom-manual "(emacs-goodies-el)table")
-  :load 'table
-;;:require 'table
-  :group 'emacs-goodies-el)
-
 ;; tail
 (defgroup tail nil
   "Tail files or commands into Emacs buffers."
@@ -554,15 +584,6 @@ See `table-insert' for examples about how to use."
   :link '(custom-manual "(emacs-goodies-el)toggle-option")
   :load 'toggle-option
 ;;:require 'toggle-option
-  :group 'emacs-goodies-el)
-
-;; wdired
-(defgroup wdired nil
-  "Mode to rename files by editing their names in dired buffers."
-  :group 'dired
-  :link '(custom-manual "(emacs-goodies-el)wdired")
-  :load 'wdired
-;;:require 'wdired
   :group 'emacs-goodies-el)
 
 ;; xrdb-mode

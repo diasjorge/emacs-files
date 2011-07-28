@@ -7,7 +7,7 @@
 
 ;; Keywords: languages, faces
 ;; Last edit: 2005-01-06
-;; Version: 2.0 $Id: apache-mode.el,v 1.4 2005/06/23 17:23:33 psg Exp $
+;; Version: 2.0 $Id: apache-mode.el,v 1.5 2009-09-03 14:41:25 psg Exp $
 
 ;; apache-mode.el is free software; you can redistribute it and/or modify it
 ;; under the terms of the GNU General Public License as published by the Free
@@ -43,6 +43,9 @@
 ;;   rewrote pretty much everything using define-derived-mode; added support
 ;;   for Apache 2.x; fixed highlighting in GNU Emacs; created indentation
 ;;   function
+;;
+;; 2005-06-29 Kumar Appaiah <akumar_NOSPAM@ee.iitm.ac.in>
+;;   use syntax table instead of font-lock-keywords to highlight comments.
 
 ;;; Code:
 
@@ -62,6 +65,8 @@
     (modify-syntax-entry ?>   ")<"   table)
     (modify-syntax-entry ?\"   "\""  table)
     (modify-syntax-entry ?,   "."    table)
+    (modify-syntax-entry ?#   "<"    table)
+    (modify-syntax-entry ?\n  ">#"   table)
     table))
 
 ;;;###autoload
@@ -84,7 +89,10 @@
 (defconst apache-font-lock-keywords
   (purecopy
    (list
-    (list "^[ \t]*#.*" 0 'font-lock-comment-face t)
+
+    ;; see syntax table for comment highlighting
+
+    ;; (list "^[ \t]*#.*" 0 'font-lock-comment-face t)
 
     (list (concat                       ; sections
            "^[ \t]*</?"

@@ -87,7 +87,6 @@
   (message error-message)
   (beep))
 
-;;;###autoload
 (defun marker-visit-prev ()
   "From point, visit the nearest mark earlier in the buffer."
   (interactive)
@@ -103,7 +102,6 @@
 	  (goto-char dest-mark)
 	(marker-visit-warn "No previous mark to visit")))))
 
-;;;###autoload
 (defun marker-visit-next ()
   "From point, visit the nearest mark later in the buffer."
   (interactive)
@@ -123,7 +121,6 @@
 	  (goto-char dest-mark)
 	(marker-visit-warn "No next mark to visit")))))
 
-;;;###autoload
 (defun marker-visit-truncate-mark-ring ()
   "Truncate the `mark-ring'."
   (interactive)

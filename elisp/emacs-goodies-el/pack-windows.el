@@ -39,7 +39,7 @@
 
 ;;; History:
 ;;
-;; $Id: pack-windows.el,v 1.1 2003/11/17 19:44:28 psg Exp $
+;; $Id: pack-windows.el,v 1.1 2003-11-17 19:44:28 psg Exp $
 ;;
 ;; 2003-11-17
 ;; Incorporated modifications by Peter S Galbraith <psg@debian.org>:

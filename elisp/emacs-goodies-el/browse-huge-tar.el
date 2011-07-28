@@ -1,5 +1,5 @@
 ;;; browse-huge-tar.el --- Browse files in a tarball memory-efficiently.
-;;;  $Id: browse-huge-tar.el,v 1.1 2003/11/17 19:44:28 psg Exp $
+;;;  $Id: browse-huge-tar.el,v 1.1 2003-11-17 19:44:28 psg Exp $
 ;;
 ;; (c) Gareth Owen 1999 (hey I just typed `space' 1999.  Ho ho.)
 

@@ -3,10 +3,11 @@
 ;; Copyright (C) 2001, 2002 Colin Walters <walters@verbum.org>
 
 ;; Author: Colin Walters <walters@verbum.org>
+;; Maintainer: Nick Hurley <hurley@cis.ohio-state.edu>
 ;; Created: 7 Apr 2001
-;; Version: 1.2 (CVS)
-;; X-RCS: $Id: browse-kill-ring.el,v 1.2 2003-05-26 00:21:49 psg Exp $
-;; URL: http://web.verbum.org/~walters
+;; Version: 1.3a (CVS)
+;; X-RCS: $Id: browse-kill-ring.el,v 1.3 2009-09-03 14:41:25 psg Exp $
+;; URL: http://freedom.cis.ohio-state.edu/~hurley/
 ;; URL-ja: http://www.fan.gr.jp/~ring/doc/browse-kill-ring.html
 ;; Keywords: convenience
 
@@ -48,6 +49,25 @@
 ;; again.
 
 ;;; Change Log:
+
+;; Changes from 1.3 to 1.3a:
+
+;; * Sneak update by Benjamin Andresen <bandresen@gmail.com>
+;; * Added the read-only bugfix (http://bugs.debian.org/225082) from 
+;;   the emacs-goodies-el package
+
+;; Changes from 1.2 to 1.3:
+
+;; * New maintainer, Nick Hurley <hurley@cis.ohio-state.edu>
+;; * New functions `browse-kill-ring-prepend-insert', and
+;;   `browse-kill-ring-append-insert', bound to 'b' and 'a' by
+;;   default. There are also the unbound functions
+;;   `browse-kill-ring-prepend-insert-and-quit',
+;;   `browse-kill-ring-prepend-insert-and-move',
+;;   `browse-kill-ring-prepend-insert-move-and-quit',
+;;   `browse-kill-ring-append-insert-and-quit',
+;;   `browse-kill-ring-append-insert-and-move',
+;;   `browse-kill-ring-append-insert-move-and-quit'.
 
 ;; Changes from 1.1 to 1.2:
 
@@ -212,7 +232,7 @@ properties to add to the result."
 
 (defgroup browse-kill-ring nil
   "A package for browsing and inserting the items in `kill-ring'."
-  :link '(url-link "http://web.verbum.org/~walters")
+  :link '(url-link "http://freedom.cis.ohio-state.edu/~hurley/")
   :group 'convenience)
 
 (defvar browse-kill-ring-display-styles
@@ -447,6 +467,121 @@ well."
   (interactive)
   (browse-kill-ring-insert-and-move t))
 
+(defun browse-kill-ring-prepend-insert (&optional quit)
+  "Like `browse-kill-ring-insert', but it places the entry at the beginning
+of the buffer as opposed to point."
+  (interactive "P")
+  (browse-kill-ring-do-prepend-insert (current-buffer)
+				      (point))
+  (when quit
+    (browse-kill-ring-quit)))
+
+(defun browse-kill-ring-prepend-insert-and-quit ()
+  "Like `browse-kill-ring-prepend-insert', but close the *Kill Ring* buffer."
+  (interactive)
+  (browse-kill-ring-prepend-insert t))
+
+(defun browse-kill-ring-prepend-insert-and-move (&optional quit)
+  "Like `browse-kill-ring-prepend-insert', but move the entry to the front
+of the *Kill Ring*."
+  (interactive "P")
+  (let ((buf (current-buffer))
+	(pt (point)))
+    (browse-kill-ring-do-prepend-insert buf pt)
+    (let ((str (browse-kill-ring-current-string buf pt)))
+      (browse-kill-ring-delete)
+      (kill-new str)))
+  (if quit
+      (browse-kill-ring-quit)
+    (browse-kill-ring-update)))
+
+(defun browse-kill-ring-prepend-insert-move-and-quit ()
+  "Like `browse-kill-ring-prepend-insert-and-move', but close the
+*Kill Ring* buffer."
+  (interactive)
+  (browse-kill-ring-prepend-insert-and-move t))
+
+(defun browse-kill-ring-do-prepend-insert (buf pt)
+  (let ((str (browse-kill-ring-current-string buf pt)))
+    (let ((orig (current-buffer)))
+      (unwind-protect
+	  (progn
+	    (unless (window-live-p browse-kill-ring-original-window)
+	      (error "Window %s has been deleted; Try calling `browse-kill-ring' again"
+		     browse-kill-ring-original-window))
+	    (set-buffer (window-buffer browse-kill-ring-original-window))
+	    (save-excursion
+	      (let ((pt (point)))
+		(goto-char (point-min))
+		(insert (if browse-kill-ring-depropertize
+			    (browse-kill-ring-depropertize-string str)
+			  str))
+		(when browse-kill-ring-highlight-inserted-item
+		  (let ((o (make-overlay (point-min) (point))))
+		    (overlay-put o 'face 'highlight)
+		    (sit-for 0.5)
+		    (delete-overlay o)))
+		(goto-char pt))))
+	(set-buffer orig)))))
+
+(defun browse-kill-ring-append-insert (&optional quit)
+  "Like `browse-kill-ring-insert', but places the entry at the end of the
+buffer as opposed to point."
+  (interactive "P")
+  (browse-kill-ring-do-append-insert (current-buffer)
+				     (point))
+  (when quit
+    (browse-kill-ring-quit)))
+
+(defun browse-kill-ring-append-insert-and-quit ()
+  "Like `browse-kill-ring-append-insert', but close the *Kill Ring* buffer."
+  (interactive)
+  (browse-kill-ring-append-insert t))
+
+(defun browse-kill-ring-append-insert-and-move (&optional quit)
+  "Like `browse-kill-ring-append-insert', but move the entry to the front
+of the *Kill Ring*."
+  (interactive "P")
+  (let ((buf (current-buffer))
+	(pt (point)))
+    (browse-kill-ring-do-append-insert buf pt)
+    (let ((str (browse-kill-ring-current-string buf pt)))
+      (browse-kill-ring-delete)
+      (kill-new str)))
+  (if quit
+      (browse-kill-ring-quit)
+    (browse-kill-ring-update)))
+
+(defun browse-kill-ring-append-insert-move-and-quit ()
+  "Like `browse-kill-ring-append-insert-and-move', but close the
+*Kill Ring* buffer."
+  (interactive)
+  (browse-kill-ring-append-insert-and-move t))
+
+(defun browse-kill-ring-do-append-insert (buf pt)
+  (let ((str (browse-kill-ring-current-string buf pt)))
+    (let ((orig (current-buffer)))
+      (unwind-protect
+	  (progn
+	    (unless (window-live-p browse-kill-ring-original-window)
+	      (error "Window %s has been deleted; Try calling `browse-kill-ring' again"
+		     browse-kill-ring-original-window))
+	    (set-buffer (window-buffer browse-kill-ring-original-window))
+	    (save-excursion
+	      (let ((pt (point))
+		    (begin-pt (point-max)))
+		(goto-char begin-pt)
+		(insert (if browse-kill-ring-depropertize
+			    (browse-kill-ring-depropertize-string str)
+			  str))
+		(when browse-kill-ring-highlight-inserted-item
+		  (let ((o (make-overlay begin-pt (point-max))))
+		    (overlay-put o 'face 'highlight)
+		    (sit-for 0.5)
+		    (delete-overlay o)))
+		(goto-char pt))))
+	(set-buffer orig)))))
+
 (defun browse-kill-ring-delete ()
   "Remove the item at point from the `kill-ring'."
   (interactive)
@@ -456,10 +591,7 @@ well."
     (unwind-protect
 	(progn
 	  (setq buffer-read-only nil)
-	  (let ((target (overlay-get over 'browse-kill-ring-target))
-                ;; See http://bugs.debian.org/224751
-                ;; Emacs 21.1 fails when text was read-only
-                (inhibit-read-only t))
+	  (let ((target (overlay-get over 'browse-kill-ring-target)))
 	    (delete-region (overlay-start over)
 			   (1+ (overlay-end over)))
 	    (setq kill-ring (delete target kill-ring)))
@@ -648,7 +780,9 @@ You most likely do not want to call `browse-kill-ring-mode' directly; use
   (define-key browse-kill-ring-mode-map (kbd "i") 'browse-kill-ring-insert)
   (define-key browse-kill-ring-mode-map (kbd "o") 'browse-kill-ring-insert-and-move)
   (define-key browse-kill-ring-mode-map (kbd "x") 'browse-kill-ring-insert-and-delete)
-  (define-key browse-kill-ring-mode-map (kbd "RET") 'browse-kill-ring-insert-and-quit))
+  (define-key browse-kill-ring-mode-map (kbd "RET") 'browse-kill-ring-insert-and-quit)
+  (define-key browse-kill-ring-mode-map (kbd "b") 'browse-kill-ring-prepend-insert)
+  (define-key browse-kill-ring-mode-map (kbd "a") 'browse-kill-ring-append-insert))
 
 ;;;###autoload
 (defun browse-kill-ring-default-keybindings ()
@@ -771,7 +905,7 @@ directly; use `browse-kill-ring' instead.
   (let* ((item (browse-kill-ring-elide origitem))
 	 (len (length item)))
     (browse-kill-ring-add-overlays-for origitem
-	(insert item))
+                                       (insert item))
     ;; When the kill-ring has items with read-only text property at
     ;; **the end of** string, browse-kill-ring-setup fails with error
     ;; `Text is read-only'.  So inhibit-read-only here.

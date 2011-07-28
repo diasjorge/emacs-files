@@ -24,7 +24,7 @@
 ;; Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 ;; 02111-1307, USA.
 
-;;  $Id: tail.el,v 1.3 2003/10/10 01:46:49 psg Exp $
+;;  $Id: tail.el,v 1.4 2010-07-28 15:50:01 psg Exp $
 
 ;;; Commentary:
 
@@ -46,6 +46,9 @@
 ;;      copied code from appt.el appt-delete-window.
 ;;   - Fix boolean defcustoms.
 ;;   - Make it work on XEmacs (only briefly tested).
+;;
+;;  2010-06-05 Kevin Ryde <user42@zip.com.au>
+;;   - timer object in a per-buffer variable for new output (Closes: #584598).
 
 ;;; Code:
 
@@ -83,6 +86,9 @@
 
 
 ;; Functions
+
+(defvar tail-timer nil)
+(make-variable-buffer-local 'tail-timer)
 
 ;; Taken from calendar/appt.el
 (defun tail-disp-window (tail-buffer tail-msg)
@@ -132,11 +138,15 @@ the lowest side of the frame."
     (select-window this-window)
     (if tail-audible
 	(beep 1))
-    (if tail-hide-delay
-	(run-with-timer tail-hide-delay nil 'tail-hide-window tail-buffer))))
+    (when tail-hide-delay
+      (if tail-timer
+          (cancel-timer tail-timer))
+      (setq tail-timer (run-with-timer tail-hide-delay nil
+                                       'tail-hide-window tail-buffer)))))
 
 (defun tail-hide-window (buffer)
-  ;; TODO: cancel timer when some output comes during that time
+  (with-current-buffer buffer
+    (kill-local-variable 'tail-timer)) ;; the now expired timer object
   (let ((window (get-buffer-window buffer t)))
     (and window
 	 (or (eq window (frame-root-window (window-frame window)))

@@ -22,20 +22,24 @@
 
 ;;; Code:
 
+;;;###autoload
 (defun align-string (begin end regexp count)
   "Align first occurrence of REGEXP in each line of region.
 If given a prefix argument, align occurrence number COUNT on each line."
   (interactive "r
 sAlign by: 
 p")
+  (undo-boundary)
   (save-excursion
     ;; Move begin point to start of line.
     (goto-char begin)
     (setq begin (line-beginning-position))
     ;; Make end a marker, to track updates made in buffer.  Point the
-    ;; marker at the end of the last line.
+    ;; marker at the end of the last line, unless at start of line.
     (goto-char end)
-    (setq end (set-marker (make-marker) (line-end-position)))
+    (setq end (set-marker (make-marker) (if (bolp) 
+					    (point)
+					  (line-end-position))))
     (let ((max-col 0))
       ;; Find max column of first occurrence of string in the lines
       ;; bounded by begin-marker and end-marker
@@ -43,7 +47,7 @@ p")
       (while (< (point) end)
 	(when (re-search-forward regexp (line-end-position) t count)
 	  (goto-char (match-beginning 0))
-	  (setq max-col (max (current-column) max-col)))
+	  (setq max-col (max max-col (current-column))))
 	(beginning-of-line 2))
       ;; For each line in region, indent first occurrence of string
       ;; to max column.
@@ -56,6 +60,7 @@ p")
     ;; Clear end marker.
     (set-marker end nil)))
 
+;;;###autoload
 (defun align-all-strings (begin end regexp)
   "Align all occurrences of REGEXP in each line of region.
 That is to say, align the first occurrence of each line with each other,
@@ -69,28 +74,27 @@ sAlign by: ")
     ;; Make end a marker, to track updates made in buffer.  Point the
     ;; marker at the end of the last line.
     (goto-char end)
-    (setq end (set-marker (make-marker) (line-end-position)))
-    ;; Starting with i = 1, check if there is at least one line in
-    ;; region that has at least i occurrences of regexp.  If so, align
-    ;; i'th occurrence with align-string.  Otherwise, terminate.
-    (let ((i 1)
-	  (i-occurrences-p t))
-      (while i-occurrences-p
-	;; Check that at least one line in region has i occurrences
-	(setq i-occurrences-p nil)
-	(goto-char begin)
-	(while (and (< (point) end)
-		    (not i-occurrences-p))
-	   (when (re-search-forward regexp (line-end-position) t i)
-	     (setq i-occurrences-p t))
-	   (beginning-of-line 2))
-	;; Perform alignment if neccessary.
-	(when i-occurrences-p
+    (setq end (set-marker (make-marker) (if (bolp)
+					    (point)
+					  (line-end-position))))
+    ;; Count max number of occurrences in any line in region, then
+    ;; run align-string for each enumerated occurrence.
+    (let ((max-occs 0))
+      (goto-char begin)
+      (while (< (point) end)
+	(let ((occs-this-line 0)
+	      (line-end (line-end-position)))
+	  (while (and (< (point) line-end)
+		      (re-search-forward regexp line-end t))
+	    (setq occs-this-line (1+ occs-this-line))
+	    ; Ensure that search moves forward even if match is empty
+	    (when (= (match-beginning 0) (point))
+	      (forward-char)))
+	  (setq max-occs (max max-occs occs-this-line)))
+	(beginning-of-line 2))
+      (let ((i 1))
+	(while (<= i max-occs)
 	  (align-string begin end regexp i)
 	  (setq i (1+ i)))))
     ;; Clear end marker.
     (set-marker end nil)))
-
-(provide 'align-string)
-
-;;; align-string.el ends here

@@ -6,6 +6,8 @@
 
 ;;; History:
 ;;
+;; 2009-02-22 Peter Galbraith
+;;  - Replace $ by \\' in auto-mode-alist entries (Closes: #570293)
 ;; 2006-11-26 - Ramkumar R.
 ;;  - Obey `emacs-goodies-el-defaults' for xrdb-mode.
 ;; 2003-06-14 - Peter Galbraith
@@ -41,16 +43,6 @@ Setting to aggressive will enable features that supercede Emacs defaults."
 
 ;; apache-mode.el
 (add-to-list 'auto-mode-alist '("apache2\\.conf\\'"  . apache-mode))
-
-;; auto-fill-inhibit.el
-(defgroup auto-fill-inhibit '((auto-fill-inhibit-list custom-variable))
-  "Finer grained control over auto-fill-mode (de)activation."
-  :load 'auto-fill-inhibit
-  :link '(custom-manual "(emacs-goodies-el)auto-fill-inhibit")
-  :group 'emacs-goodies-el)
-
-;; cfengine.el
-(add-to-list 'auto-mode-alist '("/cf\\." . cfengine-mode))
 
 ;; clipper.el
 (autoload 'clipper-create "clipper" "Create a new 'clip' for use within Emacs."
@@ -176,26 +168,6 @@ Stores the value of the prior `home' keybinding.")
   :load 'home-end
   :group 'emacs-goodies-el)
 
-;; ibuffer
-(when (not (featurep 'xemacs))
-  (defvar ibuffer-enable-done nil
-    "Whether `ibuffer-enable' was activated.
-Stores the value of the prior keybinding in case we need to restore it.")
-
-  (defcustom ibuffer-enable emacs-goodies-el-defaults
-    "*Defines \\C-x\\C-b as 'ibuffer, a dired-like buffer manager."
-    :type 'boolean
-    :set (lambda (symbol value)
-           (set-default symbol value)
-           (cond
-            (value
-             (setq ibuffer-enable-done (lookup-key ctl-x-map "\C-b"))
-             (define-key ctl-x-map "\C-b" 'ibuffer))
-            (ibuffer-enable-done
-             (define-key ctl-x-map "\C-b" ibuffer-enable-done))))
-    :load 'ibuffer
-    :group 'emacs-goodies-el))
-
 ;; keydef.el
 (autoload 'keydef "keydef"
   "Define the key sequence SEQ, written in kbd form, to run CMD."
@@ -215,6 +187,21 @@ Stores the value of the prior keybinding in case we need to restore it.")
 (autoload 'maplev-mode "maplev" "Maple editing mode" t)
 (autoload 'cmaple      "maplev" "Start maple process" t)
 (add-to-list 'auto-mode-alist '("\\.mpl\\'" . maplev-mode))
+
+;; matlab
+(defcustom matlab-auto-mode nil
+  "*Enter matlab-mode when editing .m files.
+Technically, this adjusts the `auto-mode-list' when set.
+To unset, you will have to restart Emacs."
+  :type 'boolean
+  :set (lambda (symbol value)
+         (set-default symbol value)
+         (cond
+          (value
+           (add-to-list 'auto-mode-alist '("\\.m\\'" . matlab-mode)))))
+  :load 'matlab
+  :group 'emacs-goodies-el
+  :require 'matlab)
 
 ;; minibuf-electric.el
 (defcustom minibuffer-electric-file-name-behavior nil
@@ -240,7 +227,7 @@ in `substitute-in-file-name'."
 
 
 ;; pod-mode.el
-(add-to-list 'auto-mode-alist '("\\.pod$" . pod-mode))
+(add-to-list 'auto-mode-alist '("\\.pod\\'" . pod-mode))
 
 ;; rfcview
 (add-to-list 'auto-mode-alist
@@ -264,7 +251,7 @@ this function to `after-init-hook'."
 
 ;; slang-mode.el
 (setq auto-mode-alist
-      (append '(("\\.sl$" . slang-mode)) auto-mode-alist))
+      (append '(("\\.sl\\'" . slang-mode)) auto-mode-alist))
 
 ;; todoo.el
 (when (not (featurep 'xemacs))
@@ -274,20 +261,27 @@ this function to `after-init-hook'."
   (autoload 'todoo-mode "todoo"
     "TODO Mode"
     t)
-  (add-to-list 'auto-mode-alist '("TODO$" . todoo-mode)))
+  (add-to-list 'auto-mode-alist '("TODO\\'" . todoo-mode)))
 
 ;; toggle-option.el
 (autoload 'toggle-option "toggle-option"
   "Easily toggle frequently toggled options."
   t)
 
+;; upstart-mode.el
+(when (not (featurep 'xemacs))
+  (autoload 'upstart-mode "upstart-mode"
+    "major mode for .upstart files."
+    t)
+  (add-to-list 'auto-mode-alist '("\\.upstart\\'" . upstart-mode)))
+
 ;; xrdb-mode.el
 
 (defun xrdb-mode-setup-auto-mode-alist ()
-  (add-to-list 'auto-mode-alist '("\\.Xdefaults$" . xrdb-mode))
-  (add-to-list 'auto-mode-alist '("\\.Xenvironment$". xrdb-mode))
-  (add-to-list 'auto-mode-alist '("\\.Xresources$". xrdb-mode))
-  (add-to-list 'auto-mode-alist '("\\.ad$". xrdb-mode))
+  (add-to-list 'auto-mode-alist '("\\.Xdefaults\\'" . xrdb-mode))
+  (add-to-list 'auto-mode-alist '("\\.Xenvironment\\'". xrdb-mode))
+  (add-to-list 'auto-mode-alist '("\\.Xresources\\'". xrdb-mode))
+  (add-to-list 'auto-mode-alist '("\\.ad\\'". xrdb-mode))
   (add-to-list 'auto-mode-alist '("/app-defaults/". xrdb-mode))
   (add-to-list 'auto-mode-alist '("/Xresources/". xrdb-mode)))
 
@@ -319,28 +313,6 @@ effects to take effect."
            (xrdb-mode-setup-auto-mode-alist)))
   :group 'emacs-goodies-el
   :group 'xrdb)
-
-;; wdired.el
-(defcustom wdired-enable emacs-goodies-el-defaults
-  "*Defines \"r\" as 'wdired-change-to-wdired-mode if key was unset.
-Also add menu-bar entry."
-  :type 'boolean
-  :set (lambda (symbol value)
-         (set-default symbol value)
-         (cond
-          (value
-           (require 'dired)
-           (if (or (equal 'nil (lookup-key dired-mode-map "r"))
-                   (equal 'undefined (lookup-key dired-mode-map "r")))
-               (define-key dired-mode-map "r" 'wdired-change-to-wdired-mode))
-           ;; emacs-snapshot, v22,  already has a menu entry
-           (if (and (< emacs-major-version 22)
-                    (not (featurep 'xemacs)))
-               (define-key dired-mode-map
-                 [menu-bar immediate wdired-change-to-wdired-mode]
-                 '("Edit File Names" . wdired-change-to-wdired-mode))))))
-  :load 'wdired
-  :group 'emacs-goodies-el)
 
 (provide 'emacs-goodies-el)
 

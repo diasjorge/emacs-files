@@ -62,6 +62,7 @@
   "regexep LIST to match against buffer-name to inhibit auto-fill-mode.
 An empty list of regexps (the default) retains the original
 `auto-fill-mode' behaviour."
+  :require 'auto-fill-inhibit
   :type '(repeat (regexp :tag "Buffer name regexp")))
 
 (defadvice auto-fill-mode (before auto-fill-mode-inhibit activate)

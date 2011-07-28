@@ -1,42 +1,32 @@
-;;; setnu.el --- vi-style line number mode for Emacs
-;;
-;; (requires Emacs 19.29 or later, or XEmacs 19.14 or later)
-;; Copyright (C) 1994, 1995, 1997 Kyle E. Jones
-;;
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation; either version 2, or (at your option)
-;; any later version.
-;;
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-;;
-;; A copy of the GNU General Public License can be obtained from this
-;; program's author (send electronic mail to kyle@uunet.uu.net) or from
-;; the Free Software Foundation, Inc., 675 Mass Ave, Cambridge, MA
-;; 02139, USA.
-
-;;; Commentary:
-;;
-;; Send bug reports to kyle@wonderworks.com
+;;; vi-style line number mode for Emacs
+;;; (requires Emacs 19.29 or later, or XEmacs 19.14 or later)
+;;; Copyright (C) 1994, 1995, 1997 Kyle E. Jones
+;;;
+;;; This program is free software; you can redistribute it and/or modify
+;;; it under the terms of the GNU General Public License as published by
+;;; the Free Software Foundation; either version 2, or (at your option)
+;;; any later version.
+;;;
+;;; This program is distributed in the hope that it will be useful,
+;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;;; GNU General Public License for more details.
+;;;
+;;; A copy of the GNU General Public License can be obtained from this
+;;; program's author (send electronic mail to kyle@uunet.uu.net) or from
+;;; the Free Software Foundation, Inc., 675 Mass Ave, Cambridge, MA
+;;; 02139, USA.
+;;;
+;;; Send bug reports to kyle@wonderworks.com
 ;;
 ;; M-x setnu-mode toggles the line number mode on and off.
 ;;
-;; turn-on-setnu-mode is useful for adding to a major-mode hook variable.
+;; turn-on-setnu-mode is useful for adding to a major-mode hook
+;; variable.
 ;; Example:
 ;;     (add-hook 'text-mode-hook 'turn-on-setnu-mode)
-;;  to automatically turn on line numbering when enterting text-mode."
+;; to automatically turn on line numbering when enterting text-mode."
 
-;;; History:
-;; 
-;; 2003-10-13 Peter S Galbraith <psg@debian.org>
-;;  - made checkdoc changes (but it's still not happy).
-;;  - created settnu defgroup and created defface setnu-line-number-face.
-;;  - added atoload tags.
-
-;;; Code:
 (provide 'setnu)
 
 (defconst setnu-running-under-xemacs
@@ -44,20 +34,20 @@
       (string-match "Lucid" emacs-version)))
 
 (defconst setnu-mode-version "1.06"
-  "Version number for this release of `setnu-mode'.")
+  "Version number for this release of setnu-mode.")
 
 (defvar setnu-mode nil
-  "Non-nil if `setnu-mode' is active in the current buffer.")
+  "Non-nil if setnu-mode is active in the current buffer.")
 (make-variable-buffer-local 'setnu-mode)
 
 (defvar setnu-start-extent nil
-  "First extent of a chain of extents used by `setnu-mode'.
+  "First extent of a chain of extents used by setnu-mode.
 Each line has its own extent.  Each line extent has a
 `setnu-next-extent' property that points to the next extent in
 the chain, which is the extent for the next line in the buffer.
 There is also a `setnu-prev-extent' that points at the previous
 extent in the chain.  To distinguish them from other extents the
-`setnu-mode' extents all have a non-nil `setnu' property.")
+setnu-mode extents all have a non-nil `setnu' property.")
 (make-variable-buffer-local 'setnu-start-extent)
 
 (defvar setnu-glyph-obarray (make-vector 401 0)
@@ -76,21 +66,14 @@ be made the begin glyph of an extent to display as a line number.")
 `format' will be called with this string and one other argument
 which will be an integer, the line number.")
 
-(defvar setnu-line-number-face 'setnu-line-number-face
-  "*Face used to display the line numbers.")
+(defvar setnu-line-number-face 'bold
+  "*Face used to display the line numbers.
+Currently this works for XEmacs 19.12 and later versions only.")
 
-(defgroup setnu nil
-  "vi-style line number mode for Emacs.")
-
-(defface setnu-line-number-face '((t (:bold t)))
-  "*Face used to display the line numbers."
-  :group 'setnu)
-
-;;;###autoload
 (defun setnu-mode (&optional arg)
-  "Toggle `setnu-mode'.
-With prefix argument ARG, turn `setnu-mode' on if argument is positive.
-When `setnu-mode' is enabled, a line number will appear at the left
+  "Toggle setnu-mode.
+With prefix argument, turn setnu-mode on if argument is positive.
+When setnu-mode is enabled, a line number will appear at the left
 margin of each line."
   (interactive "P")
   (let ((oldmode (not (not setnu-mode)))
@@ -102,13 +85,12 @@ margin of each line."
 	    (setnu-mode-on)
 	  (setnu-mode-off)))))
 
-;;;###autoload
 (defun turn-on-setnu-mode ()
-  "Turn on `setnu-mode'.
-Useful for adding to a `major-mode' hook variable.
+  "Turn on setnu-mode.
+Useful for adding to a major-mode hook variable.
 Example:
     (add-hook 'text-mode-hook 'turn-on-setnu-mode)
-to automatically turn on line numbering when enterting `text-mode'."
+to automatically turn on line numbering when enterting text-mode."
   (setnu-mode 1))
 
 ;;; Internal functions
@@ -166,8 +148,8 @@ to automatically turn on line numbering when enterting `text-mode'."
 	 (put-text-property 0 (length g) 'face face g))))
 
 (defun setnu-mode-off ()
-  "Internal shutdown of `setnu-mode'.
-Deletes the extents associated with `setnu-mode'."
+  "Internal shutdown of setnu-mode.
+Deletes the extents associated with setnu-mode."
   (if (and setnu-running-under-xemacs
 	   (fboundp 'remove-specifier))
       (remove-specifier left-margin-width (current-buffer)))
@@ -181,13 +163,11 @@ Deletes the extents associated with `setnu-mode'."
 	(setq setnu-start-extent nil))))
 
 (defun setnu-mode-on ()
-  "Internal startup of `setnu-mode'.
-Sets up the extents associated with `setnu-mode'."
+  "Internal startup of setnu-mode.
+Sets up the extents associated with setnu-mode."
   (if (and setnu-running-under-xemacs
 	   (fboundp 'set-specifier))
       (set-specifier left-margin-width 6 (current-buffer)))
-  (add-hook 'before-change-functions 'setnu-before-change-function)
-  (add-hook 'after-change-functions 'setnu-after-change-function)
   (let ((done nil)
 	(curr-e nil)
 	(n 1)
@@ -216,9 +196,9 @@ Sets up the extents associated with `setnu-mode'."
       (store-match-data match-data))))
 
 (defun setnu-before-change-function (start end)
-  "Before change function for `setnu-mode'.
+  "Before change function for setnu-mode.
 Notices when a delete is about to delete some lines and adjusts
-the line number extents accordingly (betwee START and END)."
+the line number extents accordingly."
   (if (or (not setnu-mode) (= start end))
       () ;; not in setnu-mode or this is an insertion
     (let ((inhibit-quit t)
@@ -272,12 +252,9 @@ the line number extents accordingly (betwee START and END)."
 	(store-match-data match-data)))))
 
 (defun setnu-after-change-function (start end length)
-  "After change function for `setnu-mode'.
+  "After change function for setnu-mode.
 Notices when an insert has added some lines and adjusts
-the line number extents accordingly.
-Three arguments are passed to an `after-change-function': the positions of
-the START and END of the range of changed text,
-and the LENGTH in bytes of the pre-change text replaced by that range."
+the line number extents accordingly."
   (if (or (not setnu-mode) (= start end))
       () ; not in setnu-mode or this is a deletion
     (let ((inhibit-quit t)
@@ -354,8 +331,7 @@ and the LENGTH in bytes of the pre-change text replaced by that range."
 	g ))))
 
 (defun setnu-make-setnu-extent (beg end)
-  "Create an extent and set some properties that all setnu extents have.
-Extent is between BEG and END."
+  "Create an extent and set some properties that all setnu extents have."
   (let ((e (setnu-make-extent beg end)))
     (setnu-set-extent-property e 'setnu t)
 ;;    (setnu-set-extent-property e 'begin-glyph-layout 'outside-margin)
@@ -413,12 +389,11 @@ Extent is between BEG and END."
 				       e
 				     nil)))
 		       buf pos pos)))
-       (t (error "Can't find overlays-in, overlays-at, or map-extents!")))
+       (t (error "can't find overlays-in, overlays-at, or map-extents!")))
 
 (defun setnu-extent-at-create (pos buf)
-  "Like `setnu-extent-at' for position POS in buffer BUF.
-If an extent isn't found, then it is created based on where the extent failed
-to be found."
+  "Like `setnu-extent-at' except if an extent isn't found, then
+it is created based on where the extent failed to be found."
   (let ((e (setnu-extent-at pos buf)) ee beg numstr)
     (if e
 	e
@@ -469,6 +444,5 @@ to be found."
 	       (setnu-set-extent-begin-glyph e (setnu-number-glyph numstr))
 	       e ))))))
 
-(provide 'setnu)
-
-;;; setnu.el ends here
+(add-hook 'before-change-functions 'setnu-before-change-function)
+(add-hook 'after-change-functions 'setnu-after-change-function)

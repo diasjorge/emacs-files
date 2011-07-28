@@ -1,11 +1,11 @@
 ;;; diminish.el --- Diminished modes are minor modes with no modeline display
 
-;; Copyright (C) 1998, 2003 Free Software Foundation, Inc.
+;; Copyright (C) 1998 Free Software Foundation, Inc.
 
 ;; Author: Will Mengarini <seldon@eskimo.com>
 ;; URL: <http://www.eskimo.com/~seldon>
 ;; Created: Th 19 Feb 98
-;; Version: 0.45, 18 Jun 2003
+;; Version: 0.44, Sa 23 Jan 99
 ;; Keywords: extensions, diminish, minor, codeprose
 
 ;; This file is part of GNU Emacs.
@@ -95,11 +95,6 @@
 ;; near the end of your .emacs file.  It should be near the end so that any
 ;; minor modes your .emacs loads will already have been loaded by the time
 ;; they're to be converted to diminished modes.
-;;
-;; Alternatively, you can setup dimished modes using the customize
-;; interface by customizing the variable `diminished-minor-modes'.  The
-;; same caveat as above applies and the minor mode libraries should be
-;; loaded in ~/.emacs before the `(custom-set-variables' line.
 
 ;; To diminish a major mode, (setq mode-name "whatever") in the mode hook.
 
@@ -108,21 +103,6 @@
 ;;         "The quality of our thoughts is bordered on all sides
 ;;          by our facility with language."
 ;;               --J. Michael Straczynski
-
-
-;;; History:
-;;
-;; 2003-06-08 Peter S. Galbraith <psg@debian.org>
-;;
-;;  - Make diminished-minor-modes a defcustom.  You can now setup the
-;;    package using `M-x customize-variable[RET]diminished-minor-modes[RET]'.
-;;
-;;    The minor modes still need to be loaded in ~/.emacs prior to diminish
-;;    setup but I'm not too sure how to best handle that.  An list of 
-;;    (MINOR-MODE . LIBRARY-FILE) obtained by pre-parsing the Emacs elisp
-;;    files perhaps, and then add an eval-after-load?  Seems like a kludge
-;;    because it relies on outside information remaining constant, but it
-;;    would help.
 
 ;;; Code:
 
@@ -172,7 +152,7 @@ message \"Attempt to modify read-only object\".")
 ;; perhaps at first in surprise, the freedom they thus gain, and grow strong.
 
 ;;;###autoload
-(defun diminish (mode &optional to-what annotate-flag)
+(defun diminish (mode &optional to-what)
   "Diminish mode-line display of minor mode MODE to TO-WHAT (default \"\").
 
 Interactively, enter (with completion) the name of any minor mode, followed
@@ -187,10 +167,7 @@ you're having problems with a cramped mode line, you may choose to use single
 letters for some modes, without leading spaces.  Capitalizing them works
 best; if you then diminish some mode to \"X\" but have abbrev-mode enabled as
 well, you'll get a display like \"AbbrevX\".  This function prepends a space
-to TO-WHAT if it's > 1 char long & doesn't already begin with a space.
-
-If ANNOTATE-FLAG is nil or omitted, the normal case in interactive use, then
-the variable `diminished-minor-modes' will be modified to reflect the change."
+to TO-WHAT if it's > 1 char long & doesn't already begin with a space."
   (interactive (list (read (completing-read
                             "Diminish what minor mode: "
                             (mapcar (lambda (x) (list (symbol-name (car x))))
@@ -207,11 +184,7 @@ the variable `diminished-minor-modes' will be modified to reflect the change."
           (callf2 concat " " to-what)))
     (or (assq mode diminished-mode-alist)
         (push (copy-sequence minor) diminished-mode-alist))
-    (setcdr minor (list to-what))
-    (if (not annotate-flag)
-        (setq diminished-minor-modes
-              (append diminished-minor-modes
-                      (list (cons (car minor) to-what)))))))
+    (setcdr minor (list to-what))))
 
 ;; But an image comes to me, vivid in its unreality, of a loon alone on his
 ;; forest lake, shrieking his soul out into a canopy of stars.  Alone this
@@ -230,7 +203,7 @@ the variable `diminished-minor-modes' will be modified to reflect the change."
 ;; He was shot dead by police.
 
 ;;;###autoload
-(defun diminish-undo (mode &optional annotate-flag)
+(defun diminish-undo (mode)
   "Restore mode-line display of diminished mode MODE to its minor-mode value.
 Do nothing if the arg is a minor mode that hasn't been diminished.
 
@@ -238,10 +211,7 @@ Interactively, enter (with completion) the name of any diminished mode (a
 mode that was formerly a minor mode on which you invoked M-x diminish).
 To restore all diminished modes to minor status, answer `diminished-modes'.
 The response to the prompt shouldn't be quoted.  However, in Lisp code,
-the arg must be quoted as a symbol, as in (diminish-undo 'diminished-modes).
-
-If ANNOTATE-FLAG is nil or omitted, the normal case in interactive use, then
-the variable `diminished-minor-modes' will be modified to reflect the change."
+the arg must be quoted as a symbol, as in (diminish-undo 'diminished-modes)."
   (interactive
    (list (read (completing-read
                 "Restore what diminished mode: "
@@ -259,10 +229,7 @@ the variable `diminished-minor-modes' will be modified to reflect the change."
       (or minor
           (error "%S is not currently registered as a minor mode" mode))
       (when diminished
-        (setcdr minor (cdr diminished))
-        (when (not annotate-flag)
-          (setq diminished-minor-modes
-                (assq-delete-all (car minor) diminished-minor-modes)))))))
+        (setcdr minor (cdr diminished))))))
 
 ;; Plumber Bob was not from Seattle, my grey city, for rainy Seattle is a
 ;; city of interiors, a city of the self-diminished.  When I moved here one
@@ -320,31 +287,6 @@ what diminished modes would be on the mode-line if they were still minor."
 ;; Now, here a dozen years, I can recognize them everywhere, standing quietly
 ;; in line with the ducks and geese at the espresso counter, gazing placidly
 ;; out on the world through loon-red eyes, thinking secret thoughts.
-
-(defgroup diminish nil
-  "Diminished modes are minor modes with no modeline display."
-  :group 'convenience)
-
-(defcustom diminished-minor-modes nil
-  "List of minor modes to diminish and their mode line display strings.
-The display string can be the empty string if you want the name of the mode
-completely removed from the mode line.  If you prefer, you can abbreviate
-the name.  For 2 characters or more will be displayed as a separate word on
-the mode line, just like minor modes' names.  A single character will be
-scrunched up against the previous word.  Multiple single-letter diminished
-modes will all be scrunched together.
-
-The display of undiminished modes will not be affected."
-  :group 'diminish
-  :type '(alist :key-type (symbol :tag "Minor-mode")
-		:value-type (string :tag "Title"))
-  :options (mapcar 'car minor-mode-alist)
-  :set (lambda (symbol value)
-         (if (and (boundp 'diminished-minor-modes) diminished-minor-modes)
-             (mapcar 
-              (lambda (x) (diminish-undo (car x) t)) diminished-minor-modes))
-         (set-default symbol value)
-         (mapcar (lambda (x) (diminish (car x) (cdr x) t)) value)))
 
 (provide 'diminish)
 

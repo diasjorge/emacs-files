@@ -4,9 +4,9 @@
 
 ;; Author: Anders Lindgren <andersl@andersl.com>
 ;; Maintainer: Anders Lindgren <andersl@andersl.com>
-;; Version: 1.4 by Peter S Galbraith
+;; Version: 1.3.1
 ;; Created: 1997-03-16
-;; Date: 2003-11-10
+;; Date: 1999-06-23
 
 ;; CTypes is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -228,22 +228,11 @@
 
 ;;}}}
 
-;;; History:
-;;
-;; 1.3.1 is from http://www.juliocastillo.com/emacs/site-lisp/ctypes.el
-;;
-;; 1.4  Peter S Galbraith <psg@debian.org>
-;;  I can't find the author, so did a few changes myself.
-;;  - minor checkdoc changes (it still lists 43 documentation errors).
-;;  - custom support.
-;;  - add defcustom `ctypes-install' for easier setup in Debian package
-;;    emacs-goodies-el.
-
 ;;; Code:
 
 ;;{{{ Dependencies
 
-;; The only reason to load font-lock is to determine the font-lock
+;; The only reason to load font-lock is to determinate the font-lock
 ;; version we are using.
 
 (require 'font-lock)
@@ -254,38 +243,19 @@
 ;;}}}
 ;;{{{ Variables
 
-(defgroup ctypes nil
-  "Enhanced Font lock support for custom defined types."
-  :group 'programming)
-
-(defcustom ctypes-install nil
-  "*Whether to load this file at macs startup.
-Setting this variable will load the file to install the 'find-file-hooks
-and 'kill-emacs-hook hooks.  The effect is the same as adding
- (require 'ctypes)
-in your Emacs initilization file.
-The file ctypes.el must be in the Emacs load-path when the customization
-code is run in .emacs otherwise Emacs will not find it and will yield an
-error."
-  :type 'boolean
-  :require 'ctypes
-  :group 'ctypes)
-
-(defcustom ctypes-file-name "~/.ctypes"
+(defvar ctypes-file-name "~/.ctypes"
   "*Default name of file to read types from.
-When `ctypes-read-file' and `ctypes-write-file' are called interactively
-the directory part of the file name is ignored."
-  :type 'file
-  :group 'ctypes)
 
-(defcustom ctypes-write-types-at-exit nil
+When `ctypes-read-file' and `ctypes-write-file' are called interactively
+the directory part of the file name is ignored.")
+
+
+(defvar ctypes-write-types-at-exit nil
   "*When non-nil types are saved to file when Emacs exits.
-When this variable be 'ask, the user is prompted before the types are saved."
-  :type '(choice
-          (const :tag "t; save to file when Emacs exits" t)
-          (const :tag "nil; do not save to file when Emacs exits" nil)
-          (const :tag "ask; prompt before saving" ask))
-  :group 'ctypes)
+
+When this variable be 'ask, the user is prompted before the
+types are saved.")
+
 
 (defvar ctypes-mode-descriptor
   (if (boundp 'c-font-lock-extra-types)
@@ -330,13 +300,13 @@ field be followed by anything it will be used as additional arguments
 when the function is called.")
 
 
-(defcustom ctypes-dir-read-file nil
-  "*Variable determining which files `ctypes-dir' should read.
+(defvar ctypes-dir-read-file nil
+  "*Variable determinating which files `ctypes-dir' should read.
 
-When searching for types in a large number of files it is difficult to
-determine which files to parse.  Some types can be missed should too few
-file be opened, and the parse process could take much longer than needed
-with too many files.
+When search for types in a large number of files it is difficult
+to determine which files to parse.  Should to few be opened, we
+can miss some types.  The opposite, to open to many be opened,
+the parse process could take much longer than needed.
 
 The default behavior, when `ctypes-dir-read-file' is nil, is to look
 at the extension of the files found.  Should it match a major mode in
@@ -361,29 +331,11 @@ open all files ending in `.cplusplus'.
     (setq ctypes-dir-read-file \"\\\\.cplusplus\\\\'\")
 
 However, the files would still need a -*- C++ -*- header line
-to be parsed as C++ files."
-  :type '(choice (const :tag "nil; fast approach." nil)
-                 (const :tag "t; read all non-backup files" t)
-                 (regexp :tag "regexp to match files"))
-  :group 'ctypes)
+to be parsed as C++ files.")
 
-(defcustom ctypes-dir-backup-files nil
-  "*Non-nil means that `ctypes-dir' should parse backup files."
-  :type 'boolean
-  :group 'ctypes)
 
-(defcustom ctypes-auto-parse-mode-hook nil
-  "*List of functions to run when `ctypes-auto-parse-mode' is activated."
-  :type 'hook
-  :group 'ctypes)
-
-(defcustom ctypes-load-hook nil
-  "*List of functions to run when `ctypes' is loaded."
-  :type 'hook
-  :group 'ctypes)
-
-(defvar ctypes-saved-p t
-  "Nil when types not saved to file.")
+(defvar ctypes-dir-backup-files nil
+  "*Non-nil means that `ctypes-dir' should parse backup files.")
 
 (defvar ctypes-auto-parse-mode nil
   "Non-nil when the minor mode `ctypes-auto-parse-mode' is enabled.
@@ -393,6 +345,18 @@ types in all new buffers loaded.
 
 To start the mode call the function `ctypes-auto-parse-mode', do not
 set this variable explicitly.")
+
+
+(defvar ctypes-auto-parse-mode-hook nil
+  "*List of functions to run when `ctypes-auto-parse-mode' is activated.")
+
+(defvar ctypes-load-hook nil
+  "*List of functions to run when `ctypes' is loaded.")
+
+
+(defvar ctypes-saved-p t
+  "Nil when types not saved to file.")
+
 
 (defvar ctypes-repetitive-type-regexp
   (concat "\\<\\(short\\|int\\|long\\|float\\|"
@@ -423,7 +387,7 @@ Example: `unsigned char'")
 When preceded by C-u the display is not updated.
 
 Return non-nil if the type was not known before."
-  (interactive
+  (interactive 
    (list
     (let* ((default (ctypes-get-type-under-point))
            (prompt (if default
@@ -436,7 +400,7 @@ Return non-nil if the type was not known before."
       (error "Can't define \"\" as a type"))
   (or mode
       (setq mode major-mode))
-  (and type
+  (and type 
        (> (length type) 0)
        (let ((added (ctypes-add-types mode (list type))))
          (ctypes-perform-action mode added delay-action)
@@ -588,7 +552,7 @@ Return mode of file, if new types was found."
 When preceded by C-u the display is not updated.
 
 Return non-nil if type is removed."
-  (interactive
+  (interactive 
    (list
     (let* ((default (ctypes-get-type-under-point))
            (prompt (if default
@@ -864,7 +828,7 @@ name, the file part of `ctypes-file-name' is added to FILE."
 ;;{{{ Edit
 
 (defvar ctypes-edit-map nil
-  "Keymap used in `ctypes-edit' mode.")
+  "Keymap used in ctypes-edit mode.")
 (if ctypes-edit-map
     nil
   (setq ctypes-edit-map (make-sparse-keymap))
@@ -1123,7 +1087,7 @@ Note that the elements need not come in the same order in the two lists."
 
 
 (defun ctypes-subset (type-list1 type-list2)
-  "Non-nil if TYPE-LIST1 is included in TYPE-LIST2."
+  "Non-nil if type-list1 is included in type-list2."
   (let ((included t))
     (while (and included type-list1)
       (if (not (member (car type-list1) type-list2))
@@ -1163,7 +1127,7 @@ MODES can a mode or a list of modes.
 
 The action is performed immediately for major modes in MODES, and for
 major modes that inherits types from modes in MODES, when
-`delay-action' is nil, and either CHANGED-P is non-nil or the modes
+`delay-action' is nil, and either changed-p is non-nil or the modes
 previously have been marked for delayed action.
 
 Should DELAY-ACTION be non-nil, the actions are not performed
@@ -1225,7 +1189,7 @@ and the modes are marked for delayed action."
 
 
 (defun ctypes-perform-delayed-action ()
-  "Perform the action (normally update the display)."
+  "Perform the action (normally update the display)"
   (ctypes-perform-action ctypes-delayed-action-list nil nil))
 
 ;;}}}
@@ -1279,7 +1243,7 @@ Note 2: The file name is only used for debugging."
     (set (make-local-variable 'parse-sexp-ignore-comments) t)
     (unwind-protect
         (let ((lst '()))
-          (while (re-search-forward
+          (while (re-search-forward 
                   "^\\(\\(typedef\\)\\|class\\|struct\\|enum\\)\\>" nil t)
             (condition-case ()
                 (if (match-beginning 2)
@@ -1530,15 +1494,15 @@ See the function `ctypes-tags'."
                        (forward-char -1)
                      (goto-char end))
                    (skip-chars-backward " \t")
-                   (setq modes
-                         (cons (intern
-                                (concat
-                                 (downcase
+                   (setq modes 
+                         (cons (intern 
+                                (concat 
+                                 (downcase 
                                   (buffer-substring beg (point))) "-mode"))
                                modes)))
                ;; Simple -*-MODE-*- case.
-               (setq modes
-                     (cons (intern
+               (setq modes 
+                     (cons (intern 
                             (concat (downcase (buffer-substring beg end))
                                                  "-mode"))
                                  modes))))))
@@ -1595,7 +1559,7 @@ This means the number of parenthesized expressions."
 
 
 (defun ctypes-string-to-mode (mode)
-  "Convert a MODE name, entered by the user, to a mode symbol.
+  "Convert a mode name, entered by the user, to a mode symbol.
 
 Example:
     (ctypes-string-to-mode \"C++\")  =>  c++-mode"
@@ -1695,7 +1659,7 @@ of the keyword list."
           ;; Fontify each declaration item.
           (list 'font-lock-match-c++-style-declaration-item-and-skip-to-next
             ;; Start with point after all type specifiers.
-            (list 'goto-char
+            (list 'goto-char 
                   (list 'or (list 'match-beginning
                                   (+ 2 (regexp-opt-depth regexp)))
                         '(match-end 1)))
@@ -1718,7 +1682,7 @@ of the keyword list."
               ((= number 2)
                (setq keywords keyword-2))
               (t
-               (error "Incorrect entry in rule.  Found `%s', expected 1 or 2"
+               (error "Incorrect entry in rule.  Found `%s', expected 1 or 2."
                       number)))
         (if append-p
             (set var (append (symbol-value var) (list keywords)))
@@ -1766,11 +1730,13 @@ of RULES."
 
 ;;}}}
 
-;; Install ourself
+;; The End
+
 (add-hook 'find-file-hooks 'ctypes-find-file-hook)
 (add-hook 'kill-emacs-hook 'ctypes-kill-emacs-hook)
 
-(run-hooks 'ctypes-load-hook)
 (provide 'ctypes)
 
-;;; ctypes.el ends here
+(run-hooks 'ctypes-load-hook)
+
+;; ctypes.el ends here.

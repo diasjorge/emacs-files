@@ -2,9 +2,12 @@
 
 ;; Copyright 1998 Naggum Software
 ;; Copyright 2003 Peter S Galbraith <psg@debian.org>
-;;  (Erik, please contact me for copyright assignment back to you.  -psg)
 
 ;; Author: Erik Naggum <erik@naggum.no>
+;; Maintainer: Peter S Galbraith <psg@debian.org>
+;;  Erik Naggum died on June 17, 2009.  I will therefofre maintain this
+;;  since it was already packaged in Debian, but contact me if you would
+;;  like to take over.  - Peter
 ;; Keywords: internal
 
 ;; This file is not part of GNU Emacs, but distributed under the same

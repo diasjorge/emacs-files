@@ -51,9 +51,12 @@
 ;;; History:
 ;; 
 
-;; $Id: df.el,v 1.5 2003-06-17 23:47:31 psg Exp $
+;; $Id: df.el,v 1.6 2009-09-04 01:44:56 psg Exp $
 
 ;; $Log: df.el,v $
+;; Revision 1.6  2009-09-04 01:44:56  psg
+;; move df tweaks into main CVS
+;;
 ;; Revision 1.5  2003-06-17 23:47:31  psg
 ;; Peter S Galbraith <psg@debian.org>
 ;; - Add autoload for cancel-function-timers (for XEmacs).

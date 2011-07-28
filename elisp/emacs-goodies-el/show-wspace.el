@@ -4,15 +4,15 @@
 ;; Description: Highlight whitespace of various kinds.
 ;; Author: Peter Steiner <unistein@isbe.ch>, Drew Adams
 ;; Maintainer: Drew Adams
-;; Copyright (C) 2000-2007, Drew Adams, all rights reserved.
+;; Copyright (C) 2000-2009, Drew Adams, all rights reserved.
 ;; Created: Wed Jun 21 08:54:53 2000
 ;; Version: 21.0
-;; Last-Updated: Tue Sep 25 09:22:37 2007 (-25200 Pacific Daylight Time)
+;; Last-Updated: Sat Aug  1 15:42:17 2009 (-0700)
 ;;           By: dradams
-;;     Update #: 262
+;;     Update #: 282
 ;; URL: http://www.emacswiki.org/cgi-bin/wiki/show-wspace.el
 ;; Keywords: highlight, whitespace
-;; Compatibility: GNU Emacs 20.x, GNU Emacs 21.x, GNU Emacs 22.x
+;; Compatibility: GNU Emacs: 20.x, 21.x, 22.x, 23.x
 ;;
 ;; Features that might be required by this library:
 ;;
@@ -41,7 +41,7 @@
 ;; whitespace highlighting will also be turned on.
 ;;
 ;; For example, you can turn on tab highlighting by default by adding
-;; command `show-ws-highlight-tabs' to `font-lock-mode-hook' in your
+;; function `show-ws-highlight-tabs' to `font-lock-mode-hook' in your
 ;; .emacs file, as follows:
 ;;
 ;;     (add-hook 'font-lock-mode-hook 'show-ws-highlight-tabs)
@@ -61,6 +61,9 @@
 ;;
 ;; Non-interactive functions defined here:
 ;;
+;;    `show-ws-dont-highlight-hard-spaces',
+;;    `show-ws-dont-highlight-tabs',
+;;    `show-ws-dont-highlight-trailing-whitespace',
 ;;    `show-ws-highlight-hard-spaces', `show-ws-highlight-tabs',
 ;;    `show-ws-highlight-trailing-whitespace'.
 ;;
@@ -78,6 +81,11 @@
 ;;
 ;;; Change log:
 ;;
+;; 2009/06/25 dadams
+;;     show-ws-dont-*: Should be no-op's for Emacs 20, 21.
+;; 2009/06/17 dadams
+;;     Added: show-ws-dont-highlight-*.
+;;     show-ws-toggle-show-*: Remove the font-lock keywords. Needed for Emacs 22+.
 ;; 2007/09/25 dadams
 ;;     Renamed to use prefix show-ws-.  Thx to Cyril Brulebois.
 ;; 2006/11/11 dadams
@@ -170,10 +178,11 @@ Don't forget to mention your Emacs and library versions."))
 (defun show-ws-toggle-show-tabs ()
   "Toggle highlighting of TABs, using face `show-ws-tab'."
   (interactive)
-  (if show-ws-highlight-tabs-p
-      (remove-hook 'font-lock-mode-hook 'show-ws-highlight-tabs)
-    (add-hook 'font-lock-mode-hook 'show-ws-highlight-tabs))
   (setq show-ws-highlight-tabs-p (not show-ws-highlight-tabs-p))
+  (if show-ws-highlight-tabs-p
+      (add-hook 'font-lock-mode-hook 'show-ws-highlight-tabs)
+    (remove-hook 'font-lock-mode-hook 'show-ws-highlight-tabs)
+    (show-ws-dont-highlight-tabs))
   (font-lock-mode) (font-lock-mode)
   (message "TAB highlighting is now %s." (if show-ws-highlight-tabs-p "ON" "OFF")))
 
@@ -184,10 +193,11 @@ Don't forget to mention your Emacs and library versions."))
   "Toggle highlighting of non-breaking space characters (`\240').
 Uses face `show-ws-hard-space'."
   (interactive)
-  (if show-ws-highlight-hard-spaces-p
-      (remove-hook 'font-lock-mode-hook 'show-ws-highlight-hard-spaces)
-    (add-hook 'font-lock-mode-hook 'show-ws-highlight-hard-spaces))
   (setq show-ws-highlight-hard-spaces-p (not show-ws-highlight-hard-spaces-p))
+  (if show-ws-highlight-hard-spaces-p
+      (add-hook 'font-lock-mode-hook 'show-ws-highlight-hard-spaces)
+    (remove-hook 'font-lock-mode-hook 'show-ws-highlight-hard-spaces)
+    (show-ws-dont-highlight-hard-spaces))
   (font-lock-mode) (font-lock-mode)
   (message "Hard (non-breaking) space highlighting is now %s."
            (if show-ws-highlight-hard-spaces-p "ON" "OFF")))
@@ -200,11 +210,12 @@ Uses face `show-ws-hard-space'."
   "Toggle highlighting of trailing whitespace.
 Uses face `show-ws-trailing-whitespace'."
   (interactive)
-  (if show-ws-highlight-trailing-whitespace-p
-      (remove-hook 'font-lock-mode-hook 'show-ws-highlight-trailing-whitespace)
-    (add-hook 'font-lock-mode-hook 'show-ws-highlight-trailing-whitespace))
   (setq show-ws-highlight-trailing-whitespace-p
         (not show-ws-highlight-trailing-whitespace-p))
+  (if show-ws-highlight-trailing-whitespace-p
+      (add-hook 'font-lock-mode-hook 'show-ws-highlight-trailing-whitespace)
+    (remove-hook 'font-lock-mode-hook 'show-ws-highlight-trailing-whitespace)
+    (show-ws-dont-highlight-trailing-whitespace))
   (font-lock-mode) (font-lock-mode)
   (message "Trailing whitespace highlighting is now %s."
            (if show-ws-highlight-trailing-whitespace-p "ON" "OFF")))
@@ -219,6 +230,24 @@ Uses face `show-ws-trailing-whitespace'."
   "Highlight whitespace characters at line ends."
   (font-lock-add-keywords
    nil '(("[\240\040\t]+$" (0 'show-ws-trailing-whitespace t)))))
+
+;; These are no-ops for Emacs 20, 21:
+;; `font-lock-remove-keywords' is not defined, and we don't need to use it.
+(defun show-ws-dont-highlight-tabs ()
+  "Don't highlight tab characters (`C-i')."
+  (when (fboundp 'font-lock-remove-keywords)
+    (font-lock-remove-keywords nil '(("[\t]+" (0 'show-ws-tab t))))))
+
+(defun show-ws-dont-highlight-hard-spaces ()
+  "Don't highlight hard (non-breaking) space characters (`\240')."
+  (when (fboundp 'font-lock-remove-keywords)
+    (font-lock-remove-keywords nil '(("[\240]+" (0 'show-ws-hard-space t))))))
+
+(defun show-ws-dont-highlight-trailing-whitespace ()
+  "Don't highlight whitespace characters at line ends."
+  (when (fboundp 'font-lock-remove-keywords)
+    (font-lock-remove-keywords
+     nil '(("[\240\040\t]+$" (0 'show-ws-trailing-whitespace t))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;
 

@@ -3,7 +3,7 @@
 ;; Author: Eric M. Ludlam <eludlam@mathworks.com>
 ;; Keywords: tlc
 ;; Version: $Revision: 1.1 $
-;; X-RCS: $Id: tlc.el,v 1.1 2005/10/06 18:49:40 psg Exp $
+;; X-RCS: $Id: tlc.el,v 1.1 2005-10-06 18:49:40 psg Exp $
 ;; X-Abstract: Major mode for editing tlc files
 ;;
 ;; Copyright (c) 1997, 1998 by The MathWorks, Inc.

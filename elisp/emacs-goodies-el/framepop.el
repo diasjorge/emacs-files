@@ -9,9 +9,9 @@
 ;;  you are willing to do the same.  Contact me if you want to *actively*
 ;;  maintain this file.)
 ;; Created: 8 Oct 1993 by David Smith
-;; Modified: $Date: 2003/10/15 14:16:54 $
+;; Modified: $Date: 2003-10-15 14:16:54 $
 ;; Version: $Revision: 1.11 $
-;; RCS-Id: $Id: framepop.el,v 1.11 2003/10/15 14:16:54 psg Exp $
+;; RCS-Id: $Id: framepop.el,v 1.11 2003-10-15 14:16:54 psg Exp $
 
 ;; This file is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -187,7 +187,7 @@
   "The revision number of the framepop package.
 
 The complete RCS ID is:
-$Id: framepop.el,v 1.11 2003/10/15 14:16:54 psg Exp $")
+$Id: framepop.el,v 1.11 2003-10-15 14:16:54 psg Exp $")
 
 ;;; Customizable variables at end
 

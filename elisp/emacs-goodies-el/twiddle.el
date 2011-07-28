@@ -8,7 +8,7 @@
 ;; Status: Works in Emacs 19 and XEmacs.
 ;; Created: 1997-03-12
 
-;; $Id: twiddle.el,v 1.1.1.1 2003/04/04 20:16:17 lolando Exp $
+;; $Id: twiddle.el,v 1.1.1.1 2003-04-04 20:16:17 lolando Exp $
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by

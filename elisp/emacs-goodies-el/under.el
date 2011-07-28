@@ -1,6 +1,6 @@
 ;;; under.el --- Underline with the ^ character
 
-;;;  $Id: under.el,v 1.3 2003/10/10 17:28:59 psg Exp $
+;;;  $Id: under.el,v 1.3 2003-10-10 17:28:59 psg Exp $
 
 ;; Copyright (C) 1998 by Benjamin Drieu
 ;; Author:	 Benjamin Drieu <bdrieu@april.org>
