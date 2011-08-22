@@ -175,6 +175,9 @@
 (add-hook 'yaml-mode-hook
 	  '(lambda () (define-key yaml-mode-map "\C-m" 'newline-and-indent)))
 
+;; markdown-mode
+(add-to-list 'auto-mode-alist '("\\.md$" . markdown-mode))
+
 (if (not (getenv "ERGOEMACS_KEYBOARD_LAYOUT")) (setenv "ERGOEMACS_KEYBOARD_LAYOUT" "gb"))
 (require 'ergoemacs-mode)
 (ergoemacs-mode 1)
