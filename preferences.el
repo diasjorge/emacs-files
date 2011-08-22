@@ -102,5 +102,8 @@
 (require 'color-theme)
 (color-theme-initialize)
 
-(load-file "~/.emacs.d/elisp/color-theme/blackboard.el")
-(color-theme-blackboard)
+(autoload 'color-theme-blackboard "~/.emacs.d/elisp/color-theme/blackboard.el" "Load blackboard color theme" t)
+
+;; solarized color-theme
+(require 'color-theme-solarized)
+(color-theme-solarized-light)
