@@ -133,12 +133,12 @@
 (require 'magit)
 (global-set-key (kbd "C-c m") 'magit-status)
 ;; change magit diff colors http://readystate4.com/2011/02/22/emacs-changing-magits-default-diff-colors/
-(eval-after-load 'magit
-  '(progn
-     (set-face-foreground 'magit-diff-add "green3")
-     (set-face-foreground 'magit-diff-del "red3")
-     (when (not window-system)
-       (set-face-background 'magit-item-highlight "black"))))
+;; (eval-after-load 'magit
+;;   '(progn
+;;      (set-face-foreground 'magit-diff-add "green3")
+;;      (set-face-foreground 'magit-diff-del "red3")
+;;      (when (not window-system)
+;;        (set-face-background 'magit-item-highlight "black"))))
 
 ;; jekyll blog support
 (require 'jekyll)
@@ -172,13 +172,12 @@
 
 ;; yaml-mode
 ;; http://svn.clouder.jp/repos/public/yaml-mode/trunk/
-(autoload 'yaml-mode "yaml-mode" "Yaml editing mode")
+(autoload 'yaml-mode "yaml-mode" "Yaml editing mode" t)
 (add-to-list 'auto-mode-alist '("\\.yml$" . yaml-mode))
-(add-hook 'yaml-mode-hook
-	  '(lambda () (define-key yaml-mode-map "\C-m" 'newline-and-indent)))
 
 ;; markdown-mode
 (add-to-list 'auto-mode-alist '("\\.md$" . markdown-mode))
+(add-to-list 'auto-mode-alist '("\\.markdown$" . markdown-mode))
 
 (if (not (getenv "ERGOEMACS_KEYBOARD_LAYOUT")) (setenv "ERGOEMACS_KEYBOARD_LAYOUT" "gb"))
 (require 'ergoemacs-mode)
