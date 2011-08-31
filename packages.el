@@ -142,7 +142,7 @@
 
 ;; jekyll blog support
 (require 'jekyll)
-(setq jekyll-directory "~/development/mrdias.com/")
+(setq jekyll-directory (file-truename "~/development/mrdias.com/"))
 (global-set-key (kbd "C-c j n") 'jekyll-draft-post)
 (global-set-key (kbd "C-c j P") 'jekyll-publish-post)
 (global-set-key (kbd "C-c j p") (lambda ()
@@ -153,6 +153,8 @@
                                   (find-file(concat jekyll-directory "_drafts/"))))
 
 (global-set-key (kbd "C-c j e") 'jekyll-insert-preview-end)
+(add-to-list 'jekyll-modes-list '("html" 'html-mode))
+
 
 ;; auto-complete support
 ;; Execute make to bytecompile
