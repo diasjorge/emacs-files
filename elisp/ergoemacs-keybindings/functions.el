@@ -29,8 +29,8 @@
   "Put the whole buffer content into the kill-ring.
 If narrow-to-region is in effect, then copy that region only."
   (interactive)
-  (kill-ring-save (point-min) (point-max))
-  (message "Buffer content copied")
+  (kill-new (buffer-string))
+  (message "Buffer content copied copy-region-as-kill")
   )
 
 (defun cut-all ()
@@ -48,7 +48,7 @@ If narrow-to-region is in effect, then cut that region only."
        (list (region-beginning) (region-end))
      (progn
        (message "Current line is copied.")
-       (list (line-beginning-position) (line-end-position)) ) ) ))
+       (list (line-beginning-position) (line-beginning-position 2)) ) ) ))
 
 (defadvice kill-region (before slick-copy activate compile)
   "When called interactively with no active region, cut the current line."
@@ -56,19 +56,25 @@ If narrow-to-region is in effect, then cut that region only."
    (if mark-active
        (list (region-beginning) (region-end))
      (progn
-       (message "Current line is cut.")
-       (list (line-beginning-position) (line-end-position)) ) ) ))
+       (list (line-beginning-position) (line-beginning-position 2)) ) ) ))
 
 ;;; TEXT SELECTION RELATED
 
 (defun select-text-in-quote ()
   "Select text between the nearest left and right delimiters.
-Delimiters are paired characters: ()[]<>«»“”‘’「」【】, including \"\"."
+Delimiters are paired characters:
+ () [] {} «» ‹› “” 〖〗 【】 「」 『』 （） 〈〉 《》 〔〕 ⦗⦘ 〘〙
+
+For practical purposes, it also includes double straight quote
+\", but not curly single quote matching pairs ‘’, because that is
+often used as apostrophy. It also consider both left and right
+angle brackets <> as either beginning or ending pair, so that it
+is easy to get content inside html tags."
  (interactive)
  (let (b1 b2)
-   (skip-chars-backward "^<>(“{[「«【\"‘")
+   (skip-chars-backward "^<>([{“「『‹«（〈《〔【〖⦗〘\"")
    (setq b1 (point))
-   (skip-chars-forward "^<>)”}]」】»\"’")
+   (skip-chars-forward "^<>)]}”」』›»）〉》〕】〗⦘〙\"")
    (setq b2 (point))
    (set-mark b1)
    )
@@ -354,6 +360,16 @@ Emacs buffers are those whose name starts with *."
 ;; status to offer save
 ;; This custome kill buffer is close-current-buffer.
 
+(defun open-in-desktop ()
+  "Open the current file in desktop.
+Works in Microsoft Windows, Mac OS X, Linux."
+  (interactive)
+  (cond
+   ((string-equal system-type "windows-nt")
+    (w32-shell-execute "explore" (replace-regexp-in-string "/" "\\" default-directory t t)))
+   ((string-equal system-type "darwin") (shell-command "open ."))
+   ((string-equal system-type "gnu/linux") (shell-command "xdg-open ."))
+   ) )
 
 (defvar recently-closed-buffers (cons nil nil) "A list of recently closed buffers. The max number to track is controlled by the variable recently-closed-buffers-max.")
 (defvar recently-closed-buffers-max 10 "The maximum length for recently-closed-buffers.")
@@ -410,3 +426,8 @@ Else it is a user buffer."
      )
    )
  )
+
+(defun open-last-closed ()
+  "Open the last closed file."
+  (interactive)
+  (find-file (cdr (pop recently-closed-buffers)) ) )

@@ -1,14 +1,12 @@
-(add-to-list 'load-path "~/.emacs.d/elisp/ruby-mode")
-(add-to-list 'load-path "~/.emacs.d/elisp/rinari")
-(add-to-list 'load-path "~/.emacs.d/elisp/cucumber")
-
 ;; ruby-test  run test/specs for ruby projects
-;; http://www.emacswiki.org/cgi-bin/emacs/download/ruby-test.el (wget)
 ;;
-;; C-x C-SPC => run this test/spec
+;; C-x SPC   => run this test/spec
 ;; C-x t     => run tests/specs in this file
 ;; C-c t     => toggle between specification and implementation
-(require 'ruby-test)
+(require 'ruby-test-mode)
+(global-set-key (kbd "C-x t") 'ruby-test-run)
+(global-set-key (kbd "C-x SPC") 'ruby-test-run-at-point)
+
 
 ;; autotest support
 (setq autotest-use-ui t)
@@ -17,8 +15,12 @@
 ;; rinari
 ;; http://github.com/eschulte/rinari
 (require 'rinari)
-(global-set-key (kbd "C-x C-M-f") 'find-file-in-project)
 (setq rinari-browse-url-func 'browse-url-generic)
+
+;; ported from rinari to support rvm
+(setq inf-ruby-prompt-pattern "^\\(j?ruby[^> ]+\\|J?RUBY[^> ]+\\|irb([^> ]+\\)?\\( ?:[0-9]+\\)* ?>>? ")
+(setq inf-ruby-first-prompt-pattern inf-ruby-prompt-pattern)
+
 
 ;; ruby-mode
 ;; ruby-mode from ruby-lang svn
@@ -37,17 +39,28 @@
 (add-to-list 'auto-mode-alist '("\\.autotest$" . ruby-mode))
 (add-to-list 'auto-mode-alist '("\\.rjs$" . ruby-mode))
 (add-to-list 'auto-mode-alist '("Gemfile" . ruby-mode))
-
+(add-to-list 'auto-mode-alist '("\\.irbrc$" . ruby-mode))
+(add-to-list 'auto-mode-alist '("\\.gemspec$" . ruby-mode))
 
 ;; inf-ruby
 (autoload 'run-ruby "inf-ruby" "Run an inferior Ruby process")
 (autoload 'inf-ruby-keys "inf-ruby" "Set local key defs for inf-ruby in ruby-mode")
 (add-hook 'ruby-mode-hook '(lambda () (inf-ruby-keys) ))
 
+;; Support for bond
+(require 'inf-ruby-bond)
+
 ;; cucumber features
 (require 'feature-mode)
 (add-to-list 'auto-mode-alist '("\\.feature$" . feature-mode))
 
+;; rvm
 (require 'rvm)
-
 (rvm-use-default) ;; use rvm’s default ruby for the current Emacs session
+
+;; haml-mode and & sass-mode
+;; http://github.com/nex3/haml/
+(require 'haml-mode)
+(require 'sass-mode)
+(add-to-list 'auto-mode-alist '("\\.haml$" . haml-mode))
+(add-to-list 'auto-mode-alist '("\\.sass$" . sass-mode))

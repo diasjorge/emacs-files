@@ -1,9 +1,6 @@
 [submodule "elisp/git-emacs"]
 	path = elisp/git-emacs
 	url = git://github.com/tsgates/git-emacs.git
-[submodule "snippets/yasnippets-rails"]
-	path = snippets/yasnippets-rails
-	url = git://github.com/eschulte/yasnippets-rails.git
 [submodule "elisp/rinari"]
 	path = elisp/rinari
 	url = git://github.com/eschulte/rinari.git
@@ -34,3 +31,18 @@
 [submodule "elisp/sass-mode"]
 	path = elisp/sass-mode
 	url = git://github.com/nex3/sass-mode.git
+[submodule "elisp/magit"]
+	path = elisp/magit
+	url = git://github.com/magit/magit.git
+[submodule "elisp/nxhtml"]
+	path = elisp/nxhtml
+	url = https://github.com/emacsmirror/nxhtml.git
+[submodule "elisp/ruby-test-mode"]
+	path = elisp/ruby-test-mode
+	url = git@github.com:diasjorge/ruby-test-mode.git
+[submodule "elisp/yaml-mode"]
+	path = elisp/yaml-mode
+	url = git@github.com:diasjorge/yaml-mode.git
+[submodule "elisp/solarized"]
+	path = elisp/solarized
+	url = https://github.com/sellout/emacs-color-theme-solarized.git
