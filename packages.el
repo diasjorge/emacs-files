@@ -168,7 +168,10 @@
 (define-key ac-mode-map (kbd "C-g") 'ac-complete)
 
 (require 'zencoding-mode)
-(add-hook 'sgml-mode-hook 'zencoding-mode) ;; Auto-start on any markup modes
+(add-hook 'sgml-mode-hook
+          '(lambda ()
+             (unless zencoding-mode
+               (zencoding-mode)))) ;; Auto-start on any markup modes
 
 ;; yaml-mode
 ;; http://svn.clouder.jp/repos/public/yaml-mode/trunk/
