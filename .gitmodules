@@ -46,3 +46,6 @@
 [submodule "elisp/solarized"]
 	path = elisp/solarized
 	url = https://github.com/sellout/emacs-color-theme-solarized.git
+[submodule "elisp/clojure-mode"]
+	path = elisp/clojure-mode
+	url = git://github.com/technomancy/clojure-mode.git

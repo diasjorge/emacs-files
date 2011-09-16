@@ -182,6 +182,13 @@
 (add-to-list 'auto-mode-alist '("\\.md$" . markdown-mode))
 (add-to-list 'auto-mode-alist '("\\.markdown$" . markdown-mode))
 
+
+;;; clojure-mode
+(add-to-list 'auto-mode-alist '("\\.clj$" . clojure-mode))
+(add-to-list 'auto-mode-alist '("\\.cljs$" . clojure-mode))
+(add-to-list 'interpreter-mode-alist '("cake" . clojure-mode))
+(autoload 'clojure-mode "clojure-mode" "Load Clojure" t)
+
 (if (not (getenv "ERGOEMACS_KEYBOARD_LAYOUT")) (setenv "ERGOEMACS_KEYBOARD_LAYOUT" "gb"))
 (require 'ergoemacs-mode)
 (ergoemacs-mode 1)
