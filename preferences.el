@@ -98,6 +98,10 @@
 ;; beep and ignore disabled commands
 (setq disabled-command-hook 'beep)
 
+;; move thru camelCaseWords
+(subword-mode 1) ; 1 for on, 0 for off
+(global-subword-mode 1) ; 1 for on, 0 for off
+
 ;; color-theme
 (require 'color-theme)
 (color-theme-initialize)
@@ -107,3 +111,4 @@
 ;; solarized color-theme
 (require 'color-theme-solarized)
 (color-theme-solarized-light)
+
