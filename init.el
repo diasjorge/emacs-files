@@ -37,34 +37,18 @@
 ;; disable tooltips
 (if (fboundp 'tooltip-mode) (tooltip-mode -1))
 
+;;;;;;;;;;;;;;;;;;;
+;; Load packages ;;
+;;;;;;;;;;;;;;;;;;;
+
+(load "~/.emacs.d/packages")
+
 ;;;;;;;;;;;;;;;;;
 ;; Preferences ;;
 ;;;;;;;;;;;;;;;;;
 
 (load "~/.emacs.d/preferences")
-
-;;;;;;;;;;;;;;;;;;;
-;; Load packages ;;
-;;;;;;;;;;;;;;;;;;;
-
-(setenv "ERGOEMACS_KEYBOARD_LAYOUT" "us")
-
-(load "~/.emacs.d/packages")
-
-;; mardown support
-(add-to-list 'auto-mode-alist '("\\.md$" . markdown-mode))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Ruby specific configuration ;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(load "~/.emacs.d/ruby")
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; PHP specific configuration ;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(load "~/.emacs.d/php")
+(load "~/.emacs.d/keybindings")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Mac Specific Configuration ;;

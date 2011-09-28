@@ -20,7 +20,6 @@
       '(("\\.\\(jpe?g\\|png\\)$" . "~/Downloads/wget/pictures")
 	("\\.el$" . "~/.emacs.d/elisp")
 	("." . "~/Downloads/wget")))
-(global-set-key (kbd "C-c w") 'wget)
 
 ;; icomplete
 ;; preview command completion when writing in Minibuffer
@@ -118,7 +117,6 @@
         (haskell-mode           .       "ghc -o %n %f")
         (asy-mode               .       (call-interactively 'asy-compile-view))
         (muse-mode              .       (call-interactively 'muse-project-publish))))
-(global-set-key (kbd "M-7") 'smart-compile)
 
 ;; erlang-mode
 (setq load-path (cons  "/usr/lib/erlang/lib/tools-2.6.4/emacs" load-path))
@@ -131,7 +129,6 @@
 
 ;; magit support. Source: git clone git://gitorious.org/magit/mainline.git
 (require 'magit)
-(global-set-key (kbd "C-c m") 'magit-status)
 ;; change magit diff colors http://readystate4.com/2011/02/22/emacs-changing-magits-default-diff-colors/
 ;; (eval-after-load 'magit
 ;;   '(progn
@@ -143,18 +140,7 @@
 ;; jekyll blog support
 (require 'jekyll)
 (setq jekyll-directory (file-truename "~/development/mrdias.com/"))
-(global-set-key (kbd "C-c j n") 'jekyll-draft-post)
-(global-set-key (kbd "C-c j P") 'jekyll-publish-post)
-(global-set-key (kbd "C-c j p") (lambda ()
-                                  (interactive)
-                                  (find-file(concat jekyll-directory "_posts/"))))
-(global-set-key (kbd "C-c j d") (lambda ()
-                                  (interactive)
-                                  (find-file(concat jekyll-directory "_drafts/"))))
-
-(global-set-key (kbd "C-c j e") 'jekyll-insert-preview-end)
 (add-to-list 'jekyll-modes-list '("html" 'html-mode))
-
 
 ;; auto-complete support
 ;; Execute make to bytecompile
@@ -182,20 +168,23 @@
 (add-to-list 'auto-mode-alist '("\\.md$" . markdown-mode))
 (add-to-list 'auto-mode-alist '("\\.markdown$" . markdown-mode))
 
-
 ;;; clojure-mode
+(autoload 'clojure-mode "clojure-mode" "Load Clojure" t)
 (add-to-list 'auto-mode-alist '("\\.clj$" . clojure-mode))
 (add-to-list 'auto-mode-alist '("\\.cljs$" . clojure-mode))
 (add-to-list 'interpreter-mode-alist '("cake" . clojure-mode))
-(autoload 'clojure-mode "clojure-mode" "Load Clojure" t)
 
-(if (not (getenv "ERGOEMACS_KEYBOARD_LAYOUT")) (setenv "ERGOEMACS_KEYBOARD_LAYOUT" "gb"))
+;;; find-file-in-project
+(require 'find-file-in-project)
+(setq ffip-limit 20000)
+
+;;; ruby
+(load "~/.emacs.d/ruby")
+
+;;; php
+(load "~/.emacs.d/php")
+
+;;; Ergoemacs keybindings
+(if (not (getenv "ERGOEMACS_KEYBOARD_LAYOUT")) (setenv "ERGOEMACS_KEYBOARD_LAYOUT" "us"))
 (require 'ergoemacs-mode)
 (ergoemacs-mode 1)
-(global-unset-key (kbd "C-w")) ;; prevent accidentally closing buffer
-(global-set-key (kbd "C-l") 'goto-line)
-(global-set-key (kbd "C-j") 'newline-and-indent)
-(global-set-key (kbd "M-[") 'align-string)
-(global-unset-key (kbd "<insert>"))
-(global-set-key (kbd "M-m") 'comint-previous-input)
-(global-set-key (kbd "M-M") 'comint-next-input)

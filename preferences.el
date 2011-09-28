@@ -60,10 +60,6 @@
 ;; set default tramp mode
 (setq tramp-default-method "ssh")
 
-;; keybindings
-(global-set-key (kbd "C-c b") 'browse-url)
-(global-set-key (kbd "C-%") 'query-replace-regexp)
-
 ;; Paren mode globally
 (show-paren-mode 1)
 

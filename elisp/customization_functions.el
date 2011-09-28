@@ -7,11 +7,9 @@
         Replaces default behaviour of comment-dwim, when it inserts comment at the end of the line."
   (interactive "*P")
   (comment-normalize-vars)
-  (if (and (not (region-active-p)) (not (looking-at "[ \t]*$")))
-      (comment-or-uncomment-region (line-beginning-position) (line-end-position))
+  (unless (region-active-p)
+    (comment-or-uncomment-region (line-beginning-position) (line-end-position))
     (comment-dwim arg)))
-
-(global-set-key (kbd "M-@") 'comment-dwim-line)
 
 ;; Behave like vi's o command
 (defun open-next-line (arg)
@@ -24,8 +22,6 @@
   (when newline-and-indent
     (indent-according-to-mode)))
 
-(global-set-key (kbd "M-y") 'open-next-line)
-
 ;; Behave like vi's O command
 (defun open-previous-line (arg)
   "Open a new line before the current one.
@@ -35,8 +31,6 @@
   (open-line arg)
   (when newline-and-indent
     (indent-according-to-mode)))
-
-(global-set-key (kbd "M-Y") 'open-previous-line)
 
 ;; Autoindent open-*-lines
 (defvar newline-and-indent t
@@ -58,8 +52,6 @@
   (interactive "r\nnEnter number of spaces: \n")
   (indent-code-rigidly beg end spaces))
 
-(global-set-key (kbd "M-]") 'indent-magically)
-
 ;; Code folding support. http://www.emacswiki.org/emacs/HideShow
 (defun toggle-selective-display (column)
   (interactive "P")
@@ -77,8 +69,6 @@
           (hs-show-all))
     (toggle-selective-display column)))
 
-(global-set-key (kbd "M-#") 'toggle-hiding)
-
 (add-hook 'emacs-lisp-mode-hook 'hs-minor-mode)
 (add-hook 'lisp-mode-hook       'hs-minor-mode)
 (add-hook 'sh-mode-hook         'hs-minor-mode)
@@ -88,6 +78,13 @@
   (interactive)
   (insert "<!-- -**-END-**- -->"))
 
+(defun test-split ()
+  (interactive)
+  (if (eql 1 (count-windows))
+    (split-window-horizontally))
+  (switch-to-buffer-other-window (current-buffer))
+  (ruby-test-toggle-implementation-and-specification))
+
 (defun rinari-generate-tags()
   (interactive)
   (let ((my-tags-file (concat (rinari-root) "TAGS"))
@@ -96,7 +93,7 @@
     (if (file-exists-p my-tags-file)
 	(delete-file my-tags-file))
     (shell-command
-     (format "find %s -iname *.rb | grep -v db | xargs ctags -a -e -f %s"
+     (format "find %s -iname '*.rb' | grep -v db | xargs ctags -a -e -f %s"
 	     root my-tags-file))
     (if (get-file-buffer my-tags-file)
 	 (kill-buffer (get-file-buffer my-tags-file)))
