@@ -49,3 +49,6 @@
 [submodule "elisp/clojure-mode"]
 	path = elisp/clojure-mode
 	url = git://github.com/technomancy/clojure-mode.git
+[submodule "elisp/find-file-in-project"]
+	path = elisp/find-file-in-project
+	url = git://github.com/technomancy/find-file-in-project.git
