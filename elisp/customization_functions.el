@@ -18,7 +18,7 @@
   (interactive "p")
   (end-of-line)
   (open-line arg)
-  (next-line 1)
+  (forward-line)
   (when newline-and-indent
     (indent-according-to-mode)))
 
@@ -85,16 +85,16 @@
   (switch-to-buffer-other-window (current-buffer))
   (ruby-test-toggle-implementation-and-specification))
 
-(defun rinari-generate-tags()
+(defun ruby-generate-tags()
   (interactive)
-  (let ((my-tags-file (concat (rinari-root) "TAGS"))
-	(root (rinari-root)))
-    (message "Regenerating TAGS file: %s" my-tags-file)
-    (if (file-exists-p my-tags-file)
-	(delete-file my-tags-file))
-    (shell-command
-     (format "find %s -iname '*.rb' | grep -v db | xargs ctags -a -e -f %s"
-	     root my-tags-file))
-    (if (get-file-buffer my-tags-file)
-	 (kill-buffer (get-file-buffer my-tags-file)))
-    (visit-tags-table my-tags-file)))
+  (let ((root (ffip-project-root)))
+    (let ((my-tags-file (concat root "TAGS")))
+      (message "Regenerating TAGS file: %s" my-tags-file)
+      (if (file-exists-p my-tags-file)
+          (delete-file my-tags-file))
+      (shell-command
+       (format "find %s -iname '*.rb' | grep -v db | xargs ctags -a -e -f %s"
+               root my-tags-file))
+      (if (get-file-buffer my-tags-file)
+          (kill-buffer (get-file-buffer my-tags-file)))
+      (visit-tags-table my-tags-file))))
