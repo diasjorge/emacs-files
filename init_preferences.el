@@ -117,5 +117,3 @@
 ;; this is part of emacs
 (icomplete-mode 1)
 
-;; solarized color-theme
-(color-theme-solarized-light)

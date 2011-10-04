@@ -2,18 +2,6 @@
 (add-to-list 'load-path
              (concat (file-name-directory (or load-file-name buffer-file-name)) "el-get/el-get"))
 
-(unless (require 'el-get nil t)
-  (url-retrieve
-   "https://raw.github.com/dimitri/el-get/master/el-get-install.el"
-   (lambda (s)
-     (let (el-get-master-branch)
-       (end-of-buffer)
-       (eval-print-last-sexp)))))
-
-(require 'package)
-(setq package-archives (cons '("tromey" . "http://tromey.com/elpa/") package-archives))
-(package-initialize)
-
 (defun ruby-mode-after-load ()
   (autoload 'ruby-mode "ruby-mode" nil t)
   (add-to-list 'auto-mode-alist '("Capfile" . ruby-mode))
@@ -73,7 +61,8 @@
         (:name auto-complete
                :after (lambda () (auto-complete-after-load)))
         (:name icomplete+)
-        (:name color-theme-solarized)
+        (:name color-theme-solarized
+               :after (lambda () (color-theme-solarized-light)))
         (:name yasnippet)
         (:name magit
                :features magit)
@@ -122,7 +111,22 @@
                :features lorem-ipsum)
 ))
 
-(setq my-packages
-      (mapcar 'el-get-source-name el-get-sources))
+(defun sync-packages ()
+  "Synchronize packages"
+  (interactive)
+  (el-get 'sync '("package"))
+  (setq package-archives (cons '("tromey" . "http://tromey.com/elpa/") package-archives))
+  (setq my-packages
+        (mapcar 'el-get-source-name el-get-sources))
+  (el-get 'sync my-packages))
 
-(el-get 'sync my-packages)
+(if (require 'el-get nil t)
+    (sync-packages)
+  (url-retrieve
+   "https://raw.github.com/dimitri/el-get/master/el-get-install.el"
+   (lambda (s)
+     (let (el-get-master-branch)
+       (end-of-buffer)
+       (eval-print-last-sexp)
+       (setq el-get-verbose t)
+       (sync-packages)))))
