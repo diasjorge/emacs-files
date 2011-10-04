@@ -5,7 +5,9 @@
 
 ;; Share clipboard with other X applications
 (setq x-select-enable-clipboard t)
-(setq interprogram-paste-function 'x-cut-buffer-or-selection-value)
+;; Set to work with older versions
+(if (functionp 'x-cut-buffer-or-selection-value)
+    (setq interprogram-paste-function 'x-cut-buffer-or-selection-value))
 
 ;; Set coding system to UTF-8
 (prefer-coding-system 'utf-8)

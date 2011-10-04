@@ -11,6 +11,7 @@
   (load "init_mac"))
 
 (load "custom_functions")
+(load "environment" t)
 
 ;; ; nxhtml
 ;; (setq
@@ -52,5 +53,3 @@
 ;; 		      compilation-info-face
 ;; 		    compilation-error-face))
 ;; 	       (3 compilation-info-face t t)))
-
-
