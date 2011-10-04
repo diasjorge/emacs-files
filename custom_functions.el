@@ -18,7 +18,7 @@
   (interactive "p")
   (end-of-line)
   (open-line arg)
-  (forward-line)
+  (next-line 1)
   (when newline-and-indent
     (indent-according-to-mode)))
 
@@ -85,16 +85,55 @@
   (switch-to-buffer-other-window (current-buffer))
   (ruby-test-toggle-implementation-and-specification))
 
-(defun ruby-generate-tags()
+(defun rinari-generate-tags()
   (interactive)
-  (let ((root (ffip-project-root)))
-    (let ((my-tags-file (concat root "TAGS")))
-      (message "Regenerating TAGS file: %s" my-tags-file)
-      (if (file-exists-p my-tags-file)
-          (delete-file my-tags-file))
-      (shell-command
-       (format "find %s -iname '*.rb' | grep -v db | xargs ctags -a -e -f %s"
-               root my-tags-file))
-      (if (get-file-buffer my-tags-file)
-          (kill-buffer (get-file-buffer my-tags-file)))
-      (visit-tags-table my-tags-file))))
+  (let ((my-tags-file (concat (rinari-root) "TAGS"))
+	(root (rinari-root)))
+    (message "Regenerating TAGS file: %s" my-tags-file)
+    (if (file-exists-p my-tags-file)
+	(delete-file my-tags-file))
+    (shell-command
+     (format "find %s -iname '*.rb' | grep -v db | xargs ctags -a -e -f %s"
+	     root my-tags-file))
+    (if (get-file-buffer my-tags-file)
+	 (kill-buffer (get-file-buffer my-tags-file)))
+    (visit-tags-table my-tags-file)))
+
+;; HAML
+(defun haml-convert-erb-file (rhtmlFile)
+  "Convert an erb file to haml and opens a new buffer"
+  (interactive "fSelect erb file: \n")
+  (let ((hamlFile (replace-regexp-in-string ".erb" ".haml" rhtmlFile)))
+    (let ((comando (concat "html2haml -e "
+                         rhtmlFile
+                         " "
+                         hamlFile)))
+    (shell-command comando)
+    (find-file hamlFile))))
+
+(defun haml-convert-region (beg end)
+  "Convert selected region to haml"
+  (interactive "r")
+  (let ((comando "html2haml -r -s"))
+  (shell-command-on-region beg end comando (buffer-name) t)))
+
+(defun haml-to-html-region (beg end)
+  "Convert selected region to html"
+  (interactive "r")
+  (let ((comando "haml -s -c"))
+  (shell-command-on-region beg end comando (buffer-name) t)))
+
+(defun haml-convert-buffer ()
+  "Convert selected buffer to haml"
+  (interactive)
+  (let ((nuevoarchivo
+	 (replace-regexp-in-string "r?html\\(.erb\\)?$" "haml"
+				   (buffer-file-name))))
+     (haml-convert-region (point-min) (point-max))
+     (write-file nuevoarchivo)))
+
+(defun sass-convert-region (beg end)
+  "Convert selected region to sass"
+  (interactive "r")
+  (let ((comando "css2sass -s"))
+  (shell-command-on-region beg end comando (buffer-name) t)))

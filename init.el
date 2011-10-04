@@ -1,72 +1,56 @@
-;;
-;; .emacs --- My personal Emacs startup script
-;;
-;; Original By Jorge Calás Lozano.
-;; Modified By Jorge Dias
-;;
-;; The following packages are required for this:
-;; emacs23 emacs-goodies-el erlang exuberant-ctags
-;;
-;; To bytecompile most important files run:
-;;
-;; rake
-;; on OSX: rake EMACS=/Applications/Emacs.app/Contents/MacOS/Emacs
+;; Emacs files By Jorge Dias
 
-;;;;;;;;;;;;;;;;;;
-;; EMACS SERVER ;;
-;;;;;;;;;;;;;;;;;;
+(add-to-list 'load-path (file-name-directory (or load-file-name buffer-file-name)))
 
-;; Initialize emacs server if it is not already running
-(require 'server)
-(if (not (eq t (server-running-p server-name)))
-    (server-start))
-
-;; add library dirs to load-path
-(let ((default-directory
-        (concat user-emacs-directory
-                (convert-standard-filename "elisp/"))))
-      (normal-top-level-add-to-load-path '("."))
-      (normal-top-level-add-subdirs-to-load-path))
-
-;; disable menu bar
-(if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
-;; disable scroll bars
-(if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
-;; disable toolbars
-(if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
-;; disable tooltips
-(if (fboundp 'tooltip-mode) (tooltip-mode -1))
-
-;;;;;;;;;;;;;;;;;;;
-;; Load packages ;;
-;;;;;;;;;;;;;;;;;;;
-
-(load "~/.emacs.d/packages")
-
-;;;;;;;;;;;;;;;;;
-;; Preferences ;;
-;;;;;;;;;;;;;;;;;
-
-(load "~/.emacs.d/preferences")
-(load "~/.emacs.d/keybindings")
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Mac Specific Configuration ;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(load "init_pre_init")
+(load "init_packages")
+(load "init_preferences")
+(load "init_keybindings")
 
 (when (string-equal system-type "darwin")
-  (load "~/.emacs.d/mac"))
+  (load "init_mac"))
 
-;;;;;;;;;;;;;;;;;;
-;; My Functions ;;
-;;;;;;;;;;;;;;;;;;
+(load "custom_functions")
 
-(load "~/.emacs.d/elisp/customization_functions")
+;; ; nxhtml
+;; (setq
+;;  nxhtml-global-minor-mode t
+;;  mumamo-chunk-coloring 'submode-colored
+;;  nxhtml-skip-welcome t
+;;  indent-region-mode t
+;;  rng-nxml-auto-validate-flag nil
+;;  nxml-degraded t)
 
-(load "~/.emacs.d/elisp/haml_functions")
+;; (yas/load-directory "~/.emacs.d/snippets/defaults")
+;; (yas/load-directory "~/.emacs.d/snippets/contrib-snippets")
+;; (yas/load-directory "~/.emacs.d/snippets/my-snippets")
+;; (setq yas/prompt-functions '(yas/dropdown-prompt
+;;                              yas/ido-prompt
+;;                              yas/completing-prompt))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Environment Specific Settings ;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(load "~/.emacs.d/environment" t)
+;; ;; emacs-wget
+;; ;; http://pop-club.hp.infoseek.co.jp/emacs/emacs-wget/emacs-wget-0.5.0.tar.gz
+;; ;; Download, uncompress and move to ~/.emacs.d/elisp/emacs-wget
+;; ;; run make
+;; (autoload 'wget "wget" "wget interface for Emacs." t)
+;; (autoload 'wget-web-page "wget" "wget interface to download whole web page." t)
+;; (setq wget-download-directory-filter 'wget-download-dir-filter-regexp)
+;; (setq wget-download-directory
+;;       '(("\\.\\(jpe?g\\|png\\)$" . "~/Downloads/wget/pictures")
+;; 	("\\.el$" . "~/.emacs.d/elisp")
+;; 	("." . "~/Downloads/wget")))
+
+;; emacs-compile font-lock tweaks to get a pretty rspec result output
+
+
+;; (add-to-list 'compilation-mode-font-lock-keywords
+;; 	     '("^\\([[:digit:]]+\\) examples?, \\([[:digit:]]+\\) failures?\\(?:, \\([[:digit:]]+\\) pendings?\\)?$"
+;; 	       (0 '(face nil message nil help-echo nil mouse-face nil) t)
+;; 	       (1 compilation-info-face)
+;; 	       (2 (if (string= "0" (match-string 2))
+;; 		      compilation-info-face
+;; 		    compilation-error-face))
+;; 	       (3 compilation-info-face t t)))
+
+

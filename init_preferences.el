@@ -1,5 +1,6 @@
 ;; Set font
-(if (>= emacs-major-version 23)
+(if (functionp 'set-frame-font)
+    (set-frame-font "Dejavu Sans Mono-12")
   (set-default-font "Dejavu Sans Mono-12"))
 
 ;; Share clipboard with other X applications
@@ -42,9 +43,9 @@
                                   ("%b - Dir:  " default-directory)))))))
 
 ;; No backup or auto-save
-(setq backup-by-copying t)
 (setq make-backup-files nil)
 (setq auto-save-default nil)
+(setq backup-by-copying t)
 
 ;; don't show startup message
 (setq inhibit-startup-message t)
@@ -98,13 +99,21 @@
 (subword-mode 1) ; 1 for on, 0 for off
 (global-subword-mode 1) ; 1 for on, 0 for off
 
-;; color-theme
-(require 'color-theme)
-(color-theme-initialize)
+;; Cursor blink
+(blink-cursor-mode t)
 
-(autoload 'color-theme-blackboard "~/.emacs.d/elisp/color-theme/blackboard.el" "Load blackboard color theme" t)
+;; Adjust window fringe
+(set-fringe-style -1)
+
+;; ido-mode
+(setq ido-enable-flex-matching t)
+(ido-mode t)
+(ido-everywhere t)
+
+; icomplete
+;; preview command completion when writing in Minibuffer
+;; this is part of emacs
+(icomplete-mode 1)
 
 ;; solarized color-theme
-(require 'color-theme-solarized)
 (color-theme-solarized-light)
-

@@ -33,6 +33,17 @@
 (global-set-key (kbd "C-x t") 'ruby-test-run)
 (global-set-key (kbd "C-x SPC") 'ruby-test-run-at-point)
 
+(add-hook 'ido-setup-hook 'custom-ido-extra-keys)
+(defun custom-ido-extra-keys ()
+  "Add my keybindings for ido."
+  (define-key ido-completion-map "\C-n" 'ido-next-match)
+  (define-key ido-completion-map "\C-p" 'ido-prev-match)
+  (define-key ido-completion-map " "    'ido-exit-minibuffer))
+
+(define-key ac-mode-map (kbd "M-n") 'ac-complete)
+(define-key ac-mode-map (kbd "C-g") 'ac-complete)
+
 ;;; Disabled keys
 (global-unset-key (kbd "C-w")) ;; prevent accidentally closing buffer
 (global-unset-key (kbd "<insert>"))
+
