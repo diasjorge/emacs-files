@@ -75,7 +75,8 @@
         (:name icomplete+)
         (:name color-theme-solarized)
         (:name yasnippet)
-        (:name magit)
+        (:name magit
+               :features magit)
         (:name git-emacs)
         (:name gist)
         (:name rvm
