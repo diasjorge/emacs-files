@@ -81,6 +81,7 @@
         (:name css-mode)
         (:name haml-mode)
         (:name sass-mode)
+        (:name rinari)
         (:name ruby-test-mode
                :type git
                :url "git://github.com/r0man/ruby-test-mode.git"
@@ -109,6 +110,12 @@
 
                :type emacswiki
                :features lorem-ipsum)
+        (:name find-file-in-project
+               :type git
+               :url "git://github.com/technomancy/find-file-in-project.git"
+               :load "find-file-in-project.el"
+               :compile ("\\.el$")
+               :features find-file-in-project)
 ))
 
 (defun sync-packages ()
