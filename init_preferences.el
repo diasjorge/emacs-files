@@ -5,7 +5,6 @@
 
 ;; Share clipboard with other X applications
 (setq x-select-enable-clipboard t)
-;; Set to work with older versions
 (if (functionp 'x-cut-buffer-or-selection-value)
     (setq interprogram-paste-function 'x-cut-buffer-or-selection-value))
 

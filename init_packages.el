@@ -53,8 +53,7 @@
 
 ;; local sources
 (setq el-get-sources
-      '((:name el-get)
-        (:name ergoemacs-keybindings
+      '((:name ergoemacs-keybindings
                :after (lambda () (ergoemacs-mode)))
         (:name emacs-goodies-el
                :after (lambda () (emacs-goodies-el-after-load)))
@@ -107,7 +106,6 @@
                :features jekyll)
         (:name lorem-ipsum
                :description "Lorem Ipsum Generator"
-
                :type emacswiki
                :features lorem-ipsum)
         (:name find-file-in-project
@@ -121,10 +119,9 @@
 (defun sync-packages ()
   "Synchronize packages"
   (interactive)
-  (el-get 'sync '("package"))
-  (setq package-archives (cons '("tromey" . "http://tromey.com/elpa/") package-archives))
-  (setq my-packages
-        (mapcar 'el-get-source-name el-get-sources))
+  (el-get 'sync '(el-get package))
+  (add-to-list 'package-archives '("tromey" . "http://tromey.com/elpa/"))
+  (setq my-packages (mapcar 'el-get-source-name el-get-sources))
   (el-get 'sync my-packages))
 
 (if (require 'el-get nil t)
