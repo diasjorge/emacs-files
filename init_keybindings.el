@@ -40,10 +40,11 @@
   (define-key ido-completion-map "\C-p" 'ido-prev-match)
   (define-key ido-completion-map " "    'ido-exit-minibuffer))
 
-(define-key ac-mode-map (kbd "M-n") 'ac-complete)
-(define-key ac-mode-map (kbd "C-g") 'ac-complete)
+(eval-after-load "auto-complete"
+  '(progn
+     (define-key ac-mode-map (kbd "C-c h") 'ac-last-quick-help)
+     (define-key ac-mode-map (kbd "C-c H") 'ac-last-help)))
 
 ;;; Disabled keys
 (global-unset-key (kbd "C-w")) ;; prevent accidentally closing buffer
 (global-unset-key (kbd "<insert>"))
-

@@ -51,6 +51,12 @@
   (add-to-list 'auto-mode-alist '("\\.md$" . markdown-mode))
   (add-to-list 'auto-mode-alist '("\\.markdown$" . markdown-mode)))
 
+(defun zencoding-mode-after-load ()
+  (add-hook 'sgml-mode-hook
+            '(lambda ()
+               (unless zencoding-mode
+                 (zencoding-mode)))))
+
 ;; local sources
 (setq el-get-sources
       '((:name ergoemacs-keybindings
@@ -59,6 +65,9 @@
                :after (lambda () (emacs-goodies-el-after-load)))
         (:name auto-complete
                :after (lambda () (auto-complete-after-load)))
+        (:name pos-tip)
+        (:name popup-pos-tip
+               :type emacswiki)
         (:name icomplete+)
         (:name color-theme-solarized
                :after (lambda () (color-theme-solarized-light)))
@@ -76,7 +85,8 @@
         (:name yaml-mode
                :after (lambda () (yaml-mode-after-load)))
         (:name nxhtml)
-        (:name zencoding-mode)
+        (:name zencoding-mode
+               :after (lamda () (zencoding-mode-after-load)))
         (:name css-mode)
         (:name haml-mode)
         (:name sass-mode)
