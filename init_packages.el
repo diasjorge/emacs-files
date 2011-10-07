@@ -57,6 +57,9 @@
                (unless zencoding-mode
                  (zencoding-mode)))))
 
+(defun find-file-in-project-after-load ()
+  (setq ffip-limit 20000))
+
 ;; local sources
 (setq el-get-sources
       '((:name ergoemacs-keybindings
@@ -66,11 +69,11 @@
         (:name auto-complete
                :after (lambda () (auto-complete-after-load)))
         (:name pos-tip)
-        (:name popup-pos-tip
-               :type emacswiki)
         (:name icomplete+)
         (:name color-theme-solarized
                :after (lambda () (color-theme-solarized-light)))
+        (:name autopair
+               :after (lambda () (autopair-global-mode)))
         (:name yasnippet)
         (:name magit
                :features magit)
@@ -95,8 +98,7 @@
                :type git
                :url "git://github.com/r0man/ruby-test-mode.git"
                :load "ruby-test-mode.el"
-               :compile ("ruby-test-mode.el")
-               :features ruby-test-mode)
+               :compile ("ruby-test-mode.el"))
         (:name js2-mode-mooz
                :type git
                :url "git://github.com/mooz/js2-mode.git"
@@ -122,8 +124,7 @@
                :type git
                :url "git://github.com/technomancy/find-file-in-project.git"
                :load "find-file-in-project.el"
-               :compile ("\\.el$")
-               :features find-file-in-project)
+               :compile ("\\.el$"))
 ))
 
 (defun sync-packages ()
