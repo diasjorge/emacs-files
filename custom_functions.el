@@ -78,7 +78,7 @@
   (interactive)
   (insert "<!-- -**-END-**- -->"))
 
-(defun test-split ()
+(defun ruby-test-split ()
   (interactive)
   (if (eql 1 (count-windows))
     (split-window-horizontally))

@@ -1,11 +1,11 @@
 ;;; Custom functions keybindings
-(global-set-key (kbd "M-@") 'comment-dwim-line)
+(global-set-key (kbd "M-\"") 'comment-dwim-line)
 (global-set-key (kbd "M-y") 'open-next-line)
 (global-set-key (kbd "M-Y") 'open-previous-line)
 (global-set-key (kbd "M-]") 'indent-magically)
 (global-set-key (kbd "M-#") 'toggle-hiding)
 (global-set-key (kbd "C-%") 'query-replace-regexp)
-(global-set-key (kbd "C-c t") 'test-split)
+
 (global-set-key (kbd "C-c b") 'browse-url)
 (global-set-key (kbd "C-c w") 'wget)
 
@@ -30,8 +30,6 @@
 (global-set-key (kbd "C-j") 'newline-and-indent)
 
 (global-set-key (kbd "C-c m") 'magit-status)
-(global-set-key (kbd "C-x t") 'ruby-test-run)
-(global-set-key (kbd "C-x SPC") 'ruby-test-run-at-point)
 
 (add-hook 'ido-setup-hook 'custom-ido-extra-keys)
 (defun custom-ido-extra-keys ()
@@ -44,6 +42,13 @@
   '(progn
      (define-key ac-mode-map (kbd "C-c h") 'ac-last-quick-help)
      (define-key ac-mode-map (kbd "C-c H") 'ac-last-help)))
+
+(eval-after-load "ruby-test-mode"
+  '(progn
+     (define-key ruby-test-mode-map (kbd "C-x t") 'ruby-test-run)
+     (define-key ruby-test-mode-map (kbd "C-c t") 'ruby-test-split)
+     (define-key ruby-test-mode-map (kbd "C-x SPC") 'ruby-test-run-at-point)))
+
 
 ;;; Disabled keys
 (global-unset-key (kbd "C-w")) ;; prevent accidentally closing buffer
