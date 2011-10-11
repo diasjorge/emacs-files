@@ -25,9 +25,6 @@
 ;; (yas/load-directory "~/.emacs.d/snippets/defaults")
 ;; (yas/load-directory "~/.emacs.d/snippets/contrib-snippets")
 ;; (yas/load-directory "~/.emacs.d/snippets/my-snippets")
-;; (setq yas/prompt-functions '(yas/dropdown-prompt
-;;                              yas/ido-prompt
-;;                              yas/completing-prompt))
 
 
 ;; ;; emacs-wget

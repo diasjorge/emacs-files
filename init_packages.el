@@ -61,6 +61,10 @@
   (setq ffip-limit 20000))
 
 (defun yasnippet-after-load ()
+  (require 'dropdown-list)
+  (setq yas/prompt-functions '(yas/dropdown-prompt
+                               yas/ido-prompt
+                               yas/completing-prompt))
   (yas/initialize)
   (let ((snippets-dir (concat (file-name-directory (or load-file-name buffer-file-name)) "snippets/")))
     (yas/load-directory (concat snippets-dir "contrib-snippets"))
