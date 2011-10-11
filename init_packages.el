@@ -102,10 +102,7 @@
         (:name sass-mode)
         (:name rinari)
         (:name ruby-test-mode
-               :type git
-               :url "git://github.com/r0man/ruby-test-mode.git"
-               :load "ruby-test-mode.el"
-               :compile ("ruby-test-mode.el"))
+               :url "git://github.com/diasjorge/ruby-test-mode.git")
         (:name js2-mode-mooz
                :type git
                :url "git://github.com/mooz/js2-mode.git"
@@ -116,22 +113,9 @@
         (:name textile-mode
                :after (lambda () (textile-mode-after-load)))
         (:name clojure-mode)
-        (:name jekyll-el
-               :description "Jekyll Mode"
-               :type git
-               :url "git://github.com/diasjorge/jekyll.el.git"
-               :load-path (".")
-               :compile ("\\.el$")
-               :features jekyll)
-        (:name lorem-ipsum
-               :description "Lorem Ipsum Generator"
-               :type emacswiki
-               :features lorem-ipsum)
-        (:name find-file-in-project
-               :type git
-               :url "git://github.com/technomancy/find-file-in-project.git"
-               :load "find-file-in-project.el"
-               :compile ("\\.el$"))
+        (:name jekyll-el)
+        (:name lorem-ipsum)
+        (:name find-file-in-project)
 ))
 
 (defun sync-packages ()
