@@ -60,6 +60,12 @@
 (defun find-file-in-project-after-load ()
   (setq ffip-limit 20000))
 
+(defun yasnippet-after-load ()
+  (yas/initialize)
+  (let ((snippets-dir (concat (file-name-directory (or load-file-name buffer-file-name)) "snippets/")))
+    (yas/load-directory (concat snippets-dir "contrib-snippets"))
+    (yas/load-directory (concat snippets-dir "my-snippets"))))
+
 ;; local sources
 (setq el-get-sources
       '((:name ergoemacs-keybindings
@@ -74,7 +80,8 @@
                :after (lambda () (color-theme-solarized-light)))
         (:name autopair
                :after (lambda () (autopair-global-mode)))
-        (:name yasnippet)
+        (:name yasnippet
+               :after (lambda () (yasnippet-after-load)))
         (:name magit
                :features magit)
         (:name git-emacs)

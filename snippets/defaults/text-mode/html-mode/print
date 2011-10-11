@@ -1,4 +1,0 @@
-#name : <?php print ... ?>
-#group : general
-# --
-<?php print $0; ?>
