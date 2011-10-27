@@ -1,0 +1,6 @@
+#-*- require-final-newline: nil -*-
+#name : before minitest
+# --
+before do
+  $0
+end

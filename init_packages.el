@@ -65,10 +65,13 @@
   (setq yas/prompt-functions '(yas/dropdown-prompt
                                yas/ido-prompt
                                yas/completing-prompt))
-  (yas/initialize)
-  (let ((snippets-dir (concat (file-name-directory (or load-file-name buffer-file-name)) "snippets/")))
-    (yas/load-directory (concat snippets-dir "contrib-snippets"))
-    (yas/load-directory (concat snippets-dir "my-snippets"))))
+  (let ((snippets-dir (concat default-directory "snippets/")))
+    (setq yas/snippet-dirs
+          (list (concat el-get-dir (file-name-as-directory "yasnippet") "snippets")
+                (concat snippets-dir "contrib-snippets")
+                (concat snippets-dir "my-snippets")))
+    (yas/initialize))
+)
 
 ;; local sources
 (setq el-get-sources
