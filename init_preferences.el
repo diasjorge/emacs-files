@@ -83,13 +83,6 @@
 ;; delete trailing whitespace before save
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 
-(add-hook 'js2-mode-hook 'untabify-hook)
-
-;; Turn off auto new line on yas/minor-mode
-(add-hook 'yas/minor-mode-on-hook
-	  (lambda ()
-	    (setq mode-require-final-newline nil)))
-
 ;; no overwrite mode
 (put 'overwrite-mode 'disabled t)
 
@@ -115,4 +108,3 @@
 ;; preview command completion when writing in Minibuffer
 ;; this is part of emacs
 (icomplete-mode 1)
-
