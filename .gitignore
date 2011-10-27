@@ -9,3 +9,4 @@ session.*
 /environment.el
 el-get/*
 elpa/*
+/url/cookies

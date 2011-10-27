@@ -28,6 +28,7 @@
 
 (global-set-key (kbd "C-l") 'goto-line)
 (global-set-key (kbd "C-j") 'newline-and-indent)
+(global-set-key (kbd "M-t") 'back-to-indentation)
 
 (global-set-key (kbd "C-c m") 'magit-status)
 
