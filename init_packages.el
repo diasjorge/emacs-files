@@ -4,23 +4,78 @@
 
 (defun ruby-mode-after-load ()
   (autoload 'ruby-mode "ruby-mode" nil t)
+  (add-to-list 'auto-mode-alist '("\\.rb$" . ruby-mode))
+  (add-to-list 'auto-mode-alist '("\\.ru$" . ruby-mode))
   (add-to-list 'auto-mode-alist '("Capfile" . ruby-mode))
   (add-to-list 'auto-mode-alist '("Gemfile" . ruby-mode))
   (add-to-list 'auto-mode-alist '("Rakefile" . ruby-mode))
   (add-to-list 'auto-mode-alist '("\\.rake$" . ruby-mode))
   (add-to-list 'auto-mode-alist '("\\.thor$" . ruby-mode))
-  (add-to-list 'auto-mode-alist '("\\.builder$" . ruby-mode))
-  (add-to-list 'auto-mode-alist '("\\.autotest$" . ruby-mode))
   (add-to-list 'auto-mode-alist '("\\.irbrc$" . ruby-mode))
   (add-to-list 'auto-mode-alist '("\\.gemspec$" . ruby-mode))
-  (add-to-list 'auto-mode-alist '("\\.rb$'" . ruby-mode))
-  (add-to-list 'auto-mode-alist '("\\.ru$'" . ruby-mode))
+  (add-to-list 'auto-mode-alist '("\\.builder$" . ruby-mode))
+  (add-to-list 'auto-mode-alist '("\\.autotest$" . ruby-mode))
+
   (add-hook 'ruby-mode-hook '(lambda ()
-                               (setq ruby-deep-arglist t)
-                               (setq ruby-deep-indent-paren nil)
+                              ;; (setq ruby-deep-indent-paren nil)
                                (setq c-tab-always-indent nil)
                                (require 'inf-ruby)
-                               (require 'ruby-compilation))))
+                               (require 'ruby-compilation)
+                               ;; (setq autopair-dont-activate t)
+                               (autopair-mode -1)
+                               (ruby-electric-mode)))
+
+  ;; This allows indentation like:
+  ;; object.method(
+  ;;   arg1
+  ;; )
+  ;; when ruby-deep-indent-paren is nil
+  (defadvice ruby-indent-line (after unindent-closing-paren activate)
+    (if (eq ruby-deep-indent-paren nil)
+        (let ((column (current-column))
+              indent offset)
+          (save-excursion
+            (back-to-indentation)
+            (let ((state (syntax-ppss)))
+              (setq offset (- column (current-column)))
+              (when (and (eq (char-after) ?\))
+                         (not (zerop (car state))))
+                (goto-char (cadr state))
+                (setq indent (current-indentation)))))
+          (when indent
+            (indent-line-to indent)
+            (when (> offset 0) (forward-char offset))))))
+
+  ;; This allows indentation without parenthesis
+  ;; object.method arg1,
+  ;;               arg2
+  ;; when ruby-deep-indent-paren is nil
+  ;; object.method arg1,
+  ;;   arg2
+  (defadvice ruby-indent-line (after line-up-args activate)
+    (let (indent prev-indent arg-indent)
+      (save-excursion
+        (back-to-indentation)
+        (when (zerop (car (syntax-ppss)))
+          (setq indent (current-column))
+          (skip-chars-backward " \t\n")
+          (when (eq ?, (char-before))
+            (ruby-backward-sexp)
+            (back-to-indentation)
+            (setq prev-indent (current-column))
+            (skip-syntax-forward "w_.")
+            (skip-chars-forward " ")
+            (setq arg-indent (current-column)))))
+      (when prev-indent
+        (let ((offset (- (current-column) indent)))
+          (cond ((< indent prev-indent)
+                 (indent-line-to prev-indent))
+                ((= indent prev-indent)
+                 (if (eq ruby-deep-indent-paren nil)
+                     (indent-line-to (+ prev-indent 2))
+                   (indent-line-to arg-indent))))
+          (when (> offset 0) (forward-char offset))))))
+)
 
 (defun yaml-mode-after-load ()
   (autoload 'yaml-mode "yaml-mode" nil t)
@@ -99,6 +154,10 @@
                :after (lambda () (ruby-mode-after-load)))
         (:name inf-ruby)
         (:name ruby-compilation)
+        (:name ruby-electric)
+        (:name ruby-test-mode
+               :url "git://github.com/diasjorge/ruby-test-mode.git")
+        (:name rinari)
         (:name yaml-mode
                :after (lambda () (yaml-mode-after-load)))
         (:name nxhtml)
@@ -107,9 +166,6 @@
         (:name css-mode)
         (:name haml-mode)
         (:name sass-mode)
-        (:name rinari)
-        (:name ruby-test-mode
-               :url "git://github.com/diasjorge/ruby-test-mode.git")
         (:name js2-mode-mooz
                :type git
                :url "git://github.com/mooz/js2-mode.git"
