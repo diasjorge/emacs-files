@@ -1,11 +1,14 @@
 # Instructions
 
-Initialize submodules
+Make sure you have the following installed:
 
-    git submodule foreach --recursive "git submodule init; git submodule update"
+* git
+* git-svn
+* subversion
+* cvs
 
-Bytecompile the important stuff
+You must clone the repository to ~/.emacs.d or symlink it
 
-    rake compile # You can pass EMACS=/alternate/emacs/location
+    $ emacs
 
-
+This will load the el-get package manager and install all the packages
