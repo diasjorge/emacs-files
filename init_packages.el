@@ -121,7 +121,7 @@
   (setq yas/prompt-functions '(yas/dropdown-prompt
                                yas/ido-prompt
                                yas/completing-prompt))
-  (let ((snippets-dir (concat default-directory "snippets/")))
+  (let ((snippets-dir (concat (file-name-directory (or load-file-name buffer-file-name)) "snippets/")))
     (setq yas/snippet-dirs
           (list (concat el-get-dir (file-name-as-directory "yasnippet") "snippets")
                 (concat snippets-dir "contrib-snippets")
@@ -194,6 +194,7 @@
   (interactive)
   (el-get 'sync '(el-get package))
   (add-to-list 'package-archives '("tromey" . "http://tromey.com/elpa/"))
+  (add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
   (setq my-packages (mapcar 'el-get-source-name el-get-sources))
   (el-get 'sync my-packages))
 
