@@ -17,13 +17,14 @@
   (add-to-list 'auto-mode-alist '("\\.autotest$" . ruby-mode))
 
   (add-hook 'ruby-mode-hook '(lambda ()
-                              ;; (setq ruby-deep-indent-paren nil)
+                               ;; (setq ruby-deep-indent-paren nil)
                                (setq c-tab-always-indent nil)
                                (require 'inf-ruby)
                                (require 'ruby-compilation)
-                               ;; (setq autopair-dont-activate t)
-                               (autopair-mode -1)
-                               (ruby-electric-mode)))
+                               ;; make ruby-electric play nice with autopair
+                               (substitute-key-definition 'ruby-electric-curlies nil ruby-mode-map)
+                               (substitute-key-definition 'ruby-electric-matching-char nil ruby-mode-map)
+                               (substitute-key-definition 'ruby-electric-close-matching-char nil ruby-mode-map)))
 
   ;; This allows indentation like:
   ;; object.method(
@@ -132,8 +133,6 @@
   (add-hook 'yas/minor-mode-on-hook
             (lambda ()
               (setq mode-require-final-newline nil)))
-
-
 )
 
 ;; local sources
