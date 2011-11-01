@@ -1,3 +1,0 @@
-#name : presence
-# --
-validates_presence_of :${1:attributes}

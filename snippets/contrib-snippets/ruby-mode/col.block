@@ -1,3 +1,0 @@
-#name : collect (with block)
-# --
-collect { |${1:variable}| $0 }
