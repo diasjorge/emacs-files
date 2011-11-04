@@ -133,7 +133,14 @@
   (add-hook 'yas/minor-mode-on-hook
             (lambda ()
               (setq mode-require-final-newline nil)))
+
+  (yas/define-snippets 'nxhtml-mode nil 'html-mode)
 )
+
+(defun autopair-after-load ()
+  (add-hook 'term-mode-hook
+            #'(lambda () (setq autopair-dont-activate t)))
+  (autopair-global-mode))
 
 ;; local sources
 (setq el-get-sources
@@ -148,7 +155,7 @@
         (:name color-theme-solarized
                :after (lambda () (color-theme-solarized-light)))
         (:name autopair
-               :after (lambda () (autopair-global-mode)))
+               :after (lambda () (autopair-after-load)))
         (:name yasnippet
                :after (lambda () (yasnippet-after-load)))
         (:name magit
