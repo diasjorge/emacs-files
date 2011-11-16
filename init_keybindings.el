@@ -46,10 +46,9 @@
 
 (eval-after-load "ruby-test-mode"
   '(progn
-     (define-key ruby-test-mode-map (kbd "C-x t") 'ruby-test-run)
-     (define-key ruby-test-mode-map (kbd "C-c t") 'ruby-test-split)
-     (define-key ruby-test-mode-map (kbd "C-x SPC") 'ruby-test-run-at-point)))
-
+     (define-key ruby-mode-map (kbd "C-x t") 'ruby-test-run)
+     (define-key ruby-mode-map (kbd "C-c t") 'ruby-test-split)
+     (define-key ruby-mode-map (kbd "C-x SPC") 'ruby-test-run-at-point)))
 
 ;;; Disabled keys
 (global-unset-key (kbd "C-w")) ;; prevent accidentally closing buffer

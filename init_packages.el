@@ -21,6 +21,7 @@
                                (setq c-tab-always-indent nil)
                                (require 'inf-ruby)
                                (require 'ruby-compilation)
+                               (require 'ruby-test-mode)
                                ;; make ruby-electric play nice with autopair
                                (substitute-key-definition 'ruby-electric-curlies nil ruby-mode-map)
                                (substitute-key-definition 'ruby-electric-matching-char nil ruby-mode-map)
@@ -165,6 +166,7 @@
         (:name rvm
                :after (lambda () (rvm-use-default)))
         (:name ruby-mode
+               :load "ruby-mode.el"
                :after (lambda () (ruby-mode-after-load)))
         (:name inf-ruby)
         (:name ruby-compilation)
