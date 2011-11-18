@@ -138,6 +138,16 @@
   (yas/define-snippets 'nxhtml-mode nil 'html-mode)
 )
 
+(defun nxhtml-after-load ()
+  (setq nxhtml-skip-welcome t
+        indent-region-mode t
+        rng-nxml-auto-validate-flag nil
+        nxml-degraded t)
+
+  (add-hook 'nxhtml-mode
+            (lambda ()
+              (setq ruby-insert-encoding-magic-comment nil))))
+
 (defun autopair-after-load ()
   (add-hook 'term-mode-hook
             #'(lambda () (setq autopair-dont-activate t)))
@@ -176,7 +186,8 @@
         (:name rinari)
         (:name yaml-mode
                :after (lambda () (yaml-mode-after-load)))
-        (:name nxhtml)
+        (:name nxhtml
+               :after (lambda () (nxhtml-after-load)))
         (:name zencoding-mode
                :after (lamda () (zencoding-mode-after-load)))
         (:name css-mode)
