@@ -25,7 +25,10 @@
                                ;; make ruby-electric play nice with autopair
                                (substitute-key-definition 'ruby-electric-curlies nil ruby-mode-map)
                                (substitute-key-definition 'ruby-electric-matching-char nil ruby-mode-map)
-                               (substitute-key-definition 'ruby-electric-close-matching-char nil ruby-mode-map)))
+                               (substitute-key-definition 'ruby-electric-close-matching-char nil ruby-mode-map)
+                               (substitute-key-definition 'ruby-indent-line nil ruby-mode-map)
+                               (if (string-match-p "\\.erb" buffer-file-name)
+                                   (setq ruby-insert-encoding-magic-comment nil))))
 
   ;; This allows indentation like:
   ;; object.method(
@@ -205,7 +208,8 @@
         (:name clojure-mode)
         (:name jekyll-el)
         (:name lorem-ipsum)
-        (:name find-file-in-project)
+        (:name find-file-in-project
+               :after (lambda () (find-file-in-project-after-load)))
 ))
 
 (defun sync-packages ()
