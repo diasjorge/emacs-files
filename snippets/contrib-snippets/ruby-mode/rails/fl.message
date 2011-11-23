@@ -1,3 +1,4 @@
 #name : flash message
+# key: fl
 # --
 flash[:message] = "$0"

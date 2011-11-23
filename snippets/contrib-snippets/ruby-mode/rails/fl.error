@@ -1,3 +1,4 @@
 #name : flash error
+# key: fl
 # --
 flash[:error] = "$0"

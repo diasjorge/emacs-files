@@ -1,3 +1,4 @@
 #name : attribute INT(...)
+# key: aint
 # --
 ${1:attribute} INT(${2:length})

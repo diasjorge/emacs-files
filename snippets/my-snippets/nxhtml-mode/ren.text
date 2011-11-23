@@ -1,3 +1,4 @@
 #name : text
+# key: ren
 # --
 <%= render :text => "$0" %>

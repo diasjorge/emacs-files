@@ -1,3 +1,4 @@
 #name : O o = new O();
+# key: new
 # --
 ${1:Variabletype} ${2:variable} = new ${3:Objecttype}($0);

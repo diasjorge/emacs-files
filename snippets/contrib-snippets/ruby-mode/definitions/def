@@ -1,4 +1,5 @@
 #name : Method
+# key: def
 # --
 def ${1:method_name}
   $0

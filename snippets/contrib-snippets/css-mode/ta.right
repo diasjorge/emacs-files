@@ -1,3 +1,4 @@
 #name : text-align right
+# key: ta
 # --
 text-align: right;

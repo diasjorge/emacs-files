@@ -1,3 +1,4 @@
 #name : int
+# key: int
 # --
 int ${1:variable} = ${2:value};

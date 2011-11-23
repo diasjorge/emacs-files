@@ -1,3 +1,4 @@
 #name : message
+# key: mess
 # --
 :message => "${1:message}"

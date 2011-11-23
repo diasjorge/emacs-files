@@ -1,3 +1,4 @@
 #name : hash
+# key: hash
 # --
 ${1:variable} = {$0}

@@ -1,3 +1,4 @@
 #name : COUNT ...
+# key: count
 # --
 COUNT(${1:attribute})

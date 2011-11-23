@@ -1,3 +1,4 @@
 #name : link_to
+# key: lt
 # --
 <%= link_to ${1:name}, ${2:target} %>

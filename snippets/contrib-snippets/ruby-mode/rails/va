@@ -1,3 +1,4 @@
 #name : validates_associated : ... 
+# key: va
 # --
 validates_associated :${attr}

@@ -1,4 +1,5 @@
 #name : class block
+# key: bl
 # --
 .${1:block_name}
 {

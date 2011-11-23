@@ -1,6 +1,8 @@
 #name : id block
+# key: bl
 # --
 #${1:block_name}
+# key: bl
 {
   $0
 }

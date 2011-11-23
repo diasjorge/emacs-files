@@ -1,4 +1,5 @@
 #name : database.yml for sqlite3 
+# key: db
 # --
 ---
 # This is a sample database file for the ActiveRecord and DataMapper ORMs

@@ -1,3 +1,4 @@
 #name : margin a
+# key: mar
 # --
 margin: $1px;

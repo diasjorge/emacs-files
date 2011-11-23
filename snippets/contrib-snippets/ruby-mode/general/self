@@ -1,4 +1,5 @@
 #name : Class method
+# key: self
 # --
 def self.${1:method_name}
   $0

@@ -1,3 +1,4 @@
 #name : String
+# key: str
 # --
 String ${1:variable} = "${2:value}";

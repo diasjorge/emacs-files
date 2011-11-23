@@ -1,3 +1,4 @@
 #name : provide
+# key: pro
 # --
 (provide '${1:library})

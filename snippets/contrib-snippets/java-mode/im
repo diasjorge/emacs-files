@@ -1,3 +1,4 @@
 #name : import
+# key: im
 # --
 import java.${1:package}.${2:class};

@@ -1,3 +1,4 @@
 #name : "..." + var + "..."
+# key: cat
 # --
 + ${1:concat} + "$0

@@ -1,3 +1,4 @@
 #name : text-align center
+# key: ta
 # --
 text-align: center;

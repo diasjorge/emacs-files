@@ -1,3 +1,4 @@
 #name : partial
+# key: ren
 # --
 render :partial => "$0"

@@ -1,3 +1,4 @@
 #name : attribute VARCHAR(...)
+# key: avchar
 # --
 ${1:attribute} VARCHAR(${2:length})

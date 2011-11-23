@@ -1,3 +1,4 @@
 #name : img
+# key: img
 # --
 <img src="$1" alt="$2" />

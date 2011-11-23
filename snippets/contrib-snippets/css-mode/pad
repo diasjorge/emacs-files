@@ -1,3 +1,4 @@
 #name : padding a
+# key: pad
 # --
 padding: $1px;

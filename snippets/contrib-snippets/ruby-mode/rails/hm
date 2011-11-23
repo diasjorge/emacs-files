@@ -1,3 +1,4 @@
 #name : has_many : ... 
+# key: hm
 # --
 has_many :${class}

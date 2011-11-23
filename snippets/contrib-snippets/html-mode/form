@@ -1,4 +1,5 @@
 #name : form
+# key: form
 # --
 <form method="${1:post}">
   $0

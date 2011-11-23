@@ -1,3 +1,4 @@
 #name : SUM
+# key: sum
 # --
 SUM(${1:attribute})

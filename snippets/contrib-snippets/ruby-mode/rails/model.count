@@ -1,3 +1,4 @@
 #name : count
+# key: model
 # --
 ${1:Model}.count

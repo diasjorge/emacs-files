@@ -1,4 +1,5 @@
 #name : Constructor
+# key: init
 # --
 def initialize
   $0

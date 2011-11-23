@@ -1,3 +1,4 @@
 #name : elsif
+# key: elf
 # --
 elsif ${1:condition}

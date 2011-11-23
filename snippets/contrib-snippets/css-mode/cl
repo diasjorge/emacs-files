@@ -1,3 +1,4 @@
 #name : clear
+# key: cl
 # --
 clear: $1;

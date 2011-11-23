@@ -1,3 +1,4 @@
 #name : autoload
+# key: auto
 # --
 (autoload '${1:library} "${2:file}" ${t})

@@ -1,3 +1,4 @@
 #name : has_one : ... 
+# key: ho
 # --
 has_one :${class}

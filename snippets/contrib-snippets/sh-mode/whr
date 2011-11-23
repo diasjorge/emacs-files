@@ -1,4 +1,5 @@
 #name : while read line
+# key: whr
 # --
 while read ${1:line}; do
   $0

@@ -1,3 +1,4 @@
 #name : all (with variable)
+# key: find
 # --
 ${1:variable} = ${2:Model}.find(:all$0)

@@ -1,3 +1,4 @@
 #name : FOREIGN KEY
+# key: fk
 # --
 FOREIGN KEY

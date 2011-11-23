@@ -1,3 +1,4 @@
 #name : render :inline => " ... ", :locals => {  ...  => " ... " }
+# key: ril
 # --
 render :inline => "${<%= 'hello' %>}", :locals => { ${name} => "${value}" }

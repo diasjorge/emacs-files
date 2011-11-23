@@ -1,4 +1,5 @@
 #name : foreach
+# key: for
 # --
 for(${1:Type} ${2:variable} : ${3:collection})
 {

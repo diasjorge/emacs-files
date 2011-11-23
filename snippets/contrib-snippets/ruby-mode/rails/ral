@@ -1,3 +1,4 @@
 #name : render :action => " ... ", :layout => " ... "
+# key: ral
 # --
 render :action => "${action}", :layout => "${layoutname}"

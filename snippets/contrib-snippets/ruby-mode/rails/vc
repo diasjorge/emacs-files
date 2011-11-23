@@ -1,3 +1,4 @@
 #name : validates_confirmation_of : ... 
+# key: vc
 # --
 validates_confirmation_of :${attr}

@@ -1,3 +1,4 @@
 #name : right
+# key: padr
 # --
 padding-right: $1px;

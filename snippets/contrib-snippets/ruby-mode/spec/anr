@@ -1,5 +1,6 @@
 #-*- require-final-newline: nil -*-
 #contributor: gary <ge.iams@gmail.com>
 #name : and_raise
+# key: anr
 # --
 and_raise(${1:exception})

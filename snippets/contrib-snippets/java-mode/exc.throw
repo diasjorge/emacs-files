@@ -1,3 +1,4 @@
 #name : throw Exception
+# key: exc
 # --
 throw new ${1:Type}Exception($2);

@@ -1,4 +1,5 @@
 #name : save-excursion
+# key: se
 # --
 (save-excursion
   $0

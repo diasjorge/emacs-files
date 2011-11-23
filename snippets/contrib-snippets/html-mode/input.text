@@ -1,3 +1,4 @@
 #name : text
+# key: input
 # --
 <input type="text"$0 />

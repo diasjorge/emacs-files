@@ -1,3 +1,4 @@
 #name : before_filter
+# key: bf
 # --
 before_filter :

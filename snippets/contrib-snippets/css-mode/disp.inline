@@ -1,3 +1,4 @@
 #name : inline
+# key: disp
 # --
 display: inline;

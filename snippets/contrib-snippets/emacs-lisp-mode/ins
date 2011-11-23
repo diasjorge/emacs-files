@@ -1,3 +1,4 @@
 #name : insert variable
+# key: ins
 # --
 (insert ${1:message})

@@ -1,3 +1,4 @@
 #name : USE db
+# key: use
 # --
 USE ${1:database}

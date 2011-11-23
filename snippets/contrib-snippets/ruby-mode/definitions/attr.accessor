@@ -1,3 +1,4 @@
 #name : attr_accessor
+# key: attr
 # --
 attr_accessor :${1:attributes}

@@ -1,3 +1,4 @@
 #name : limit
+# key: lim
 # --
 :limit => $0

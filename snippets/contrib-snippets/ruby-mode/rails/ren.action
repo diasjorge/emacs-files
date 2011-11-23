@@ -1,3 +1,4 @@
 #name : render :action
+# key: ren
 # --
 render :${0:action}

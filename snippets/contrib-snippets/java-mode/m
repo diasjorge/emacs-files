@@ -1,3 +1,4 @@
 #name : method()
+# key: m
 # --
 ${1:method}($2)

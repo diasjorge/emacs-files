@@ -1,3 +1,4 @@
 #name : margin t r b l
+# key: margin
 # --
 margin: $1px $2px $3px $4px;

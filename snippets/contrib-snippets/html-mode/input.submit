@@ -1,3 +1,4 @@
 #name : submit
+# key: input
 # --
 <input type="submit" value="$1"$0 />

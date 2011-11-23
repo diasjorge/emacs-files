@@ -1,3 +1,4 @@
 #name : render xml
+# key: rx
 # --
 render :xml => 

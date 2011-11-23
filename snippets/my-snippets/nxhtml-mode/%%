@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 #contributor : Jorge Calás Lozano<calas@qvitta.net>
 #name : <%= ... %>
+# key: %%
 # --
 <%= $0 %>

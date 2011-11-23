@@ -1,3 +1,4 @@
 #name : Instance variable
+# key: ins
 # --
 private ${1:Type} ${2:variable};

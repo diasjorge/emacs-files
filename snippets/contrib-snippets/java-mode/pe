@@ -1,3 +1,4 @@
 #name : package
+# key: pe
 # --
 package ${1:package};

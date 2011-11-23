@@ -1,4 +1,5 @@
 #name : table
+# key: table
 # --
 <table border="${1:0}" class="${2:class}" cellpadding="${3:0}" cellspacing="${4:0}">
   <tr>

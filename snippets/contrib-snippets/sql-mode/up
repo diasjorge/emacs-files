@@ -1,3 +1,4 @@
 #name : UPDATE ...
+# key: up
 # --
 UPDATE ${1:table} SET ${2:column} = ${3:value}

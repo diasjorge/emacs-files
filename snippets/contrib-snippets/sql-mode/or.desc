@@ -1,3 +1,4 @@
 #name : ORDER BY ... DESC
+# key: or
 # --
 ORDER BY ${1:attributes} DESC

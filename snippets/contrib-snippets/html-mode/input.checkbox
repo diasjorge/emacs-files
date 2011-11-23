@@ -1,3 +1,4 @@
 #name : checkbox
+# key: input
 # --
 <input type="checkbox" value="$1"$0 />

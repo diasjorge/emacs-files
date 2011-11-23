@@ -1,3 +1,4 @@
 #name : add-to-list 'load-path
+# key: atl
 # --
 (add-to-list 'load-path "~/.emacs.d/elisp/${2:directory}")

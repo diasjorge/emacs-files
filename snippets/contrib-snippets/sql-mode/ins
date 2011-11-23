@@ -1,3 +1,4 @@
 #name : INSERT INTO ...
+# key: ins
 # --
 INSERT INTO ${1:table} (${2:attributes}) VALUES ${3:values}

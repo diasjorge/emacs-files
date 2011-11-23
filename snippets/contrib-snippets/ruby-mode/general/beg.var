@@ -1,4 +1,5 @@
 #name : begin / rescue (with variable)
+# key: beg
 # --
 begin
   $1

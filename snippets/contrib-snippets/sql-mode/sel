@@ -1,3 +1,4 @@
 #name : SELECT ...
+# key: sel
 # --
 SELECT ${1:attributes} FROM ${2:table}

@@ -1,3 +1,4 @@
 #name : select
+# key: sel
 # --
 :select => '${1:attributes}'

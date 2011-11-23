@@ -1,4 +1,5 @@
 #name : do / end
+# key: do
 # --
 do
   $0

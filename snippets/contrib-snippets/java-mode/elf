@@ -1,4 +1,5 @@
 #name : else if(condition) {...}
+# key: elf
 # --
 else if(${1:condition})
 {

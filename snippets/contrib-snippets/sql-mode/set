@@ -1,3 +1,4 @@
 #name : SET ...
+# key: set
 # --
 SET ${1:attribute} = ${2:value}

@@ -1,3 +1,4 @@
 #name : assert_raises  ...  { $. }
+# key: ar
 # --
 assert_raises ${Exception} { $. }

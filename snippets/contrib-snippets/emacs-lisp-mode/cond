@@ -1,4 +1,5 @@
 #name : cond
+# key: cond
 # --
 (cond ((${1:condition})
   $0

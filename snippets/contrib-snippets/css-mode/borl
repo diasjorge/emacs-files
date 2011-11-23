@@ -1,3 +1,4 @@
 #name : border left
+# key: borl
 # --
 border-left: ${1:size}px ${2:color} ${3:type};

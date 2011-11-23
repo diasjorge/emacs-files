@@ -1,3 +1,4 @@
 #name : it { should } ...
+# key: its
 # --
 it { should $0 }

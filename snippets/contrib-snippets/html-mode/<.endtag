@@ -1,3 +1,4 @@
 #name : endtag
+# key: <
 # --
 </$1>

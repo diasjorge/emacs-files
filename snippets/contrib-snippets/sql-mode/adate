@@ -1,3 +1,4 @@
 #name : attribute DATE(...)
+# key: adate
 # --
 ${1:attribute} DATE(${2:length})

@@ -1,3 +1,4 @@
 #name : mail_to
+# key: mt
 # --
 <%= mail_to ${1:name}, ${2:target} %>

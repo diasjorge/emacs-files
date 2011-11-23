@@ -1,4 +1,5 @@
 #name : while
+# key: wh
 # --
 (while (${1:condition})
   $0

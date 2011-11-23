@@ -1,3 +1,4 @@
-#name : :symbol => 
+#name : :symbol =>
+# key: :
 # --
-:${1:symbol} => 
+:${1:symbol} =>

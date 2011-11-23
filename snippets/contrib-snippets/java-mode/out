@@ -1,3 +1,4 @@
 #name : println (out)
+# key: out
 # --
 System.out.println($0);

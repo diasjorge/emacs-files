@@ -1,3 +1,4 @@
 #name : AVG ...
+# key: avg
 # --
 AVG(${attribute})

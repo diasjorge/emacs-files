@@ -1,4 +1,5 @@
 #name : if function
+# key: if
 # --
 if ${1:function_name}; then
   $0

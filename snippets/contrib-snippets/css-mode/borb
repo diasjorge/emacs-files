@@ -1,3 +1,4 @@
 #name : border bottom
+# key: borb
 # --
 border-bottom: ${1:size}px ${2:color} ${3:type};

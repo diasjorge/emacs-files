@@ -1,3 +1,4 @@
 #name : cdr
+# key: cdr
 # --
 (cdr ${1:collection})

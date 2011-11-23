@@ -1,3 +1,4 @@
 #name : session
+# key: se
 # --
 session[:$1] 

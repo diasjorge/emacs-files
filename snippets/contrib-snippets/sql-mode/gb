@@ -1,3 +1,4 @@
 #name : GROUP BY ...
+# key: gb
 # --
 GROUP BY ${attribute}

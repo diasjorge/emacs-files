@@ -1,3 +1,4 @@
 #name : font-weight
+# key: fw
 # --
 font-weight: $1;

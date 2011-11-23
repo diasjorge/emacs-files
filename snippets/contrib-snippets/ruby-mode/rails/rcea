@@ -1,3 +1,4 @@
 #name : render_component :action => " ... "
+# key: rcea
 # --
 render_component :action => "${index}"

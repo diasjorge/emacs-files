@@ -1,3 +1,4 @@
 #name : flash[: ... ] = " ... "
+# key: flsh
 # --
 flash[:${notice}] = "${Text here...}"

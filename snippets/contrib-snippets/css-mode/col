@@ -1,3 +1,4 @@
 #name : color
+# key: col
 # --
 color: $1;

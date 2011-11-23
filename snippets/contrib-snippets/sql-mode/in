@@ -1,3 +1,4 @@
 #name : IN ...
+# key: in
 # --
 IN (${1:collection})

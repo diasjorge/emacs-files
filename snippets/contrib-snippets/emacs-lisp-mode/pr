@@ -1,3 +1,4 @@
 #name : print ...
+# key: pr
 # --
 (print $1)

@@ -1,3 +1,4 @@
 #name : DELETE FROM ...
+# key: del
 # --
 DELETE FROM ${1:table} WHERE ${2:condition}

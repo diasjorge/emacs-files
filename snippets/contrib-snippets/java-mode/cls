@@ -1,4 +1,5 @@
 #name : class without constructor
+# key: cls
 # --
 /**
  * 

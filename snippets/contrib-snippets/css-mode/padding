@@ -1,3 +1,4 @@
 #name : padding t r b l
+# key: padding
 # --
 padding: $1px $2px $3px $4px;

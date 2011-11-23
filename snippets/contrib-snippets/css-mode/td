@@ -1,3 +1,4 @@
 #name : text-decoration
+# key: td
 # --
 text-decoration: $1;

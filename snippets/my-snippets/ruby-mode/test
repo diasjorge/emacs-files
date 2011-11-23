@@ -1,6 +1,7 @@
 #-*- require-final-newline: nil -*-
 #contributor: jorge <jorge@mrdias.com>
 #name : test 'something'
+# key: test
 # --
 test "${1:something}" do
   $0

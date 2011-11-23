@@ -1,3 +1,4 @@
 #name : font-size
+# key: fs
 # --
 font-size: $1px;

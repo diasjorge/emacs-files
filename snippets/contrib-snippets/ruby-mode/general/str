@@ -1,3 +1,4 @@
 #name : string
+# key: str
 # --
 ${1:variable} = "$0"

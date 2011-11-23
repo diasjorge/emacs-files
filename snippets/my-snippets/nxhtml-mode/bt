@@ -1,3 +1,4 @@
 #name : button_to
+# key: bt
 # --
 <%= button_to ${1:name}, ${2:target} %>

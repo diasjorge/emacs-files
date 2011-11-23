@@ -1,4 +1,5 @@
 #name : comment
+# key: beg
 # --
 =begin rdoc
   $0

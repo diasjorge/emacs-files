@@ -1,3 +1,4 @@
 #name : DEFAULT CHARSET ...
+# key: dc
 # --
 DEFAULT CHARSET=${1:charset}

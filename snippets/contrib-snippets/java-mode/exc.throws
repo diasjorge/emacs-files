@@ -1,3 +1,4 @@
 #name : throws Exception
+# key: exc
 # --
 throws ${1:Type}Exception

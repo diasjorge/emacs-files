@@ -1,3 +1,4 @@
 #name : MIN
+# key: min
 # --
 MIN(${1:attribute})

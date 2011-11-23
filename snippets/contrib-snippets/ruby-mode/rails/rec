@@ -1,3 +1,4 @@
 #name : redirect_to :controller => " ... "
+# key: rec
 # --
 redirect_to :controller => "${items}"

@@ -1,4 +1,5 @@
 #name : jar
+# key: ant
 # --
 <project default="${1:compile}">
   <target name="$1">

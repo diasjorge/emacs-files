@@ -1,3 +1,4 @@
 #name : HashSet
+# key: set
 # --
 Set<${1:Type}> ${2:variable} = new HashSet<$1>($0);

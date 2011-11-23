@@ -1,3 +1,4 @@
 #name : flash warning
+# key: fl
 # --
 flash[:warning] = "$0"

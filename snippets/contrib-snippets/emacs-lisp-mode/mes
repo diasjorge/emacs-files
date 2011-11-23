@@ -1,3 +1,4 @@
 #name : message
+# key: mes
 # --
 (message "${1:message}")

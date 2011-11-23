@@ -1,3 +1,4 @@
 #name : load
+# key: load
 # --
 (load "${1:file_name}")

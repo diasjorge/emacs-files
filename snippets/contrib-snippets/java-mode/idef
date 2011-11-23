@@ -1,3 +1,4 @@
 #name : interface method
+# key: idef
 # --
 ${1:public} ${2:return_type} ${3:method_name}($4);

@@ -1,3 +1,4 @@
 #name : render :inline => " ... "
+# key: ri
 # --
 render :inline => "${<%= 'hello' %>}"

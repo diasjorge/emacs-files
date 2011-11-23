@@ -1,3 +1,4 @@
 #name : ORDER BY ... ASC
+# key: ob
 # --
 ORDER BY ${1:attributes} ASC

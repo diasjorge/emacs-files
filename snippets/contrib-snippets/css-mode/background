@@ -1,3 +1,4 @@
 #name : background-color: ...
+# key: background
 # --
 background-color: #${1:DDD};

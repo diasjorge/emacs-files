@@ -1,4 +1,5 @@
 #name : interface
+# key: inf
 # --
 public interface ${1:interface_name}
 {

@@ -1,3 +1,4 @@
 #name : collect
+# key: col
 # --
 collect(&:${1:attribute})

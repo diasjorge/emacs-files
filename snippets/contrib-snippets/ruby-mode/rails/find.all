@@ -1,3 +1,4 @@
 #name : all
+# key: find
 # --
 ${1:Model}.find(:all$0)

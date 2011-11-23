@@ -1,3 +1,4 @@
 #name : CONSTRAINT ...
+# key: cons
 # --
 CONSTRAINT ${1:table} CHECK (${2})

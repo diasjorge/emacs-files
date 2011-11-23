@@ -1,3 +1,4 @@
 #name : this.instance = variable
+# key: this
 # --
 this.${1:instance} = $1;

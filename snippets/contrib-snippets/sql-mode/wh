@@ -1,3 +1,4 @@
 #name : WHERE ...
+# key: wh
 # --
 WHERE ${1:attribute} ${2:operator} ${3:value}

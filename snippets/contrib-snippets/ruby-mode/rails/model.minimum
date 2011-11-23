@@ -1,3 +1,4 @@
 #name : minimum
+# key: model
 # --
 ${1:Model}.minimum(${2:attribute})

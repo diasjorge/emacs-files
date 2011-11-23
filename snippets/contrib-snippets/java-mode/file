@@ -1,3 +1,4 @@
 #name : File
+# key: file
 # --
 File ${1:variable} = new File("${2:path}");

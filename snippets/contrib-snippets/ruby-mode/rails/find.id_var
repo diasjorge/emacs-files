@@ -1,3 +1,4 @@
 #name : id (with variable)
+# key: find
 # --
 ${1:variable} = ${2:Model}.find($0)

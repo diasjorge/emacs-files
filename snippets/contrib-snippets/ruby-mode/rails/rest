@@ -1,4 +1,5 @@
 #name : restfull controller
+# key: rest
 # --
 class ${1:class_name}Controller < ApplicationController
   def index

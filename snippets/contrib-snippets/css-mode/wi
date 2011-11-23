@@ -1,3 +1,4 @@
 #name : width
+# key: wi
 # --
 width: $1px;

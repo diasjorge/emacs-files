@@ -1,3 +1,4 @@
 #name : boolean
+# key: bool
 # --
 boolean ${1:variable} = ${2:true};

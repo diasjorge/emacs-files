@@ -1,3 +1,4 @@
 #name : button
+# key: input
 # --
 <input type="button" value="$1"$0 />

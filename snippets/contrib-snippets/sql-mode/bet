@@ -1,3 +1,4 @@
 #name : BETWEEN a AND b
+# key: bet
 # --
 BETWEEN ${1:value1} AND ${2:value2}

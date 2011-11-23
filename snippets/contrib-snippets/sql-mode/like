@@ -1,3 +1,4 @@
 #name : LIKE ...
+# key: like
 # --
 LIKE '$1'

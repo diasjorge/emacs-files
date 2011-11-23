@@ -1,3 +1,4 @@
 #name : ArrayList
+# key: list
 # --
 List<${1:Type}> ${2:variable} = new ArrayList<$1>();

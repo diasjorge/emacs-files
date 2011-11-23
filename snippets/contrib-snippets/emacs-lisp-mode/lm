@@ -1,4 +1,5 @@
 #name : (lambda() ... )
+# key: lm
 # --
 (lambda ()
   $0

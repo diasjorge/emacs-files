@@ -1,3 +1,4 @@
 #name : println (err)
+# key: err
 # --
 System.err.println($0);

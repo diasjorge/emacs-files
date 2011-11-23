@@ -1,3 +1,4 @@
 #name : first
+# key: find
 # --
 ${1:Class}.find(:first$0)
