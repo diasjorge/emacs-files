@@ -144,12 +144,8 @@
 (defun nxhtml-after-load ()
   (setq nxhtml-skip-welcome t
         indent-region-mode t
-        rng-nxml-auto-validate-flag nil
-        nxml-degraded t)
-
-  (add-hook 'nxhtml-mode
-            (lambda ()
-              (setq ruby-insert-encoding-magic-comment nil))))
+        rng-nxml-auto-validate-flag nil)
+)
 
 (defun autopair-after-load ()
   (add-hook 'term-mode-hook
