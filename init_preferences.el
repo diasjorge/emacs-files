@@ -48,6 +48,9 @@
 (setq auto-save-default nil)
 (setq backup-by-copying t)
 
+;; Delete to trash
+(setq delete-by-moving-to-trash t)
+
 ;; don't show startup message
 (setq inhibit-startup-message t)
 
@@ -61,6 +64,7 @@
 
 ;; set default tramp mode
 (setq tramp-default-method "ssh")
+(set-default 'tramp-default-proxies-alist '((".*" "/ssh:%h:")))
 
 ;; Paren mode globally
 (show-paren-mode 1)

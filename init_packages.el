@@ -22,11 +22,6 @@
                                (require 'inf-ruby)
                                (require 'ruby-compilation)
                                (require 'ruby-test-mode)
-                               ;; make ruby-electric play nice with autopair
-                               (substitute-key-definition 'ruby-electric-curlies nil ruby-mode-map)
-                               (substitute-key-definition 'ruby-electric-matching-char nil ruby-mode-map)
-                               (substitute-key-definition 'ruby-electric-close-matching-char nil ruby-mode-map)
-                               (substitute-key-definition 'ruby-indent-line nil ruby-mode-map)
                                (if (string-match-p "\\.erb" buffer-file-name)
                                    (setq ruby-insert-encoding-magic-comment nil))))
 
@@ -171,6 +166,7 @@
         (:name magit
                :features magit)
         (:name git-emacs)
+        (:name mo-git-blame)
         (:name gist)
         (:name rvm
                :after (lambda () (rvm-use-default)))
@@ -179,7 +175,6 @@
                :after (lambda () (ruby-mode-after-load)))
         (:name inf-ruby)
         (:name ruby-compilation)
-        (:name ruby-electric)
         (:name ruby-test-mode
                :url "git://github.com/diasjorge/ruby-test-mode.git")
         (:name rinari)
