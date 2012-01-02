@@ -10,3 +10,6 @@ session.*
 el-get/*
 elpa/*
 /url/cookies
+/.emacs.desktop
+/.emacs.desktop.lock
+/history
