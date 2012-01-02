@@ -9,6 +9,7 @@
   (add-to-list 'auto-mode-alist '("Capfile" . ruby-mode))
   (add-to-list 'auto-mode-alist '("Gemfile" . ruby-mode))
   (add-to-list 'auto-mode-alist '("Rakefile" . ruby-mode))
+  (add-to-list 'auto-mode-alist '("Guardfile" . ruby-mode))
   (add-to-list 'auto-mode-alist '("\\.rake$" . ruby-mode))
   (add-to-list 'auto-mode-alist '("\\.thor$" . ruby-mode))
   (add-to-list 'auto-mode-alist '("\\.irbrc$" . ruby-mode))
@@ -133,19 +134,30 @@
             (lambda ()
               (setq mode-require-final-newline nil)))
 
+  (add-hook 'html-mode-hook (lambda () (yas/minor-mode-on)))
+
   (yas/define-snippets 'nxhtml-mode nil 'html-mode)
+  (yas/define-snippets 'rhtml-mode nil 'html-mode)
+  (yas/define-snippets 'rhtml-mode nil 'ruby-mode)
 )
 
 (defun nxhtml-after-load ()
-  (setq nxhtml-skip-welcome t
+  (setq nxhtml-global-minor-mode t
+        mumamo-chunk-coloring 'submode-colored
+        nxhtml-skip-welcome t
         indent-region-mode t
-        rng-nxml-auto-validate-flag nil)
+        rng-nxml-auto-validate-flag nil
+        nxml-degraded t)
 )
 
 (defun autopair-after-load ()
   (add-hook 'term-mode-hook
             #'(lambda () (setq autopair-dont-activate t)))
   (autopair-global-mode))
+
+(defun rhtml-mode-after-load ()
+  (add-hook 'rhtml-mode-hook
+            'zencoding-mode))
 
 ;; local sources
 (setq el-get-sources
@@ -180,8 +192,10 @@
         (:name rinari)
         (:name yaml-mode
                :after (lambda () (yaml-mode-after-load)))
-        (:name nxhtml
-               :after (lambda () (nxhtml-after-load)))
+        ;; (:name nxhtml
+        ;;        :after (lambda () (nxhtml-after-load)))
+        (:name rhtml-mode
+               :after (lambda () (rhtml-mode-after-load)))
         (:name zencoding-mode
                :after (lamda () (zencoding-mode-after-load)))
         (:name css-mode)
@@ -201,6 +215,8 @@
         (:name lorem-ipsum)
         (:name find-file-in-project
                :after (lambda () (find-file-in-project-after-load)))
+        (:name httpcode
+               :type elpa)
 ))
 
 (defun sync-packages ()
