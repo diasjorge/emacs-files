@@ -150,6 +150,10 @@
         nxml-degraded t)
 )
 
+(defun jekyll-el-after-load ()
+  (setq jekyll-directory "/home/boston/development/mrdias.com/")
+)
+
 (defun autopair-after-load ()
   (add-hook 'term-mode-hook
             #'(lambda () (setq autopair-dont-activate t)))
@@ -211,7 +215,8 @@
         (:name textile-mode
                :after (lambda () (textile-mode-after-load)))
         (:name clojure-mode)
-        (:name jekyll-el)
+        (:name jekyll-el
+               :after (lambda () (jekyll-el-after-load)))
         (:name lorem-ipsum)
         (:name find-file-in-project
                :after (lambda () (find-file-in-project-after-load)))
