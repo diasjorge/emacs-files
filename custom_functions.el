@@ -50,6 +50,7 @@
 (defun indent-magically (beg end spaces)
   "Indent region of code"
   (interactive "r\nnEnter number of spaces: \n")
+  (beginning-of-line)
   (indent-code-rigidly beg end spaces))
 
 ;; Code folding support. http://www.emacswiki.org/emacs/HideShow
@@ -98,6 +99,16 @@
       (if (get-file-buffer my-tags-file)
           (kill-buffer (get-file-buffer my-tags-file)))
       (visit-tags-table my-tags-file))))
+
+(defun ruby-fancy-indent()
+  "Indent at two levels nesting"
+  (interactive)
+  (set-variable 'ruby-deep-indent-paren nil t))
+
+(defun ruby-classic-indent()
+  "Indent classic ruby mode"
+  (interactive)
+  (set-variable 'ruby-deep-indent-paren '(?\( ?\[ ?\] t) t))
 
 ;; HAML
 (defun haml-convert-erb-file (rhtmlFile)
