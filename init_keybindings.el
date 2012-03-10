@@ -10,16 +10,10 @@
 (global-set-key (kbd "C-c w") 'wget)
 
 ;;; Packages
-(global-set-key (kbd "C-c j n") 'jekyll-draft-post)
-(global-set-key (kbd "C-c j P") 'jekyll-publish-post)
-(global-set-key (kbd "C-c j e") 'jekyll-insert-preview-end)
-
-(global-set-key (kbd "C-c j p") (lambda ()
-                                  (interactive)
-                                  (find-file(concat jekyll-directory "_posts/"))))
-(global-set-key (kbd "C-c j d") (lambda ()
-                                  (interactive)
-                                  (find-file(concat jekyll-directory "_drafts/"))))
+(eval-after-load "jekyll"
+  '(progn
+     (jekyll-init-keybindings)
+     (global-set-key (kbd "C-c j e") 'jekyll-insert-preview-end)))
 
 (global-set-key (kbd "M-7") 'smart-compile)
 (global-set-key (kbd "M-[") 'align-string)
