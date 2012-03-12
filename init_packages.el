@@ -23,7 +23,7 @@
                                (require 'inf-ruby)
                                (require 'ruby-compilation)
                                (require 'ruby-test-mode)
-                               (if (string-match-p "\\.erb" buffer-file-name)
+                               (if (and buffer-file-name (string-match-p "\\.erb" buffer-file-name))
                                    (setq ruby-insert-encoding-magic-comment nil))))
 
   ;; This allows indentation like:
