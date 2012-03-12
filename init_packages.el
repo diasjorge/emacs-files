@@ -173,9 +173,10 @@
                :after (progn (auto-complete-after-load)))
         (:name pos-tip)
         (:name icomplete+)
-        (:name color-theme-solarized
-               :depends nil
-               :after (progn (color-theme-solarized-light)))
+        (:name solarized-theme
+               :type elpa
+               :prepare (progn (add-to-list 'custom-theme-load-path default-directory))
+               :after (progn (load-theme 'solarized-light t)))
         (:name autopair
                :after (progn (autopair-after-load)))
         (:name yasnippet
