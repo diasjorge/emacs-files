@@ -42,7 +42,7 @@
   (untabify (point-min) (point-max)))
 
 (defun untabify-hook()
-  (add-hook 'before-save-hook (lambda ()
+  (add-hook 'before-save-hook #'(lambda ()
                                 (untabify-buffer)
                                 (delete-trailing-whitespace))
             t t))

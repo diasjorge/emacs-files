@@ -44,7 +44,6 @@
                                   ("%b - Dir:  " default-directory)))))))
 
 ;; No backup or auto-save
-(setq backup-by-copying t)
 (setq make-backup-files nil)
 (setq auto-save-default nil)
 
@@ -79,6 +78,7 @@
 ;; Paren mode globally
 (show-paren-mode 1)
 (setq show-paren-style 'expression)
+(add-hook 'ido-mode-hook #'(progn (show-paren-mode nil)))
 
 ;; I hate tabs!
 (setq-default indent-tabs-mode nil)

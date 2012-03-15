@@ -224,6 +224,7 @@
                :after (progn (find-file-in-project-after-load)))
         (:name httpcode
                :type elpa)
+        (:name rainbow-mode)
 ))
 
 (defun sync-packages ()
