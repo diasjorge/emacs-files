@@ -148,6 +148,9 @@
         indent-region-mode t
         rng-nxml-auto-validate-flag nil
         nxml-degraded t)
+
+  ;; nxhtml sets up javascript-mode by default
+  (add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
 )
 
 (defun jekyll-el-after-load ()
