@@ -46,6 +46,10 @@
      (define-key ruby-test-mode-map (kbd "C-c t") 'ruby-test-split)
      (define-key ruby-mode-map (kbd "C-x SPC") 'ruby-test-run-at-point)))
 
+(eval-after-load "custom_functions"
+  '(progn
+     (global-set-key (kbd "C-t") 'ido-goto-symbol)))
+
 ;;; Disabled keys
 (global-unset-key (kbd "C-w")) ;; prevent accidentally closing buffer
 (global-unset-key (kbd "<insert>"))
