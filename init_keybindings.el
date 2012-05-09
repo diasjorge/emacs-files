@@ -50,6 +50,10 @@
   '(progn
      (global-set-key (kbd "C-t") 'ido-goto-symbol)))
 
+(eval-after-load "find-file-in-project"
+  '(progn
+     (global-set-key (kbd "M-1") 'ffip)))
+
 ;;; Disabled keys
 (global-unset-key (kbd "C-w")) ;; prevent accidentally closing buffer
 (global-unset-key (kbd "<insert>"))
