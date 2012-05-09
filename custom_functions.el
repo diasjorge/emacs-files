@@ -166,6 +166,17 @@
                (set-buffer-modified-p nil)
                (message "File '%s' successfully renamed to '%s'" name (file-name-nondirectory new-name))))))))
 
+(defun delete-this-buffer-and-file ()
+  "Deletes current buffer and file it is visiting."
+  (interactive)
+  (let ((name (buffer-name))
+        (filename (buffer-file-name)))
+    (if (and filename (file-exists-p filename))
+        (progn
+          (delete-file filename)
+          (kill-buffer))
+      (error "Buffer '%s' is not visiting a file!" name))))
+
 (defun ido-goto-symbol ()
   "Will update the imenu index and then use ido to select a
    symbol to navigate to"
