@@ -150,19 +150,19 @@
 ;; local sources
 (setq el-get-sources
       '((:name ergoemacs-keybindings
-               :after (lambda () (ergoemacs-mode)))
+               :after (progn (ergoemacs-mode)))
         (:name emacs-goodies-el
-               :after (lambda () (emacs-goodies-el-after-load)))
+               :after (progn (emacs-goodies-el-after-load)))
         (:name auto-complete
-               :after (lambda () (auto-complete-after-load)))
+               :after (progn (auto-complete-after-load)))
         (:name pos-tip)
         (:name icomplete+)
         (:name color-theme-solarized
-               :after (lambda () (color-theme-solarized-light)))
+               :after (progn (color-theme-solarized-light)))
         (:name autopair
-               :after (lambda () (autopair-after-load)))
+               :after (progn (autopair-after-load)))
         (:name yasnippet
-               :after (lambda () (yasnippet-after-load)))
+               :after (progn (yasnippet-after-load)))
         (:name magit
                :features magit)
         (:name git-emacs)
@@ -179,9 +179,9 @@
                :url "git://github.com/diasjorge/ruby-test-mode.git")
         (:name rinari)
         (:name yaml-mode
-               :after (lambda () (yaml-mode-after-load)))
+               :after (progn (yaml-mode-after-load)))
         (:name nxhtml
-               :after (lambda () (nxhtml-after-load)))
+               :after (progn (nxhtml-after-load)))
         (:name zencoding-mode
                :after (lamda () (zencoding-mode-after-load)))
         (:name css-mode)
@@ -193,14 +193,14 @@
                :load "js2-mode.el"
                :compile ("js2-mode.el")
                :features js2-mode
-               :after (lambda () (js2-mode-after-load)))
+               :after (progn (js2-mode-after-load)))
         (:name textile-mode
-               :after (lambda () (textile-mode-after-load)))
+               :after (progn (textile-mode-after-load)))
         (:name clojure-mode)
         (:name jekyll-el)
         (:name lorem-ipsum)
         (:name find-file-in-project
-               :after (lambda () (find-file-in-project-after-load)))
+               :after (progn (find-file-in-project-after-load)))
 ))
 
 (defun sync-packages ()
