@@ -9,6 +9,7 @@
   (add-to-list 'auto-mode-alist '("Capfile" . ruby-mode))
   (add-to-list 'auto-mode-alist '("Gemfile" . ruby-mode))
   (add-to-list 'auto-mode-alist '("Rakefile" . ruby-mode))
+  (add-to-list 'auto-mode-alist '("Guardfile" . ruby-mode))
   (add-to-list 'auto-mode-alist '("\\.rake$" . ruby-mode))
   (add-to-list 'auto-mode-alist '("\\.thor$" . ruby-mode))
   (add-to-list 'auto-mode-alist '("\\.irbrc$" . ruby-mode))
@@ -22,7 +23,7 @@
                                (require 'inf-ruby)
                                (require 'ruby-compilation)
                                (require 'ruby-test-mode)
-                               (if (string-match-p "\\.erb" buffer-file-name)
+                               (if (and buffer-file-name (string-match-p "\\.erb" buffer-file-name))
                                    (setq ruby-insert-encoding-magic-comment nil))))
 
   ;; This allows indentation like:
@@ -133,19 +134,37 @@
             (lambda ()
               (setq mode-require-final-newline nil)))
 
+  (add-hook 'html-mode-hook (lambda () (yas/minor-mode-on)))
+
   (yas/define-snippets 'nxhtml-mode nil 'html-mode)
+  (yas/define-snippets 'rhtml-mode nil 'html-mode)
+  (yas/define-snippets 'rhtml-mode nil 'ruby-mode)
 )
 
 (defun nxhtml-after-load ()
-  (setq nxhtml-skip-welcome t
+  (setq nxhtml-global-minor-mode t
+        mumamo-chunk-coloring 'submode-colored
+        nxhtml-skip-welcome t
         indent-region-mode t
-        rng-nxml-auto-validate-flag nil)
+        rng-nxml-auto-validate-flag nil
+        nxml-degraded t)
+
+  ;; nxhtml sets up javascript-mode by default
+  (add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
+)
+
+(defun jekyll-el-after-load ()
+  (setq jekyll-directory "/home/boston/development/mrdias.com/")
 )
 
 (defun autopair-after-load ()
   (add-hook 'term-mode-hook
             #'(lambda () (setq autopair-dont-activate t)))
   (autopair-global-mode))
+
+(defun rhtml-mode-after-load ()
+  (add-hook 'rhtml-mode-hook
+            'zencoding-mode))
 
 ;; local sources
 (setq el-get-sources
@@ -157,8 +176,10 @@
                :after (progn (auto-complete-after-load)))
         (:name pos-tip)
         (:name icomplete+)
-        (:name color-theme-solarized
-               :after (progn (color-theme-solarized-light)))
+        (:name solarized-theme
+               :type elpa
+               :prepare (progn (add-to-list 'custom-theme-load-path default-directory))
+               :after (progn (load-theme 'solarized-light t)))
         (:name autopair
                :after (progn (autopair-after-load)))
         (:name yasnippet
@@ -169,10 +190,10 @@
         (:name mo-git-blame)
         (:name gist)
         (:name rvm
-               :after (lambda () (rvm-use-default)))
+               :after (progn (rvm-use-default)))
         (:name ruby-mode
                :load "ruby-mode.el"
-               :after (lambda () (ruby-mode-after-load)))
+               :after (progn (ruby-mode-after-load)))
         (:name inf-ruby)
         (:name ruby-compilation)
         (:name ruby-test-mode
@@ -182,8 +203,10 @@
                :after (progn (yaml-mode-after-load)))
         (:name nxhtml
                :after (progn (nxhtml-after-load)))
+        ;; (:name rhtml-mode
+        ;;        :after (progn (rhtml-mode-after-load)))
         (:name zencoding-mode
-               :after (lamda () (zencoding-mode-after-load)))
+               :after (progn (zencoding-mode-after-load)))
         (:name css-mode)
         (:name haml-mode)
         (:name sass-mode)
@@ -197,10 +220,14 @@
         (:name textile-mode
                :after (progn (textile-mode-after-load)))
         (:name clojure-mode)
-        (:name jekyll-el)
+        (:name jekyll-el
+               :after (lambda () (jekyll-el-after-load)))
         (:name lorem-ipsum)
         (:name find-file-in-project
                :after (progn (find-file-in-project-after-load)))
+        (:name httpcode
+               :type elpa)
+        (:name rainbow-mode)
 ))
 
 (defun sync-packages ()

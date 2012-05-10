@@ -42,7 +42,7 @@
   (untabify (point-min) (point-max)))
 
 (defun untabify-hook()
-  (add-hook 'before-save-hook (lambda ()
+  (add-hook 'before-save-hook #'(lambda ()
                                 (untabify-buffer)
                                 (delete-trailing-whitespace))
             t t))
@@ -50,6 +50,7 @@
 (defun indent-magically (beg end spaces)
   "Indent region of code"
   (interactive "r\nnEnter number of spaces: \n")
+  (beginning-of-line)
   (indent-code-rigidly beg end spaces))
 
 ;; Code folding support. http://www.emacswiki.org/emacs/HideShow
@@ -99,6 +100,16 @@
           (kill-buffer (get-file-buffer my-tags-file)))
       (visit-tags-table my-tags-file))))
 
+(defun ruby-fancy-indent()
+  "Indent at two levels nesting"
+  (interactive)
+  (set-variable 'ruby-deep-indent-paren nil t))
+
+(defun ruby-classic-indent()
+  "Indent classic ruby mode"
+  (interactive)
+  (set-variable 'ruby-deep-indent-paren '(?\( ?\[ ?\] t) t))
+
 ;; HAML
 (defun haml-convert-erb-file (rhtmlFile)
   "Convert an erb file to haml and opens a new buffer"
@@ -137,3 +148,62 @@
   (interactive "r")
   (let ((comando "css2sass -s"))
   (shell-command-on-region beg end comando (buffer-name) t)))
+
+(defun rename-this-buffer-and-file ()
+  "Renames current buffer and file it is visiting."
+  (interactive)
+  (let ((name (buffer-name))
+        (filename (buffer-file-name)))
+    (if (not (and filename (file-exists-p filename)))
+        (error "Buffer '%s' is not visiting a file!" name)
+      (let ((new-name (read-file-name "New name: " (file-name-directory filename))))
+        (cond ((get-buffer new-name)
+               (error "A buffer named '%s' already exists!" new-name))
+              (t
+               (rename-file filename new-name 1)
+               (rename-buffer new-name)
+               (set-visited-file-name new-name)
+               (set-buffer-modified-p nil)
+               (message "File '%s' successfully renamed to '%s'" name (file-name-nondirectory new-name))))))))
+
+(defun delete-this-buffer-and-file ()
+  "Deletes current buffer and file it is visiting."
+  (interactive)
+  (let ((name (buffer-name))
+        (filename (buffer-file-name)))
+    (if (and filename (file-exists-p filename))
+        (progn
+          (delete-file filename)
+          (kill-buffer))
+      (error "Buffer '%s' is not visiting a file!" name))))
+
+(defun ido-goto-symbol ()
+  "Will update the imenu index and then use ido to select a
+   symbol to navigate to"
+  (interactive)
+  (imenu--make-index-alist)
+  (let ((name-and-pos '())
+        (symbol-names '()))
+    (flet ((addsymbols (symbol-list)
+                       (when (listp symbol-list)
+                         (dolist (symbol symbol-list)
+                           (let ((name nil) (position nil))
+                             (cond
+                              ((and (listp symbol) (imenu--subalist-p symbol))
+                               (addsymbols symbol))
+
+                              ((listp symbol)
+                               (setq name (car symbol))
+                               (setq position (cdr symbol)))
+
+                              ((stringp symbol)
+                               (setq name symbol)
+                               (setq position (get-text-property 1 'org-imenu-marker symbol))))
+
+                             (unless (or (null position) (null name))
+                               (add-to-list 'symbol-names name)
+                               (add-to-list 'name-and-pos (cons name position))))))))
+      (addsymbols imenu--index-alist))
+    (let* ((selected-symbol (ido-completing-read "Symbol? " symbol-names))
+           (position (cdr (assoc selected-symbol name-and-pos))))
+      (goto-char position))))

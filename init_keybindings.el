@@ -10,16 +10,10 @@
 (global-set-key (kbd "C-c w") 'wget)
 
 ;;; Packages
-(global-set-key (kbd "C-c j n") 'jekyll-draft-post)
-(global-set-key (kbd "C-c j P") 'jekyll-publish-post)
-(global-set-key (kbd "C-c j e") 'jekyll-insert-preview-end)
-
-(global-set-key (kbd "C-c j p") (lambda ()
-                                  (interactive)
-                                  (find-file(concat jekyll-directory "_posts/"))))
-(global-set-key (kbd "C-c j d") (lambda ()
-                                  (interactive)
-                                  (find-file(concat jekyll-directory "_drafts/"))))
+(eval-after-load "jekyll"
+  '(progn
+     (jekyll-init-keybindings)
+     (global-set-key (kbd "C-c j e") 'jekyll-insert-preview-end)))
 
 (global-set-key (kbd "M-7") 'smart-compile)
 (global-set-key (kbd "M-[") 'align-string)
@@ -51,6 +45,14 @@
      (define-key ruby-mode-map (kbd "C-c T") 'ruby-test-toggle-implementation-and-specification)
      (define-key ruby-test-mode-map (kbd "C-c t") 'ruby-test-split)
      (define-key ruby-mode-map (kbd "C-x SPC") 'ruby-test-run-at-point)))
+
+(eval-after-load "custom_functions"
+  '(progn
+     (global-set-key (kbd "C-t") 'ido-goto-symbol)))
+
+(eval-after-load "find-file-in-project"
+  '(progn
+     (global-set-key (kbd "M-1") 'ffip)))
 
 ;;; Disabled keys
 (global-unset-key (kbd "C-w")) ;; prevent accidentally closing buffer
