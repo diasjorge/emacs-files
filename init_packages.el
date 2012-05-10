@@ -136,9 +136,9 @@
 
   (add-hook 'html-mode-hook (lambda () (yas/minor-mode-on)))
 
-  (yas/define-snippets 'nxhtml-mode nil 'html-mode)
-  (yas/define-snippets 'rhtml-mode nil 'html-mode)
-  (yas/define-snippets 'rhtml-mode nil 'ruby-mode)
+  ;; (yas/define-snippets 'nxhtml-mode nil 'html-mode)
+  ;; (yas/define-snippets 'rhtml-mode nil 'html-mode)
+  ;; (yas/define-snippets 'rhtml-mode nil 'ruby-mode)
 )
 
 (defun nxhtml-after-load ()
@@ -162,9 +162,9 @@
             #'(lambda () (setq autopair-dont-activate t)))
   (autopair-global-mode))
 
-(defun rhtml-mode-after-load ()
-  (add-hook 'rhtml-mode-hook
-            'zencoding-mode))
+;; (defun rhtml-mode-after-load ()
+;;   (add-hook 'rhtml-mode-hook
+;;             'zencoding-mode))
 
 ;; local sources
 (setq el-get-sources
