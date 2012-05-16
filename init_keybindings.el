@@ -54,6 +54,11 @@
   '(progn
      (global-set-key (kbd "M-1") 'ffip)))
 
+(eval-after-load "ruby-compilation"
+  '(progn
+     (global-set-key (kbd "<f9>") 'ruby-compilation-rake)))
+
+
 ;;; Disabled keys
 (global-unset-key (kbd "C-w")) ;; prevent accidentally closing buffer
 (global-unset-key (kbd "<insert>"))
