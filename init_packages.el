@@ -99,9 +99,11 @@
   (add-to-list 'auto-mode-alist '("\\.textile\\'" . textile-mode)))
 
 (defun auto-complete-after-load ()
+  (load "auto-complete-config")
   (setq ac-auto-start 4)
   ;; Distinguish case
-  (setq ac-ignore-case nil))
+  (setq ac-ignore-case nil)
+  (ac-config-default))
 
 (defun emacs-goodies-el-after-load ()
   ;; markdown-mode
