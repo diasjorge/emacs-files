@@ -58,6 +58,10 @@
   '(progn
      (global-set-key (kbd "<f9>") 'ruby-compilation-rake)))
 
+(eval-after-load "feature-mode"
+  '(progn
+     (define-key feature-mode-map (kbd "C-x t") 'feature-verify-all-scenarios-in-buffer)
+     (define-key feature-mode-map (kbd "C-x SPC") 'feature-verify-scenario-at-pos)))
 
 ;;; Disabled keys
 (global-unset-key (kbd "C-w")) ;; prevent accidentally closing buffer

@@ -13,3 +13,5 @@ elpa/*
 /.emacs.desktop
 /.emacs.desktop.lock
 /history
+*.yas-compiled-snippets.el
+/var/pcache/gh/gh-gist-api/*

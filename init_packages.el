@@ -137,10 +137,6 @@
               (setq mode-require-final-newline nil)))
 
   (add-hook 'html-mode-hook (lambda () (yas/minor-mode-on)))
-
-  ;; (yas/define-snippets 'nxhtml-mode nil 'html-mode)
-  ;; (yas/define-snippets 'rhtml-mode nil 'html-mode)
-  ;; (yas/define-snippets 'rhtml-mode nil 'ruby-mode)
 )
 
 (defun nxhtml-after-load ()
@@ -161,12 +157,27 @@
 
 (defun autopair-after-load ()
   (add-hook 'term-mode-hook
-            #'(lambda () (setq autopair-dont-activate t)))
+            '(lambda () (autopair-mode -1)))
   (autopair-global-mode))
 
 ;; (defun rhtml-mode-after-load ()
 ;;   (add-hook 'rhtml-mode-hook
 ;;             'zencoding-mode))
+
+(defun rvm-after-load ()
+  (rvm-autodetect-ruby)
+)
+
+(defun feature-mode-after-load ()
+  (setq feature-use-rvm t)
+)
+
+(defun inf-ruby-after-load ()
+  ;; Fix rvm issues
+  (setq inf-ruby-prompt-pattern "^\\([a-zA-Z0-9.\-]+ :[0-9]+ >\\|>>\\) ")
+  (setq inf-ruby-first-prompt-pattern inf-ruby-prompt-pattern)
+)
+
 
 ;; local sources
 (setq el-get-sources
@@ -190,17 +201,21 @@
                :features magit)
         (:name git-emacs)
         (:name mo-git-blame)
-        (:name gist)
+        (:name gist
+	       :type elpa)
         (:name rvm
-               :after (progn (rvm-use-default)))
+               :after (progn (rvm-after-load)))
         (:name ruby-mode
                :load "ruby-mode.el"
                :after (progn (ruby-mode-after-load)))
-        (:name inf-ruby)
+        (:name inf-ruby
+               :after (progn (inf-ruby-after-load)))
         (:name ruby-compilation)
         (:name ruby-test-mode
                :url "git://github.com/diasjorge/ruby-test-mode.git")
         (:name rinari)
+        (:name feature-mode
+               :after (progn (feature-mode-after-load)))
         (:name yaml-mode
                :after (progn (yaml-mode-after-load)))
         (:name nxhtml
