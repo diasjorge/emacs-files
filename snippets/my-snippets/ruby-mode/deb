@@ -1,0 +1,6 @@
+#name : debugger ...
+# key: deb
+# --
+require 'debugger'
+debugger
+$0
