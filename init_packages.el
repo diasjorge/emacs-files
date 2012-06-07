@@ -238,7 +238,7 @@
                :after (progn (textile-mode-after-load)))
         (:name clojure-mode)
         (:name jekyll-el
-               :after (lambda () (jekyll-el-after-load)))
+               :after (progn (jekyll-el-after-load)))
         (:name lorem-ipsum)
         (:name find-file-in-project
                :after (progn (find-file-in-project-after-load)))
