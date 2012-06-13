@@ -207,3 +207,15 @@
     (let* ((selected-symbol (ido-completing-read "Symbol? " symbol-names))
            (position (cdr (assoc selected-symbol name-and-pos))))
       (goto-char position))))
+
+;; Remove all annoying modes from auto mode lists
+(defun replace-alist-mode (alist oldmode newmode)
+  (dolist (aitem alist)
+    (if (eq (cdr aitem) oldmode)
+    (setcdr aitem newmode))))
+
+;; Insert file path using autocompletion
+(defun insert-path ()
+  "Inserts a path into the buffer with completion"
+  (interactive)
+  (insert (expand-file-name (read-file-name "Path: "))))
