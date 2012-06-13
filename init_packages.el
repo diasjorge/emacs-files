@@ -148,7 +148,7 @@
         nxml-degraded t)
 
   ;; nxhtml sets up javascript-mode by default
-  (add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
+  (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
 )
 
 (defun jekyll-el-after-load ()
@@ -182,6 +182,7 @@
 ;; local sources
 (setq el-get-sources
       '((:name ergoemacs-keybindings
+               :checksum "0ee16b3a7096a93c923cb3eea3c72838f015db7f"
                :after (progn (ergoemacs-mode)))
         (:name emacs-goodies-el
                :after (progn (emacs-goodies-el-after-load)))
