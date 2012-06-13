@@ -3,7 +3,7 @@
 (global-set-key (kbd "M-y") 'open-next-line)
 (global-set-key (kbd "M-Y") 'open-previous-line)
 (global-set-key (kbd "M-]") 'indent-magically)
-(global-set-key (kbd "M-#") 'toggle-hiding)
+(global-set-key (kbd "M-<") 'toggle-hiding)
 (global-set-key (kbd "C-%") 'query-replace-regexp)
 
 (global-set-key (kbd "C-c b") 'browse-url)
