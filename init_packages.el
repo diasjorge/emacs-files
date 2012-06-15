@@ -240,7 +240,7 @@
                :type git
                :url "git://github.com/mooz/js2-mode.git"
                :load "js2-mode.el"
-               :compile ("js2-mode.el")
+               :compile "js2-mode.el"
                :features js2-mode
                :after (progn (js2-mode-after-load)))
         (:name textile-mode
