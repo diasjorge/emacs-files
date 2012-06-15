@@ -117,6 +117,13 @@
                  (zencoding-mode)))))
 
 (defun find-file-in-project-after-load ()
+
+  (defun ffip-uniqueify (file-cons)
+    "This one overrides the original to include the directory name after the file name"
+    (setcar file-cons
+            (concat (car file-cons) " "
+                    (cadr (reverse (split-string (cdr file-cons) "/"))))))
+
   (setq ffip-limit 20000))
 
 (defun yasnippet-after-load ()
