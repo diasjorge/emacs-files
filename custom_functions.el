@@ -94,8 +94,8 @@
       (if (file-exists-p my-tags-file)
           (delete-file my-tags-file))
       (shell-command
-       (format "find %s -iname '*.rb' | grep -v db | xargs ctags -a -e -f %s"
-               root my-tags-file))
+       (format "ctags -e -R --extra=+fq --exclude=db --exclude=.git -f %s %s"
+               my-tags-file root))
       (if (get-file-buffer my-tags-file)
           (kill-buffer (get-file-buffer my-tags-file)))
       (visit-tags-table my-tags-file))))
