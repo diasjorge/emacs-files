@@ -186,6 +186,7 @@
                :after (progn (ergoemacs-mode)))
         (:name emacs-goodies-el
                :after (progn (emacs-goodies-el-after-load)))
+        (:name etags-select)
         (:name auto-complete
                :after (progn (auto-complete-after-load)))
         (:name pos-tip)

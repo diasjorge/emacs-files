@@ -4,6 +4,9 @@
 (global-set-key (kbd "M-Y") 'open-previous-line)
 (global-set-key (kbd "M-]") 'indent-magically)
 (global-set-key (kbd "M-<") 'toggle-hiding)
+(global-set-key (kbd "M-.") 'etags-select-find-tag-at-point)
+(global-set-key (kbd "M-,") 'etags-select-find-tag)
+
 (global-set-key (kbd "C-%") 'query-replace-regexp)
 
 (global-set-key (kbd "C-c b") 'browse-url)
