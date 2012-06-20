@@ -165,7 +165,8 @@
 (defun autopair-after-load ()
   (add-hook 'term-mode-hook
             '(lambda () (autopair-mode -1)))
-  (autopair-global-mode))
+  (unless autopair-global-mode
+    (autopair-global-mode)))
 
 ;; (defun rhtml-mode-after-load ()
 ;;   (add-hook 'rhtml-mode-hook
@@ -254,6 +255,7 @@
         (:name httpcode
                :type elpa)
         (:name rainbow-mode)
+        (:name ack)
 ))
 
 (defun sync-packages ()
