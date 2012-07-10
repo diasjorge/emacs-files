@@ -94,7 +94,7 @@
       (if (file-exists-p my-tags-file)
           (delete-file my-tags-file))
       (shell-command
-       (format "ctags -e -R --extra=+fq --exclude=db --exclude=.git -f %s %s"
+       (format "ctags -e -R --exclude=db --exclude=.git --exclude=.#* -f %s %s"
                my-tags-file root))
       (if (get-file-buffer my-tags-file)
           (kill-buffer (get-file-buffer my-tags-file)))
