@@ -124,7 +124,7 @@
             (concat (car file-cons) " "
                     (cadr (reverse (split-string (cdr file-cons) "/"))))))
 
-  (setq ffip-limit 20000))
+  (setq ffip-limit 30000))
 
 (defun yasnippet-after-load ()
   (require 'dropdown-list)
@@ -133,9 +133,9 @@
                                yas/completing-prompt))
   (let ((snippets-dir (concat (file-name-directory (or load-file-name buffer-file-name)) "snippets/")))
     (setq yas/snippet-dirs
-          (list (concat el-get-dir (file-name-as-directory "yasnippet") "snippets")
+          (list (concat snippets-dir "my-snippets")
                 (concat snippets-dir "contrib-snippets")
-                (concat snippets-dir "my-snippets")))
+                (concat el-get-dir (file-name-as-directory "yasnippet") "snippets")))
     (yas/initialize))
 
   ;; Turn off auto new line on yas/minor-mode
@@ -186,6 +186,16 @@
   (setq inf-ruby-first-prompt-pattern inf-ruby-prompt-pattern)
 )
 
+(defun ack-and-a-half-after-load ()
+  (defalias 'ack 'ack-and-a-half)
+  (defalias 'ack-same 'ack-and-a-half-same)
+  (defalias 'ack-find-file 'ack-and-a-half-find-file)
+  (defalias 'ack-find-file-same 'ack-and-a-half-find-file-same)
+)
+
+(defun etags-select-after-load ()
+  (setq etags-select-highlight-delay 0.5)
+)
 
 ;; local sources
 (setq el-get-sources
@@ -194,7 +204,10 @@
                :after (progn (ergoemacs-mode)))
         (:name emacs-goodies-el
                :after (progn (emacs-goodies-el-after-load)))
-        (:name etags-select)
+        (:name etags-select
+               :type github
+               :pkgname diasjorge/etags-select
+               :after (progn (etags-select-after-load)))
         (:name auto-complete
                :after (progn (auto-complete-after-load)))
         (:name pos-tip)
@@ -238,11 +251,10 @@
         (:name haml-mode)
         (:name sass-mode)
         (:name js2-mode-mooz
-               :type git
-               :url "git://github.com/mooz/js2-mode.git"
+               :type github
+               :pkgname mooz/js2-mode
                :load "js2-mode.el"
                :compile "js2-mode.el"
-               :features js2-mode
                :after (progn (js2-mode-after-load)))
         (:name textile-mode
                :after (progn (textile-mode-after-load)))
@@ -255,7 +267,13 @@
         (:name httpcode
                :type elpa)
         (:name rainbow-mode)
-        (:name ack)
+        (:name ack-and-a-half
+               :type github
+               :pkgname jhelwig/ack-and-a-half
+               :after (progn (ack-and-a-half-after-load)))
+        (:name bundler
+               :type github
+               :pkgname tobiassvn/bundler.el)
 ))
 
 (defun sync-packages ()
