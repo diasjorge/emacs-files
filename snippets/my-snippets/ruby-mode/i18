@@ -1,4 +1,5 @@
 #name : I18n.t ...
 # key: i18
+#group: rails
 # --
 I18n.t($0)

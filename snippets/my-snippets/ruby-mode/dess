@@ -1,8 +1,9 @@
 #name : describe
 # key: dess
+#group: spec
 # --
 describe '${1:description}' do
 
   $0
-  
+
 end

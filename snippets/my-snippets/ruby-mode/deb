@@ -1,5 +1,6 @@
 #name : debugger ...
-# key: deb
+#key: deb
+#group: general
 # --
 require 'debugger'
 debugger

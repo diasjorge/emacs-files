@@ -1,4 +1,5 @@
 #name : it { should } ...
 # key: its
+#group: spec
 # --
 it { should $0 }

@@ -1,5 +1,6 @@
 # name : ruby-debug
 # key: rdeb
+#group: general
 # --
 require 'ruby-debug'
 debugger
