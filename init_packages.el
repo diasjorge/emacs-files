@@ -178,6 +178,14 @@
 
 (defun feature-mode-after-load ()
   (setq feature-use-rvm t)
+  (eval-after-load "ruby-mode"
+    '(progn
+       (add-to-list 'ruby-font-lock-syntactic-keywords
+                    `("\\(^\\|[=(,~?:;<>]\\|\\(^\\|\\s *\\)\\(Given\\|When\\|Then\\)\\|g?sub!?\\|scan\\|split!?\\)\\s *\\(/\\)[^/\n\\\\]*\\(\\\\.[^/\n\\\\]*\\)*\\(/\\)"
+                      (4
+                       (7 . 47))
+                      (6
+                       (7 . 47))))))
 )
 
 (defun inf-ruby-after-load ()
@@ -242,6 +250,11 @@
         (:name yaml-mode
                :after (progn (yaml-mode-after-load)))
         (:name nxhtml
+               :type github
+               :pkgname diasjorge/nxhtml
+               :build
+               (list (concat el-get-emacs " -batch -q -no-site-file -L . -l nxhtmlmaint.el -f nxhtmlmaint-start-byte-compilation"))
+               :load "autostart.el"
                :after (progn (nxhtml-after-load)))
         ;; (:name rhtml-mode
         ;;        :after (progn (rhtml-mode-after-load)))
