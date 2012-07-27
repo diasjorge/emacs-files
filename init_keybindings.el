@@ -7,6 +7,7 @@
 (global-set-key (kbd "M-.") 'etags-select-find-tag-at-point)
 (global-set-key (kbd "M-,") 'etags-select-find-tag)
 
+(global-set-key (kbd "C-_") 'textmate-toggle-camel-case)
 (global-set-key (kbd "C-%") 'query-replace-regexp)
 
 (global-set-key (kbd "C-c b") 'browse-url)

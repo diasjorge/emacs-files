@@ -214,6 +214,33 @@
     (if (eq (cdr aitem) oldmode)
     (setcdr aitem newmode))))
 
+(defun textmate-toggle-camel-case ()
+  "Toggle current sexp between camelCase and snake_case, like TextMate C-_."
+  (interactive)
+  (if (thing-at-point 'word)
+      (progn
+        (unless (looking-at "\\<") (backward-sexp))
+        (let ((case-fold-search nil)
+              (start (point))
+              (end (save-excursion (forward-sexp) (point))))
+          (if (and (looking-at "[a-z0-9_]+") (= end (match-end 0))) ; snake-case
+              (progn
+                (goto-char start)
+                (while (re-search-forward "_[a-z]" end t)
+                  (goto-char (1- (point)))
+                  (delete-char -1)
+                  (upcase-region (point) (1+ (point)))
+                  (setq end (1- end))))
+            (downcase-region (point) (1+ (point)))
+            (while (re-search-forward "[A-Z][a-z]" end t)
+              (forward-char -2)
+              (insert "_")
+              (downcase-region (point) (1+ (point)))
+              (forward-char 1)
+              (setq end (1+ end)))
+            (downcase-region start end)
+            )))))
+
 ;; Insert file path using autocompletion
 (defun insert-path ()
   "Inserts a path into the buffer with completion"
