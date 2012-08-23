@@ -16,6 +16,7 @@
   (add-to-list 'auto-mode-alist '("\\.gemspec$" . ruby-mode))
   (add-to-list 'auto-mode-alist '("\\.builder$" . ruby-mode))
   (add-to-list 'auto-mode-alist '("\\.autotest$" . ruby-mode))
+  (add-to-list 'auto-mode-alist '("\\.jbuilder$" . ruby-mode))
 
   (add-hook 'ruby-mode-hook '(lambda ()
                                ;; (setq ruby-deep-indent-paren nil)
@@ -123,7 +124,7 @@
             (concat (car file-cons) " "
                     (cadr (reverse (split-string (cdr file-cons) "/"))))))
 
-  (setq ffip-patterns ("*"))
+  (setq ffip-patterns '("*"))
   (setq ffip-find-options "-not -regex \".*git.*\"")
   (setq ffip-limit 30000))
 
@@ -156,11 +157,11 @@
         nxml-degraded t)
 
   ;; nxhtml sets up javascript-mode by default
-  (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
+  (replace-alist-mode auto-mode-alist 'javascript-mode 'js2-mode)
 )
 
 (defun jekyll-el-after-load ()
-  (setq jekyll-directory "/home/boston/development/mrdias.com/")
+  (setq jekyll-directory "~/development/mrdias.com/")
 )
 
 (defun autopair-after-load ()
@@ -205,6 +206,15 @@
 (defun etags-select-after-load ()
   (setq etags-select-highlight-delay 0.5)
 )
+
+(defun csv-mode-after-load ()
+   (add-to-list 'auto-mode-alist '("\\.[Cc][Ss][Vv]\\'" . csv-mode))
+   (autoload 'csv-mode "csv-mode"
+     "Major mode for editing comma-separated value files." t))
+
+(defun jshint-mode-after-load ()
+  (add-hook 'js2-mode-hook
+            (lambda () (flymake-mode t))))
 
 ;; local sources
 (setq el-get-sources
@@ -288,7 +298,16 @@
         (:name bundler
                :type github
                :pkgname tobiassvn/bundler.el)
+        (:name csv-mode
+               :after (progn (csv-mode-after-load)))
+        (:name expand-region)
+        (:name jshint-mode
+               :type github
+               :pkgname diasjorge/jshint-mode
+               :after (progn (jshint-mode-after-load)))
 ))
+
+
 
 (defun sync-packages ()
   "Synchronize packages"

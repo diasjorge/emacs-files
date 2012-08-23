@@ -67,6 +67,10 @@
      (define-key feature-mode-map (kbd "C-x t") 'feature-verify-all-scenarios-in-buffer)
      (define-key feature-mode-map (kbd "C-x SPC") 'feature-verify-scenario-at-pos)))
 
+(eval-after-load "expand-region-core"
+  '(progn
+     (global-set-key (kbd "C-=") 'er/expand-region)))
+
 ;;; Disabled keys
 (global-unset-key (kbd "C-w")) ;; prevent accidentally closing buffer
 (global-unset-key (kbd "<insert>"))
