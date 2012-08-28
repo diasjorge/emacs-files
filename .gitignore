@@ -15,3 +15,4 @@ elpa/*
 /history
 *.yas-compiled-snippets.el
 /var/pcache/gh/gh-gist-api/*
+/eshell/history
