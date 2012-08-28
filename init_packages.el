@@ -213,8 +213,12 @@
      "Major mode for editing comma-separated value files." t))
 
 (defun jshint-mode-after-load ()
+  (require 'flymake-jshint)
   (add-hook 'js2-mode-hook
             (lambda () (flymake-mode t))))
+
+(defun expand-region-after-load ()
+  (require 'expand-region))
 
 ;; local sources
 (setq el-get-sources
@@ -300,7 +304,9 @@
                :pkgname tobiassvn/bundler.el)
         (:name csv-mode
                :after (progn (csv-mode-after-load)))
-        (:name expand-region)
+        (:name expand-region
+               :pkgname diasjorge/expand-region.el
+               :after (progn (expand-region-after-load)))
         (:name jshint-mode
                :type github
                :pkgname diasjorge/jshint-mode
