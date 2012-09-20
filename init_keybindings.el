@@ -71,6 +71,20 @@
   '(progn
      (global-set-key (kbd "C-=") 'er/expand-region)))
 
+(eval-after-load "multiple-cursors"
+  '(progn
+     ;; From active region to multiple cursors:
+    (global-set-key (kbd "C-c = =") 'mc/edit-lines)
+    (global-set-key (kbd "C-c = e") 'mc/edit-ends-of-lines)
+    (global-set-key (kbd "C-c = a") 'mc/edit-beginnings-of-lines)
+
+    ;; Mark more like this
+    (global-set-key (kbd "C-]") 'mc/mark-next-like-this)
+    (global-set-key (kbd "C-}") 'mc/mark-all-like-this)
+    ;; (global-set-key (kbd "C-[") 'mc/mark-previous-like-this)
+    (global-set-key (kbd "C-{") 'mc/mark-all-in-region)
+   (global-set-key (kbd "C-+") 'mc/mark-more-like-this-extended)))
+
 ;;; Disabled keys
 (global-unset-key (kbd "C-w")) ;; prevent accidentally closing buffer
 (global-unset-key (kbd "<insert>"))

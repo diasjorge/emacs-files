@@ -220,6 +220,10 @@
 (defun expand-region-after-load ()
   (require 'expand-region))
 
+(defun multiple-cursors-after-load ()
+  (delete-selection-mode 1)
+)
+
 ;; local sources
 (setq el-get-sources
       '((:name ergoemacs-keybindings
@@ -311,6 +315,11 @@
                :type github
                :pkgname diasjorge/jshint-mode
                :after (progn (jshint-mode-after-load)))
+        (:name multiple-cursors
+               :type github
+               :pkgname magnars/multiple-cursors.el
+               :load "multiple-cursors.el"
+               :after (progn (multiple-cursors-after-load)))
 ))
 
 
