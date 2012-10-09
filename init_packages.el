@@ -4,6 +4,8 @@
 
 (defun ruby-mode-after-load ()
   (autoload 'ruby-mode "ruby-mode" nil t)
+  (add-to-list 'interpreter-mode-alist '("ruby" . ruby-mode))
+
   (add-to-list 'auto-mode-alist '("\\.rb$" . ruby-mode))
   (add-to-list 'auto-mode-alist '("\\.ru$" . ruby-mode))
   (add-to-list 'auto-mode-alist '("Capfile" . ruby-mode))
@@ -19,64 +21,10 @@
   (add-to-list 'auto-mode-alist '("\\.jbuilder$" . ruby-mode))
 
   (add-hook 'ruby-mode-hook '(lambda ()
-                               ;; (setq ruby-deep-indent-paren nil)
                                (setq c-tab-always-indent nil)
-                               (require 'inf-ruby)
-                               (require 'ruby-compilation)
-                               (require 'ruby-test-mode)
+                               (ruby-fancy-indent)
                                (if (and buffer-file-name (string-match-p "\\.erb" buffer-file-name))
                                    (setq ruby-insert-encoding-magic-comment nil))))
-
-  ;; This allows indentation like:
-  ;; object.method(
-  ;;   arg1
-  ;; )
-  ;; when ruby-deep-indent-paren is nil
-  (defadvice ruby-indent-line (after unindent-closing-paren activate)
-    (if (eq ruby-deep-indent-paren nil)
-        (let ((column (current-column))
-              indent offset)
-          (save-excursion
-            (back-to-indentation)
-            (let ((state (syntax-ppss)))
-              (setq offset (- column (current-column)))
-              (when (and (eq (char-after) ?\))
-                         (not (zerop (car state))))
-                (goto-char (cadr state))
-                (setq indent (current-indentation)))))
-          (when indent
-            (indent-line-to indent)
-            (when (> offset 0) (forward-char offset))))))
-
-  ;; This allows indentation without parenthesis
-  ;; object.method arg1,
-  ;;               arg2
-  ;; when ruby-deep-indent-paren is nil
-  ;; object.method arg1,
-  ;;   arg2
-  (defadvice ruby-indent-line (after line-up-args activate)
-    (let (indent prev-indent arg-indent)
-      (save-excursion
-        (back-to-indentation)
-        (when (zerop (car (syntax-ppss)))
-          (setq indent (current-column))
-          (skip-chars-backward " \t\n")
-          (when (eq ?, (char-before))
-            (ruby-backward-sexp)
-            (back-to-indentation)
-            (setq prev-indent (current-column))
-            (skip-syntax-forward "w_.")
-            (skip-chars-forward " ")
-            (setq arg-indent (current-column)))))
-      (when prev-indent
-        (let ((offset (- (current-column) indent)))
-          (cond ((< indent prev-indent)
-                 (indent-line-to prev-indent))
-                ((= indent prev-indent)
-                 (if (eq ruby-deep-indent-paren nil)
-                     (indent-line-to (+ prev-indent 2))
-                   (indent-line-to arg-indent))))
-          (when (> offset 0) (forward-char offset))))))
 )
 
 (defun yaml-mode-after-load ()
@@ -180,14 +128,6 @@
 
 (defun feature-mode-after-load ()
   (setq feature-use-rvm t)
-  (eval-after-load "ruby-mode"
-    '(progn
-       (add-to-list 'ruby-font-lock-syntactic-keywords
-                    `("\\(^\\|[=(,~?:;<>]\\|\\(^\\|\\s *\\)\\(Given\\|When\\|Then\\)\\|g?sub!?\\|scan\\|split!?\\)\\s *\\(/\\)[^/\n\\\\]*\\(\\\\.[^/\n\\\\]*\\)*\\(/\\)"
-                      (4
-                       (7 . 47))
-                      (6
-                       (7 . 47))))))
 )
 
 (defun inf-ruby-after-load ()
@@ -256,7 +196,7 @@
         (:name rvm
                :after (progn (rvm-after-load)))
         (:name ruby-mode
-               :load "ruby-mode.el"
+               :type builtin
                :after (progn (ruby-mode-after-load)))
         (:name inf-ruby
                :after (progn (inf-ruby-after-load)))
