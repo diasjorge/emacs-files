@@ -12,6 +12,8 @@
 
 (global-set-key (kbd "C-c b") 'browse-url)
 (global-set-key (kbd "C-c w") 'wget)
+(global-set-key (kbd "C-c r") 'revert-buffer)
+
 
 ;;; Packages
 (eval-after-load "jekyll"
