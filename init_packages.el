@@ -106,6 +106,7 @@
 
   ;; nxhtml sets up javascript-mode by default
   (replace-alist-mode auto-mode-alist 'javascript-mode 'js2-mode)
+  (add-to-list 'auto-mode-alist '("\\.html\\.haml$" . haml-mode))
 )
 
 (defun jekyll-el-after-load ()
@@ -208,6 +209,11 @@
                :after (progn (feature-mode-after-load)))
         (:name yaml-mode
                :after (progn (yaml-mode-after-load)))
+        (:name haml-mode
+               :description "Major mode for editing Haml files"
+               :type github
+               :pkgname "dgutov/haml-mode")
+        (:name sass-mode)
         (:name nxhtml
                :type github
                :pkgname diasjorge/nxhtml
@@ -220,8 +226,6 @@
         (:name zencoding-mode
                :after (progn (zencoding-mode-after-load)))
         (:name css-mode)
-        (:name haml-mode)
-        (:name sass-mode)
         (:name js2-mode-mooz
                :type github
                :pkgname mooz/js2-mode
