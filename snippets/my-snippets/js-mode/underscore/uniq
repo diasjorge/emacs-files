@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# uuid: AFC4ED66-38FB-4B71-BAE9-6CAB490662C2
+# contributor: Translated from textmate snippet by textmate-import.el
+# contributor: Imported by Jorge Dias
+# contributor: Original Author caiogondim (Package javascript-underscore from Github t, ver -d5902c8)
+# name: uniq
+# key: .uniq
+# --
+.uniq(${1:array}${2:, ${3:[isSorted]}})$0

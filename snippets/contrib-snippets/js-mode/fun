@@ -1,0 +1,7 @@
+# -*- coding: utf-8; mode: snippet -*-
+# name: fun
+# contributor: David Miller <david@deadpansincerity.com>
+# --
+function ${1:my_function}( ${2:args} ){
+    $0
+}

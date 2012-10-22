@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# uuid: B989B97B-2AF6-491D-AF44-DF3CC202A5B1
+# contributor: Translated from textmate snippet by textmate-import.el
+# contributor: Imported by Jorge Dias
+# contributor: Original Author caiogondim (Package javascript-underscore from Github t, ver -d5902c8)
+# name: invoke
+# key: .invoke
+# --
+.invoke('${1:methodName}'${2:, ${3:[*arguments]}})$0

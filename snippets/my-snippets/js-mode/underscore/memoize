@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# uuid: 0660189F-7E46-4AE4-A295-E30B31D885F2
+# contributor: Translated from textmate snippet by textmate-import.el
+# contributor: Imported by Jorge Dias
+# contributor: Original Author caiogondim (Package javascript-underscore from Github t, ver -d5902c8)
+# name: memoize
+# key: .memoize
+# --
+.memoize(${1:[hashFunction]})$0

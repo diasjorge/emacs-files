@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# uuid: 153D08E6-7E0B-4595-9374-C03BBFA23EBA
+# contributor: Translated from textmate snippet by textmate-import.el
+# contributor: Imported by Jorge Dias
+# contributor: Original Author caiogondim (Package javascript-underscore from Github t, ver -d5902c8)
+# name: detect
+# key: .detect
+# --
+.detect(function(${1:num}) {
+	$2
+}${3:, ${4:[context]}})$0

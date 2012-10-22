@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# uuid: 5558CDDB-032E-4A63-A83E-2F4EA840EA60
+# contributor: Translated from textmate snippet by textmate-import.el
+# contributor: Imported by Jorge Dias
+# contributor: Original Author caiogondim (Package javascript-underscore from Github t, ver -d5902c8)
+# name: groupBy
+# key: .groupBy
+# --
+.groupBy(function(${1:value}) {
+	$2
+})$0

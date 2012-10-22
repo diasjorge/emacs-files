@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# uuid: 1FB1D46D-8978-4330-98E2-FB5A8310CE2F
+# contributor: Translated from textmate snippet by textmate-import.el
+# contributor: Imported by Jorge Dias
+# contributor: Original Author caiogondim (Package javascript-underscore from Github t, ver -d5902c8)
+# name: last
+# key: .last
+# --
+.last()$0

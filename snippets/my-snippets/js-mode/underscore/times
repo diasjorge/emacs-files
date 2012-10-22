@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# uuid: 40C76A76-B988-4DB0-A377-F5B4A5C04AA6
+# contributor: Translated from textmate snippet by textmate-import.el
+# contributor: Imported by Jorge Dias
+# contributor: Original Author caiogondim (Package javascript-underscore from Github t, ver -d5902c8)
+# name: times
+# key: .times
+# --
+.times(${1:function(${2:index}) {
+	$3
+`"}"`})$0

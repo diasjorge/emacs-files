@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# uuid: 70B9F630-FDF6-4984-876F-E03CB417B424
+# contributor: Translated from textmate snippet by textmate-import.el
+# contributor: Imported by Jorge Dias
+# contributor: Original Author caiogondim (Package javascript-underscore from Github t, ver -d5902c8)
+# name: mixin
+# key: _.mixin
+# --
+_.mixin(${1:`"{"`${2:name}: ${3:function(${4:*arguments}) {
+	$5
+`"}"`}})$0

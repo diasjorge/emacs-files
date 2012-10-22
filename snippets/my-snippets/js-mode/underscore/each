@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# uuid: 7D29E983-B4EF-49DA-819E-2E2BB3DFB18E
+# contributor: Translated from textmate snippet by textmate-import.el
+# contributor: Imported by Jorge Dias
+# contributor: Original Author caiogondim (Package javascript-underscore from Github t, ver -d5902c8)
+# name: each
+# key: .each
+# --
+.each(function(${1:num${2:, ${3:key}}}) {
+	$4
+}${5:, ${6:[context]}})$0

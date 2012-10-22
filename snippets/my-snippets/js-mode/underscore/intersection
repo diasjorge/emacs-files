@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# uuid: 4640B9D1-3490-4EDD-BD9A-743E7BCE37F6
+# contributor: Translated from textmate snippet by textmate-import.el
+# contributor: Imported by Jorge Dias
+# contributor: Original Author caiogondim (Package javascript-underscore from Github t, ver -d5902c8)
+# name: intersection
+# key: .intersection
+# --
+.intersection(${1:*arrays})$0

@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# uuid: 804E84A5-B1AC-4BBC-8D45-7BD3B10EB774
+# contributor: Translated from textmate snippet by textmate-import.el
+# contributor: Imported by Jorge Dias
+# contributor: Original Author caiogondim (Package javascript-underscore from Github t, ver -d5902c8)
+# name: rest
+# key: .rest
+# --
+.rest(${1:[n]})$0

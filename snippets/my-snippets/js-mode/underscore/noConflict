@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# uuid: 2C4B0571-93C9-4700-B6E5-95BC22F2ABF7
+# contributor: Translated from textmate snippet by textmate-import.el
+# contributor: Imported by Jorge Dias
+# contributor: Original Author caiogondim (Package javascript-underscore from Github t, ver -d5902c8)
+# name: noConflict
+# key: _.noConflict
+# --
+_.noConflict()

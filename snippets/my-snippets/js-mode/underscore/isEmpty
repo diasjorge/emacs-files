@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# uuid: BE8F5D3B-A924-418B-B2EC-71BF34F1E5FD
+# contributor: Translated from textmate snippet by textmate-import.el
+# contributor: Imported by Jorge Dias
+# contributor: Original Author caiogondim (Package javascript-underscore from Github t, ver -d5902c8)
+# name: isEmpty
+# key: .isEmpty
+# --
+.isEmpty()

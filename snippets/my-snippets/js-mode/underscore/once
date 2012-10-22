@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# uuid: 69200389-68A6-4FF2-8AE8-29DC7F0619F1
+# contributor: Translated from textmate snippet by textmate-import.el
+# contributor: Imported by Jorge Dias
+# contributor: Original Author caiogondim (Package javascript-underscore from Github t, ver -d5902c8)
+# name: once
+# key: .once
+# --
+.once()

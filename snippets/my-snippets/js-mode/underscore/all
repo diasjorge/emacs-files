@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# uuid: 54EAC36D-E3FC-4E62-BB3B-57C7DC02CF35
+# contributor: Translated from textmate snippet by textmate-import.el
+# contributor: Imported by Jorge Dias
+# contributor: Original Author caiogondim (Package javascript-underscore from Github t, ver -d5902c8)
+# name: all
+# key: .all
+# --
+.all(function(${1:value}) {
+	$2
+}${3:, ${4:[context]}})

@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# uuid: AD7A7B09-7744-47F1-94EA-F5A22E227FEA
+# contributor: Translated from textmate snippet by textmate-import.el
+# contributor: Imported by Jorge Dias
+# contributor: Original Author caiogondim (Package javascript-underscore from Github t, ver -d5902c8)
+# name: isArray
+# key: .isArray()
+# --
+.isArray()

@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# uuid: 00A44DAD-A644-453A-8FB3-43A29BE7C422
+# contributor: Translated from textmate snippet by textmate-import.el
+# contributor: Imported by Jorge Dias
+# contributor: Original Author caiogondim (Package javascript-underscore from Github t, ver -d5902c8)
+# name: isEqual
+# key: .isEqual
+# --
+.isEqual(${1:other})$0

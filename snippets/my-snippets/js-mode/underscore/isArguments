@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# uuid: 1DA8D2D4-4FF1-43CD-B4CA-65807DC34282
+# contributor: Translated from textmate snippet by textmate-import.el
+# contributor: Imported by Jorge Dias
+# contributor: Original Author caiogondim (Package javascript-underscore from Github t, ver -d5902c8)
+# name: isArguments
+# key: .isArguments
+# --
+.isArguments()

@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# uuid: 3A73B5F5-41C7-472C-A55E-BCE631AAE6BB
+# contributor: Translated from textmate snippet by textmate-import.el
+# contributor: Imported by Jorge Dias
+# contributor: Original Author caiogondim (Package javascript-underscore from Github t, ver -d5902c8)
+# name: values
+# key: .values
+# --
+.values()

@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# uuid: 5754D7A7-6829-42CC-A1F0-1B6E0DC7E440
+# contributor: Translated from textmate snippet by textmate-import.el
+# contributor: Imported by Jorge Dias
+# contributor: Original Author caiogondim (Package javascript-underscore from Github t, ver -d5902c8)
+# name: isBoolean
+# key: .isBoolean
+# --
+.isBoolean()

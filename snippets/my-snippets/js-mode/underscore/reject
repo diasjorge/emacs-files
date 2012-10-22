@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# uuid: 77637439-E3F1-4D4A-B3C8-0BB3FC5CF013
+# contributor: Translated from textmate snippet by textmate-import.el
+# contributor: Imported by Jorge Dias
+# contributor: Original Author caiogondim (Package javascript-underscore from Github t, ver -d5902c8)
+# name: reject
+# key: .reject
+# --
+.reject(function(${1:num}) {
+	$2
+}${3:, ${4:[context]}})$0

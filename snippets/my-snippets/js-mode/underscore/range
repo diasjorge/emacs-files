@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# uuid: 89DA6837-A1AC-432F-9ABE-99E7DF1FC717
+# contributor: Translated from textmate snippet by textmate-import.el
+# contributor: Imported by Jorge Dias
+# contributor: Original Author caiogondim (Package javascript-underscore from Github t, ver -d5902c8)
+# name: range
+# key: .range
+# --
+.range(${1:${2:[start]}, }${3:stop}${4:, ${5:[step]}})$0

@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# uuid: 3EF5BB71-4917-4280-92CF-2885F73CAC5B
+# contributor: Translated from textmate snippet by textmate-import.el
+# contributor: Imported by Jorge Dias
+# contributor: Original Author caiogondim (Package javascript-underscore from Github t, ver -d5902c8)
+# name: chain
+# key: .chain
+# --
+.chain()

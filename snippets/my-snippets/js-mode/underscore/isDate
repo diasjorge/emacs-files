@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# uuid: AFFB3576-52E0-4B61-BCD5-80BFDF6E5295
+# contributor: Translated from textmate snippet by textmate-import.el
+# contributor: Imported by Jorge Dias
+# contributor: Original Author caiogondim (Package javascript-underscore from Github t, ver -d5902c8)
+# name: isDate
+# key: .isDate
+# --
+.isDate()

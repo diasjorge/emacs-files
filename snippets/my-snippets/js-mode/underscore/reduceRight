@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# uuid: 4BECC504-4243-4A73-B1C8-F080DD5FBFDE
+# contributor: Translated from textmate snippet by textmate-import.el
+# contributor: Imported by Jorge Dias
+# contributor: Original Author caiogondim (Package javascript-underscore from Github t, ver -d5902c8)
+# name: reduceRight
+# key: .reduceRight
+# --
+.reduceRight(function(${1:a}, ${2:b}) {
+	$3
+}, ${4:[]}${5:, ${6:[context]}})$0

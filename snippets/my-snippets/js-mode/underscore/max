@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# uuid: 072DD5BB-A607-4AB2-9DDA-AF01E463E979
+# contributor: Translated from textmate snippet by textmate-import.el
+# contributor: Imported by Jorge Dias
+# contributor: Original Author caiogondim (Package javascript-underscore from Github t, ver -d5902c8)
+# name: max
+# key: .max
+# --
+.max(${1:function(${2:value}) {
+	$3
+`"}"`${4:, ${5:[context]}}})

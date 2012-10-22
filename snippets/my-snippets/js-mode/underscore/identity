@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# uuid: DFAB8AB0-925B-4A2C-98F2-C3B26A86F7FE
+# contributor: Translated from textmate snippet by textmate-import.el
+# contributor: Imported by Jorge Dias
+# contributor: Original Author caiogondim (Package javascript-underscore from Github t, ver -d5902c8)
+# name: identity
+# key: .identity
+# --
+.identity()

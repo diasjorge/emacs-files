@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# uuid: 995E0A6C-E2B3-4B88-A735-A0541FDB058B
+# contributor: Translated from textmate snippet by textmate-import.el
+# contributor: Imported by Jorge Dias
+# contributor: Original Author caiogondim (Package javascript-underscore from Github t, ver -d5902c8)
+# name: uniqueId
+# key: _.uniqueId
+# --
+_.uniqueId(${1:[prefix]})$0

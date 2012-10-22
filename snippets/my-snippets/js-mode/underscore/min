@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# uuid: 75AAB668-71A5-48AC-B44C-0EE5F2F59442
+# contributor: Translated from textmate snippet by textmate-import.el
+# contributor: Imported by Jorge Dias
+# contributor: Original Author caiogondim (Package javascript-underscore from Github t, ver -d5902c8)
+# name: min
+# key: .min
+# --
+.min(${1:function(${2:value}) {
+	$3
+`"}"`${4:, ${5:[context]}}})

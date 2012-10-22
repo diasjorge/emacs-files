@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# uuid: D9007F42-AA13-4167-A9FF-E1DE9181AA12
+# contributor: Translated from textmate snippet by textmate-import.el
+# contributor: Imported by Jorge Dias
+# contributor: Original Author caiogondim (Package javascript-underscore from Github t, ver -d5902c8)
+# name: union
+# key: .union
+# --
+.union(${1:*arrays})$0

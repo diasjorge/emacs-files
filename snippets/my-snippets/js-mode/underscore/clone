@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# uuid: 0F7927CB-8F26-4D89-9EE7-FA370F046F03
+# contributor: Translated from textmate snippet by textmate-import.el
+# contributor: Imported by Jorge Dias
+# contributor: Original Author caiogondim (Package javascript-underscore from Github t, ver -d5902c8)
+# name: clone
+# key: .clone
+# --
+.clone()

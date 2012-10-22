@@ -1,0 +1,13 @@
+# -*- mode: snippet -*-
+# uuid: E59111A8-236C-4668-B0AA-0AC5CC6EABF8
+# contributor: Translated from textmate snippet by textmate-import.el
+# contributor: Imported by Jorge Dias
+# contributor: Original Author caiogondim (Package javascript-underscore from Github t, ver -d5902c8)
+# name: reduce
+# key: .reduce
+# --
+.reduce(function(${1:memo}, ${2:num}) {
+	$3
+
+	return memo
+}${4:, ${5:[context]}})$0

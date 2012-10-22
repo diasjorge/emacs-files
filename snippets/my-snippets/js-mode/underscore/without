@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# uuid: 594A0D75-59A6-46AB-BDCD-D30DE772B0D1
+# contributor: Translated from textmate snippet by textmate-import.el
+# contributor: Imported by Jorge Dias
+# contributor: Original Author caiogondim (Package javascript-underscore from Github t, ver -d5902c8)
+# name: without
+# key: .without
+# --
+.without(${1:[*values]})$0
