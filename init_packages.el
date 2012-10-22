@@ -207,6 +207,10 @@
         (:name rinari)
         (:name feature-mode
                :after (progn (feature-mode-after-load)))
+        (:name ruby-tools
+               :type github
+               :pkgname "rejeep/ruby-tools"
+               :load "ruby-tools.el")
         (:name yaml-mode
                :after (progn (yaml-mode-after-load)))
         (:name haml-mode
