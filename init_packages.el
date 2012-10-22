@@ -107,6 +107,10 @@
   ;; nxhtml sets up javascript-mode by default
   (replace-alist-mode auto-mode-alist 'javascript-mode 'js2-mode)
   (add-to-list 'auto-mode-alist '("\\.html\\.haml$" . haml-mode))
+
+  (remove-alist-mode auto-mode-alist "\\.html\\'")
+  (add-to-list 'auto-mode-alist '("\\.html$" . html-mode))
+
 )
 
 (defun jekyll-el-after-load ()
