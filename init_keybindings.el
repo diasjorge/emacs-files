@@ -13,7 +13,7 @@
 (global-set-key (kbd "C-c b") 'browse-url)
 (global-set-key (kbd "C-c w") 'wget)
 (global-set-key (kbd "C-c r") 'revert-buffer)
-
+(global-set-key (kbd "C-c n") 'clean-up-buffer-or-region)
 
 ;;; Packages
 (eval-after-load "jekyll"
@@ -83,9 +83,16 @@
     ;; Mark more like this
     (global-set-key (kbd "C-]") 'mc/mark-next-like-this)
     (global-set-key (kbd "C-}") 'mc/mark-all-like-this)
-    ;; (global-set-key (kbd "C-[") 'mc/mark-previous-like-this)
+    (global-set-key (kbd "C-M-]") 'mc/mark-previous-like-this)
     (global-set-key (kbd "C-{") 'mc/mark-all-in-region)
    (global-set-key (kbd "C-+") 'mc/mark-more-like-this-extended)))
+
+(eval-after-load "js2-mode"
+  '(progn
+     ;; Insert file path using autocompletion
+     (define-key js2-mode-map (kbd "C-'") 'ruby-tools-to-single-quote-string)
+     (define-key js2-mode-map (kbd "C-\"") 'ruby-tools-to-double-quote-string)
+     ))
 
 ;;; Disabled keys
 (global-unset-key (kbd "C-w")) ;; prevent accidentally closing buffer

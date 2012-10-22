@@ -208,11 +208,17 @@
            (position (cdr (assoc selected-symbol name-and-pos))))
       (goto-char position))))
 
-;; Remove all annoying modes from auto mode lists
 (defun replace-alist-mode (alist oldmode newmode)
+  "Replace mode from list"
   (dolist (aitem alist)
     (if (eq (cdr aitem) oldmode)
     (setcdr aitem newmode))))
+
+(defun remove-alist-mode (alist extension)
+  "Remove mode from list"
+  (setq alist
+        (remove-if (lambda (e)
+                     (string= extension (car e))) alist)))
 
 (defun textmate-toggle-camel-case ()
   "Toggle current sexp between camelCase and snake_case, like TextMate C-_."
@@ -241,8 +247,19 @@
             (downcase-region start end)
             )))))
 
-;; Insert file path using autocompletion
 (defun insert-path ()
   "Inserts a path into the buffer with completion"
   (interactive)
   (insert (expand-file-name (read-file-name "Path: "))))
+
+(defun clean-up-buffer-or-region ()
+  "Untabifies, indents and deletes trailing whitespace from buffer or region."
+  (interactive)
+  (save-excursion
+    (unless (region-active-p)
+      (mark-whole-buffer))
+    (untabify (region-beginning) (region-end))
+    (indent-region (region-beginning) (region-end))
+    (save-restriction
+      (narrow-to-region (region-beginning) (region-end))
+      (delete-trailing-whitespace))))
