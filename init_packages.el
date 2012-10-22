@@ -123,10 +123,6 @@
   (unless autopair-global-mode
     (autopair-global-mode)))
 
-;; (defun rhtml-mode-after-load ()
-;;   (add-hook 'rhtml-mode-hook
-;;             'zencoding-mode))
-
 (defun rvm-after-load ()
   (rvm-autodetect-ruby)
 )
@@ -163,7 +159,8 @@
             (lambda () (flymake-mode t))))
 
 (defun expand-region-after-load ()
-  (require 'expand-region))
+  (autoload 'expand-region "expand-region")
+)
 
 (defun multiple-cursors-after-load ()
   (delete-selection-mode 1)
@@ -207,7 +204,8 @@
                :after (progn (inf-ruby-after-load)))
         (:name ruby-compilation)
         (:name ruby-test-mode
-               :url "git://github.com/diasjorge/ruby-test-mode.git")
+               :type github
+               :pkgname "diasjorge/ruby-test-mode")
         (:name rinari)
         (:name feature-mode
                :after (progn (feature-mode-after-load)))
@@ -229,14 +227,12 @@
                (list (concat el-get-emacs " -batch -q -no-site-file -L . -l nxhtmlmaint.el -f nxhtmlmaint-start-byte-compilation"))
                :load "autostart.el"
                :after (progn (nxhtml-after-load)))
-        ;; (:name rhtml-mode
-        ;;        :after (progn (rhtml-mode-after-load)))
         (:name zencoding-mode
                :after (progn (zencoding-mode-after-load)))
         (:name css-mode)
         (:name js2-mode-mooz
                :type github
-               :pkgname mooz/js2-mode
+               :pkgname "mooz/js2-mode"
                :load "js2-mode.el"
                :compile "js2-mode.el"
                :after (progn (js2-mode-after-load)))

@@ -8,7 +8,7 @@
   (load "init_mac"))
 
 (load "custom_functions")
-(load "init_packages")
 (load "init_preferences")
+(load "init_packages")
 (load "init_keybindings")
 (load "environment" t)
