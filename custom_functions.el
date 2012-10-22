@@ -125,13 +125,13 @@
 (defun haml-convert-region (beg end)
   "Convert selected region to haml"
   (interactive "r")
-  (let ((comando "html2haml -r -s"))
+  (let ((comando "html2haml -e -s"))
   (shell-command-on-region beg end comando (buffer-name) t)))
 
 (defun haml-to-html-region (beg end)
   "Convert selected region to html"
   (interactive "r")
-  (let ((comando "haml -s -c"))
+  (let ((comando "haml -s"))
   (shell-command-on-region beg end comando (buffer-name) t)))
 
 (defun haml-convert-buffer ()
@@ -146,7 +146,7 @@
 (defun sass-convert-region (beg end)
   "Convert selected region to sass"
   (interactive "r")
-  (let ((comando "css2sass -s"))
+  (let ((comando "sass-convert -s"))
   (shell-command-on-region beg end comando (buffer-name) t)))
 
 (defun rename-this-buffer-and-file ()
