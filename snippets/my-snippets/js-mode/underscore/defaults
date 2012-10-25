@@ -4,6 +4,6 @@
 # contributor: Imported by Jorge Dias
 # contributor: Original Author caiogondim (Package javascript-underscore from Github t, ver -d5902c8)
 # name: defaults
-# key: .defaults
+# key: defaults
 # --
-.defaults(${1:*defaults})$0
+defaults(${1:*defaults})$0

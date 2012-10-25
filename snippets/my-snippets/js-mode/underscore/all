@@ -4,8 +4,8 @@
 # contributor: Imported by Jorge Dias
 # contributor: Original Author caiogondim (Package javascript-underscore from Github t, ver -d5902c8)
 # name: all
-# key: .all
+# key: all
 # --
-.all(function(${1:value}) {
+all(function(${1:value}) {
 	$2
 }${3:, ${4:[context]}})

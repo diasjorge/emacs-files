@@ -4,6 +4,6 @@
 # contributor: Imported by Jorge Dias
 # contributor: Original Author caiogondim (Package javascript-underscore from Github t, ver -d5902c8)
 # name: size
-# key: .size
+# key: size
 # --
-.size(${1:list})$0
+size(${1:list})$0

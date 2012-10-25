@@ -4,6 +4,6 @@
 # contributor: Imported by Jorge Dias
 # contributor: Original Author caiogondim (Package javascript-underscore from Github t, ver -d5902c8)
 # name: compose
-# key: .compose
+# key: compose
 # --
-.compose(${1:*functions})$0
+compose(${1:*functions})$0

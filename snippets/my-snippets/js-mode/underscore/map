@@ -4,8 +4,8 @@
 # contributor: Imported by Jorge Dias
 # contributor: Original Author caiogondim (Package javascript-underscore from Github t, ver -d5902c8)
 # name: map
-# key: .map
+# key: map
 # --
-.map(function(${1:num${2:, ${3:key}}}) {
+map(function(${1:num${2:, ${3:key}}}) {
 	$4
 }${5:, ${6:[context]}})$0

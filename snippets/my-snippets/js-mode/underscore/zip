@@ -6,4 +6,4 @@
 # name: zip
 # key: .zip
 # --
-.zip(${1:*arrays})$0
+zip(${1:*arrays})$0

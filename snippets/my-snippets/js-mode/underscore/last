@@ -4,6 +4,6 @@
 # contributor: Imported by Jorge Dias
 # contributor: Original Author caiogondim (Package javascript-underscore from Github t, ver -d5902c8)
 # name: last
-# key: .last
+# key: last
 # --
-.last()$0
+last()$0

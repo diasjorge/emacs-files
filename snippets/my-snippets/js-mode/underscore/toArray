@@ -4,6 +4,6 @@
 # contributor: Imported by Jorge Dias
 # contributor: Original Author caiogondim (Package javascript-underscore from Github t, ver -d5902c8)
 # name: toArray
-# key: .toArray
+# key: toArray
 # --
-.toArray(${1:list})$0
+toArray(${1:list})$0

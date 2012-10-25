@@ -6,4 +6,4 @@
 # name: without
 # key: .without
 # --
-.without(${1:[*values]})$0
+without(${1:[*values]})$0

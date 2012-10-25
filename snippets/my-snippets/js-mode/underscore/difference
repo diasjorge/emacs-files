@@ -4,6 +4,6 @@
 # contributor: Imported by Jorge Dias
 # contributor: Original Author caiogondim (Package javascript-underscore from Github t, ver -d5902c8)
 # name: difference
-# key: .difference
+# key: difference
 # --
-.difference(${1:array})$0
+difference(${1:array})$0

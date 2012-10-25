@@ -4,8 +4,8 @@
 # contributor: Imported by Jorge Dias
 # contributor: Original Author caiogondim (Package javascript-underscore from Github t, ver -d5902c8)
 # name: sortBy
-# key: .sortBy
+# key: sortBy
 # --
-.sortBy(function(${1:value}) {
+sortBy(function(${1:value}) {
 	$2
 }${3:, ${4:[context]}})$0

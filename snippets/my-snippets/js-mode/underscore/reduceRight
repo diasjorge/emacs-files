@@ -4,8 +4,8 @@
 # contributor: Imported by Jorge Dias
 # contributor: Original Author caiogondim (Package javascript-underscore from Github t, ver -d5902c8)
 # name: reduceRight
-# key: .reduceRight
+# key: reduceRight
 # --
-.reduceRight(function(${1:a}, ${2:b}) {
+reduceRight(function(${1:a}, ${2:b}) {
 	$3
 }, ${4:[]}${5:, ${6:[context]}})$0

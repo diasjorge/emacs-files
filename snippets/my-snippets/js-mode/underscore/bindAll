@@ -4,6 +4,6 @@
 # contributor: Imported by Jorge Dias
 # contributor: Original Author caiogondim (Package javascript-underscore from Github t, ver -d5902c8)
 # name: bindAll
-# key: .bindAll
+# key: bindAll
 # --
-.bindAll(${1:*[methodNames]})$0
+bindAll(${1:*[methodNames]})$0

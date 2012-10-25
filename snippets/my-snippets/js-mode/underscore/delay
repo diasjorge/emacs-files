@@ -4,6 +4,6 @@
 # contributor: Imported by Jorge Dias
 # contributor: Original Author caiogondim (Package javascript-underscore from Github t, ver -d5902c8)
 # name: delay
-# key: .delay
+# key: delay
 # --
-.delay(${1:wait}${2:, ${3:*[arguments]}})$0
+delay(${1:wait}${2:, ${3:*[arguments]}})$0

@@ -4,8 +4,8 @@
 # contributor: Imported by Jorge Dias
 # contributor: Original Author caiogondim (Package javascript-underscore from Github t, ver -d5902c8)
 # name: groupBy
-# key: .groupBy
+# key: groupBy
 # --
-.groupBy(function(${1:value}) {
+groupBy(function(${1:value}) {
 	$2
 })$0

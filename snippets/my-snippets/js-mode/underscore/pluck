@@ -4,6 +4,6 @@
 # contributor: Imported by Jorge Dias
 # contributor: Original Author caiogondim (Package javascript-underscore from Github t, ver -d5902c8)
 # name: pluck
-# key: .pluck
+# key: pluck
 # --
-.pluck('${1:propertyName}')$0
+pluck('${1:propertyName}')$0

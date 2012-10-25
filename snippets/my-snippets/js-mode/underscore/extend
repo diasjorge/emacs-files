@@ -4,6 +4,6 @@
 # contributor: Imported by Jorge Dias
 # contributor: Original Author caiogondim (Package javascript-underscore from Github t, ver -d5902c8)
 # name: extend
-# key: .extend
+# key: extend
 # --
-.extend(${1:*sources})$0
+extend(${1:*sources})$0

@@ -6,4 +6,4 @@
 # name: wrap
 # key: .wrap
 # --
-.wrap(${1:wrapper})$0
+wrap(${1:wrapper})$0
