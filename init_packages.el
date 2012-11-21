@@ -86,7 +86,7 @@
           (list (concat snippets-dir "my-snippets")
                 (concat snippets-dir "contrib-snippets")
                 (concat el-get-dir (file-name-as-directory "yasnippet") "snippets")))
-    (yas/initialize))
+    (yas-global-mode 1))
 
   ;; Turn off auto new line on yas/minor-mode
   (add-hook 'yas/minor-mode-on-hook
@@ -164,6 +164,11 @@
 
 (defun multiple-cursors-after-load ()
   (delete-selection-mode 1)
+)
+
+(defun ido-ubiquitous-after-load ()
+  (eval-after-load "ido"
+    '(ido-ubiquitous-mode))
 )
 
 ;; local sources
@@ -268,6 +273,8 @@
                :pkgname magnars/multiple-cursors.el
                :load "multiple-cursors.el"
                :after (progn (multiple-cursors-after-load)))
+        (:name ido-ubiquitous
+               :after (progn (ido-ubiquitous-after-load)))
 ))
 
 
