@@ -94,6 +94,11 @@
      (define-key js2-mode-map (kbd "C-\"") 'ruby-tools-to-double-quote-string)
      ))
 
+(eval-after-load "ack-and-a-half"
+  '(progn
+     (global-set-key (kbd "C-c ' a") 'ack-and-a-half)))
+
+
 ;;; Disabled keys
 (global-unset-key (kbd "C-w")) ;; prevent accidentally closing buffer
 (global-unset-key (kbd "<insert>"))
