@@ -171,6 +171,14 @@
     '(ido-ubiquitous-mode))
 )
 
+(defun ido-speed-hack-after-load ()
+  (require 'ido-speed-hack)
+)
+
+(defun ido-better-flex-after-load ()
+  (ido-better-flex/enable)
+)
+
 ;; local sources
 (setq el-get-sources
       '((:name ergoemacs-keybindings
@@ -180,7 +188,7 @@
                :after (progn (emacs-goodies-el-after-load)))
         (:name etags-select
                :type github
-               :pkgname diasjorge/etags-select
+               :pkgname "diasjorge/etags-select"
                :after (progn (etags-select-after-load)))
         (:name auto-complete
                :after (progn (auto-complete-after-load)))
@@ -254,27 +262,36 @@
         (:name rainbow-mode)
         (:name ack-and-a-half
                :type github
-               :pkgname jhelwig/ack-and-a-half
+               :pkgname "jhelwig/ack-and-a-half"
                :after (progn (ack-and-a-half-after-load)))
         (:name bundler
                :type github
-               :pkgname tobiassvn/bundler.el)
+               :pkgname "tobiassvn/bundler.el")
         (:name csv-mode
                :after (progn (csv-mode-after-load)))
         (:name expand-region
-               :pkgname diasjorge/expand-region.el
+               :pkgname "diasjorge/expand-region.el"
                :after (progn (expand-region-after-load)))
         (:name jshint-mode
                :type github
-               :pkgname diasjorge/jshint-mode
+               :pkgname "diasjorge/jshint-mode"
                :after (progn (jshint-mode-after-load)))
         (:name multiple-cursors
                :type github
-               :pkgname magnars/multiple-cursors.el
+               :pkgname "magnars/multiple-cursors.el"
                :load "multiple-cursors.el"
                :after (progn (multiple-cursors-after-load)))
         (:name ido-ubiquitous
+               :compile "ido-ubiquitous.el"
                :after (progn (ido-ubiquitous-after-load)))
+        (:name ido-better-flex
+               :type elpa
+               :after (progn (ido-better-flex-after-load)))
+        (:name ido-speed-hack
+               :type github
+               :pkgname "orfelyus/ido-speed-hack"
+               :compile "ido-speed-hack.el"
+               :after (progn (ido-speed-hack-after-load)))
 ))
 
 
