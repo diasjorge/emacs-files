@@ -86,6 +86,8 @@
   (switch-to-buffer-other-window (current-buffer))
   (ruby-test-toggle-implementation-and-specification))
 
+(defvar ctags-options "" "Options for tags generation")
+
 (defun ruby-generate-tags()
   (interactive)
   (let ((root (ffip-project-root)))
@@ -94,8 +96,8 @@
       (if (file-exists-p my-tags-file)
           (delete-file my-tags-file))
       (shell-command
-       (format "ctags -e -R --exclude=db --exclude=.git --exclude=.#* -f %s %s"
-               my-tags-file root))
+       (format "ctags -e -R --exclude=db --exclude=.git --exclude=tmp --exclude=.#* %s -f %s %s"
+               ctags-options my-tags-file root))
       (if (get-file-buffer my-tags-file)
           (kill-buffer (get-file-buffer my-tags-file)))
       (visit-tags-table my-tags-file))))
