@@ -14,6 +14,7 @@
 (global-set-key (kbd "C-c w") 'wget)
 (global-set-key (kbd "C-c r") 'revert-buffer)
 (global-set-key (kbd "C-c n") 'clean-up-buffer-or-region)
+(global-set-key (kbd "C-c a") 'ack-and-a-half)
 
 ;;; Packages
 (eval-after-load "jekyll"
@@ -54,7 +55,10 @@
 
 (eval-after-load "custom_functions"
   '(progn
-     (global-set-key (kbd "C-t") 'ido-goto-symbol)))
+     (global-set-key (kbd "C-t") 'ido-goto-symbol)
+     (global-set-key (kbd "M-<up>") 'move-text-up)
+     (global-set-key (kbd "M-<down>") 'move-text-down)
+     ))
 
 (eval-after-load "find-file-in-project"
   '(progn
@@ -85,7 +89,7 @@
     (global-set-key (kbd "C-}") 'mc/mark-all-like-this)
     (global-set-key (kbd "C-M-]") 'mc/mark-previous-like-this)
     (global-set-key (kbd "C-{") 'mc/mark-all-in-region)
-   (global-set-key (kbd "C-+") 'mc/mark-more-like-this-extended)))
+    (global-set-key (kbd "C-+") 'mc/mark-more-like-this-extended)))
 
 (eval-after-load "js2-mode"
   '(progn
@@ -93,11 +97,6 @@
      (define-key js2-mode-map (kbd "C-'") 'ruby-tools-to-single-quote-string)
      (define-key js2-mode-map (kbd "C-\"") 'ruby-tools-to-double-quote-string)
      ))
-
-(eval-after-load "ack-and-a-half"
-  '(progn
-     (global-set-key (kbd "C-c ' a") 'ack-and-a-half)))
-
 
 ;;; Disabled keys
 (global-unset-key (kbd "C-w")) ;; prevent accidentally closing buffer

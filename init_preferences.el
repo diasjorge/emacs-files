@@ -153,6 +153,10 @@
   (set-buffer-process-coding-system 'utf-8-unix 'utf-8-unix))
 (add-hook 'term-exec-hook 'my-term-use-utf8)
 
+;; uniquify buffere names
+(require 'uniquify)
+(setq uniquify-buffer-name-style 'post-forward)
+
 
 ;; § ----------------------------------------
 ;; auto compile elisp files after save, do so only if there's exists a byte-compiled file
