@@ -159,6 +159,13 @@
     (if (not (and filename (file-exists-p filename)))
         (error "Buffer '%s' is not visiting a file!" name)
       (let ((new-name (read-file-name "New name: " (file-name-directory filename))))
+
+        (make-directory (file-name-directory new-name) t)
+
+        (if (file-directory-p new-name)
+            (setq new-name (concat new-name (file-name-nondirectory filename)))
+          )
+
         (cond ((get-buffer new-name)
                (error "A buffer named '%s' already exists!" new-name))
               (t
