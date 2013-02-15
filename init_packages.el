@@ -72,8 +72,11 @@
             (concat (car file-cons) " "
                     (cadr (reverse (split-string (cdr file-cons) "/"))))))
 
+  ;; (setq ffip-find-options "-not -regex \".*git.*\"")
+  ;; (add-to-list 'ffip-patterns "*.haml")
+  ;; (add-to-list 'ffip-patterns "*.json.*")
   (setq ffip-patterns '("*"))
-  (setq ffip-find-options "-not -regex \".*git.*\"")
+  (setq ffip-find-options "-not -regex \".*/\\\..*\" -not -regex \".*vendor/bundle.*\" -not -name \"*.gif\" -not -name \"*.png*\"")
   (setq ffip-limit 30000))
 
 (defun yasnippet-after-load ()
