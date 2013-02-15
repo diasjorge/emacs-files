@@ -182,6 +182,14 @@
   (ido-better-flex/enable)
 )
 
+(defun rebase-mode-after-load ()
+  ;; Fixes conflict with ergoemacs keybindings
+  (add-hook 'rebase-mode-hook
+            (lambda ()
+             (local-set-key (kbd "M-p") 'rebase-mode-move-line-up)
+             (local-set-key (kbd "M-n") 'rebase-mode-move-line-down)))
+)
+
 ;; local sources
 (setq el-get-sources
       '((:name ergoemacs-keybindings
@@ -207,6 +215,9 @@
                :after (progn (yasnippet-after-load)))
         (:name magit
                :features magit)
+        (:name rebase-mode
+               :type builtin
+               :after (progn (rebase-mode-after-load)))
         (:name git-emacs)
         (:name mo-git-blame)
         (:name gist
