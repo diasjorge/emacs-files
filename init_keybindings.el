@@ -4,7 +4,7 @@
 (global-set-key (kbd "M-Y") 'open-previous-line)
 (global-set-key (kbd "M-]") 'indent-magically)
 (global-set-key (kbd "M-<") 'toggle-hiding)
-(global-set-key (kbd "M-.") 'etags-select-find-tag-at-point)
+(global-set-key (kbd "M-.") 'my-find-tag)
 (global-set-key (kbd "M-,") 'etags-select-find-tag)
 
 (global-set-key (kbd "C-_") 'textmate-toggle-camel-case)
@@ -89,7 +89,10 @@
     (global-set-key (kbd "C-}") 'mc/mark-all-like-this)
     (global-set-key (kbd "C-M-]") 'mc/mark-previous-like-this)
     (global-set-key (kbd "C-{") 'mc/mark-all-in-region)
-    (global-set-key (kbd "C-+") 'mc/mark-more-like-this-extended)))
+    (global-set-key (kbd "C-+") 'mc/mark-more-like-this-extended)
+    (global-set-key (kbd "M-S-<mouse-1>") 'mc/add-cursor-on-click)
+    )
+)
 
 (eval-after-load "js2-mode"
   '(progn
