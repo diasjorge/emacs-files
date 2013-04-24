@@ -25,6 +25,15 @@
                                (ruby-fancy-indent)
                                (if (and buffer-file-name (string-match-p "\\.erb" buffer-file-name))
                                    (setq ruby-insert-encoding-magic-comment nil))))
+
+  ;; Ruby support for hs-mode
+  (add-to-list 'hs-special-modes-alist
+	     '(ruby-mode
+	       "\\(def\\|do\\|{\\)" "\\(end\\|end\\|}\\)" "#"
+	       (lambda (arg) (ruby-end-of-block)) nil))
+
+  (add-hook 'ruby-mode-hook '(lambda ()
+                               (hs-minor-mode 1)))
 )
 
 (defun yaml-mode-after-load ()
@@ -202,6 +211,8 @@
                :pkgname "diasjorge/etags-select"
                :after (progn (etags-select-after-load)))
         (:name auto-complete
+               :type elpa
+               :depends (popup fuzzy)
                :after (progn (auto-complete-after-load)))
         (:name pos-tip)
         (:name icomplete+)
@@ -232,7 +243,8 @@
         (:name ruby-compilation)
         (:name ruby-test-mode
                :type github
-               :pkgname "diasjorge/ruby-test-mode")
+               :pkgname "diasjorge/ruby-test-mode"
+               :load "ruby-test-mode.el")
         (:name rinari)
         (:name feature-mode
                :after (progn (feature-mode-after-load)))
@@ -257,12 +269,11 @@
         (:name zencoding-mode
                :after (progn (zencoding-mode-after-load)))
         (:name css-mode)
-        (:name js2-mode-mooz
-               :type github
-               :pkgname "mooz/js2-mode"
-               :load "js2-mode.el"
-               :compile "js2-mode.el"
+        (:name js2-mode
                :after (progn (js2-mode-after-load)))
+        (:name js2-refactor)
+        (:name slim-mode
+               :type elpa)
         (:name textile-mode
                :after (progn (textile-mode-after-load)))
         (:name clojure-mode)
@@ -308,14 +319,14 @@
                :after (progn (ido-speed-hack-after-load)))
 ))
 
-
-
 (defun sync-packages ()
   "Synchronize packages"
   (interactive)
   (el-get 'sync '(el-get package))
   (add-to-list 'package-archives '("tromey" . "http://tromey.com/elpa/"))
   (add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
+  (add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/"))
+
   (setq my-packages (mapcar 'el-get-source-name el-get-sources))
   (el-get 'sync my-packages))
 
