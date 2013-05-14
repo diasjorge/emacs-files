@@ -88,7 +88,15 @@
 
 (defvar ctags-options "" "Options for tags generation")
 
-(defun ruby-generate-tags()
+(defun my-find-tag ()
+  (interactive)
+  (let ((tag-file (concat (ffip-project-root) "TAGS")))
+    (if (file-exists-p tag-file)
+      (visit-tags-table tag-file)
+      (build-ctags))
+    (etags-select-find-tag-at-point)))
+
+(defun build-ctags()
   (interactive)
   (let ((root (ffip-project-root)))
     (let ((my-tags-file (concat root "TAGS")))
@@ -96,7 +104,7 @@
       (if (file-exists-p my-tags-file)
           (delete-file my-tags-file))
       (shell-command
-       (format "ctags -e -R --exclude=db --exclude=.git --exclude=tmp --exclude=.#* %s -f %s %s"
+       (format "ctags -e -R --exclude=db --exclude=.git --exclude=tmp --exclude=test --exclude=.#* %s -f %s %s"
                ctags-options my-tags-file root))
       (if (get-file-buffer my-tags-file)
           (kill-buffer (get-file-buffer my-tags-file)))
@@ -309,3 +317,29 @@
   arg lines up."
    (interactive "*p")
    (move-text-internal (- arg)))
+
+(defun toggle-window-split ()
+  "Toggles between horizontal and vertical layout"
+  (interactive)
+  (if (= (count-windows) 2)
+      (let* ((this-win-buffer (window-buffer))
+             (next-win-buffer (window-buffer (next-window)))
+             (this-win-edges (window-edges (selected-window)))
+             (next-win-edges (window-edges (next-window)))
+             (this-win-2nd (not (and (<= (car this-win-edges)
+                                         (car next-win-edges))
+                                     (<= (cadr this-win-edges)
+                                         (cadr next-win-edges)))))
+             (splitter
+              (if (= (car this-win-edges)
+                     (car (window-edges (next-window))))
+                  'split-window-horizontally
+                'split-window-vertically)))
+        (delete-other-windows)
+        (let ((first-win (selected-window)))
+          (funcall splitter)
+          (if this-win-2nd (other-window 1))
+          (set-window-buffer (selected-window) this-win-buffer)
+          (set-window-buffer (next-window) next-win-buffer)
+          (select-window first-win)
+          (if this-win-2nd (other-window 1))))))
