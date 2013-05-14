@@ -166,9 +166,14 @@
      "Major mode for editing comma-separated value files." t))
 
 (defun jshint-mode-after-load ()
-  (require 'flymake-jshint)
   (add-hook 'js2-mode-hook
-            (lambda () (flymake-mode t))))
+            (lambda ()
+              (add-hook 'after-save-hook
+                        (lambda ()
+                          (require 'flymake-jshint)
+                          (flymake-start-syntax-check)
+                          nil 'make-it-local))))
+  )
 
 (defun expand-region-after-load ()
   (autoload 'expand-region "expand-region")
@@ -197,6 +202,12 @@
             (lambda ()
              (local-set-key (kbd "M-p") 'rebase-mode-move-line-up)
              (local-set-key (kbd "M-n") 'rebase-mode-move-line-down)))
+)
+
+(defun js2-refactor-after-load ()
+  (add-hook 'js2-mode-hook
+            (lambda ()
+              (require 'js2-refactor)))
 )
 
 ;; local sources
@@ -271,7 +282,11 @@
         (:name css-mode)
         (:name js2-mode
                :after (progn (js2-mode-after-load)))
-        (:name js2-refactor)
+        (:name js2-refactor
+               :type github
+               :pkgname "magnars/js2-refactor.el"
+               :depends (js2-mode dash multiple-cursors s)
+               :after (progn (js2-refactor-after-load)))
         (:name slim-mode
                :type elpa)
         (:name textile-mode
