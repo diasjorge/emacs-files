@@ -157,6 +157,27 @@
 (require 'uniquify)
 (setq uniquify-buffer-name-style 'post-forward)
 
+;; use cua rectangle selection
+(cua-selection-mode 1)
+
+;; http://whattheemacsd.com//setup-dired.el-02.html
+;; go to the first/last line of a dired buffer
+(defun dired-back-to-top ()
+  (interactive)
+  (beginning-of-buffer)
+  (dired-next-line 4))
+
+(defun dired-jump-to-bottom ()
+  (interactive)
+  (end-of-buffer)
+  (dired-next-line -1))
+
+(eval-after-load "dired-mode"
+  '(progn
+     (define-key dired-mode-map
+       (vector 'remap 'beginning-of-buffer) 'dired-back-to-top)
+     (define-key dired-mode-map
+       (vector 'remap 'end-of-buffer) 'dired-jump-to-bottom)))
 
 ;; § ----------------------------------------
 ;; auto compile elisp files after save, do so only if there's exists a byte-compiled file
