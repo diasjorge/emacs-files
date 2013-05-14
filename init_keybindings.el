@@ -47,11 +47,11 @@
 
 (eval-after-load "ruby-test-mode"
   '(progn
-     (define-key ruby-mode-map (kbd "C-x t") 'ruby-test-run)
      (define-key ruby-mode-map (kbd "C-c t") 'ruby-test-split)
      (define-key ruby-mode-map (kbd "C-c T") 'ruby-test-toggle-implementation-and-specification)
      (define-key ruby-test-mode-map (kbd "C-c t") 'ruby-test-split)
-     (define-key ruby-mode-map (kbd "C-x SPC") 'ruby-test-run-at-point)))
+     (define-key ruby-test-mode-map (kbd "C-x t") 'ruby-test-run)
+     (define-key ruby-test-mode-map (kbd "C-x SPC") 'ruby-test-run-at-point)))
 
 (eval-after-load "custom_functions"
   '(progn
