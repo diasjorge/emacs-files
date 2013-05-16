@@ -212,7 +212,8 @@
 
 ;; local sources
 (setq el-get-sources
-      '((:name ergoemacs-keybindings
+      '((:name package)
+        (:name ergoemacs-keybindings
                :checksum "0ee16b3a7096a93c923cb3eea3c72838f015db7f"
                :after (progn (ergoemacs-mode)))
         (:name emacs-goodies-el
@@ -233,6 +234,7 @@
                :after (progn (load-theme 'solarized-light t)))
         (:name autopair
                :after (progn (autopair-after-load)))
+        (:name dropdown-list)
         (:name yasnippet
                :after (progn (yasnippet-after-load)))
         (:name magit
@@ -267,12 +269,11 @@
                :after (progn (yaml-mode-after-load)))
         (:name haml-mode
                :description "Major mode for editing Haml files"
-               :type github
-               :pkgname "dgutov/haml-mode")
+               :type elpa)
         (:name sass-mode)
         (:name nxhtml
                :type github
-               :pkgname diasjorge/nxhtml
+               :pkgname "diasjorge/nxhtml"
                :build
                (list (concat el-get-emacs " -batch -q -no-site-file -L . -l nxhtmlmaint.el -f nxhtmlmaint-start-byte-compilation"))
                :load "autostart.el"
