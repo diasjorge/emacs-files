@@ -300,9 +300,7 @@
       (when (or (> arg 0) (not (bobp)))
         (forward-line )
         (when (or (< arg 0) (not (eobp)))
-          (transpose-lines arg)
-          (when (and (string< "24.3" emacs-version) (< arg 0))
-            (forward-line -1)))         ;works  in emacs 24.3
+          (transpose-lines arg))
         (forward-line -1))
       (move-to-column column t)))))
 
