@@ -61,7 +61,8 @@
   (setq ac-auto-start 4)
   ;; Distinguish case
   (setq ac-ignore-case nil)
-  (ac-config-default))
+  (ac-config-default)
+)
 
 (defun emacs-goodies-el-after-load ()
   ;; markdown-mode
@@ -85,7 +86,7 @@
   ;; (add-to-list 'ffip-patterns "*.haml")
   ;; (add-to-list 'ffip-patterns "*.json.*")
   (setq ffip-patterns '("*"))
-  (setq ffip-find-options "-not -regex \".*/\\\..*\" -not -regex \".*vendor/bundle.*\" -not -name \"*.gif\" -not -name \"*.png*\"")
+  (setq ffip-find-options "-not -regex \".*/\\\..*\" -not -regex \".*vendor/bundle.*\" -not -name \"*.gif\" -not -name \"*.png*\" -not -regex \".*1.0.*\"")
   (setq ffip-limit 30000))
 
 (defun yasnippet-after-load ()
@@ -210,9 +211,25 @@
               (require 'js2-refactor)))
 )
 
+(defun package-after-load()
+  (add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/"))
+)
+
+(defun ag-after-load()
+  (setq ag-highlight-search t)
+)
+
+(defun coffee-mode-after-load ()
+    (add-hook 'coffee-mode-hook
+            (lambda ()
+              (make-local-variable 'tab-width)
+              (setq coffee-tab-width 2)
+              (auto-complete-mode)))
+)
 ;; local sources
 (setq el-get-sources
-      '((:name package)
+      '((:name package
+               :after (progn (package-after-load)))
         (:name ergoemacs-keybindings
                :checksum "0ee16b3a7096a93c923cb3eea3c72838f015db7f"
                :after (progn (ergoemacs-mode)))
@@ -293,6 +310,8 @@
         (:name textile-mode
                :after (progn (textile-mode-after-load)))
         (:name clojure-mode)
+        (:name coffee-mode
+               :after (progn (coffee-mode-after-load)))
         (:name jekyll-el
                :after (progn (jekyll-el-after-load)))
         (:name lorem-ipsum)
@@ -305,6 +324,9 @@
                :type github
                :pkgname "jhelwig/ack-and-a-half"
                :after (progn (ack-and-a-half-after-load)))
+        (:name ag
+               :type elpa
+               :after (progn (ag-after-load)))
         (:name bundler
                :type github
                :pkgname "tobiassvn/bundler.el")
@@ -339,10 +361,6 @@
   "Synchronize packages"
   (interactive)
   (el-get 'sync '(el-get package))
-  (add-to-list 'package-archives '("tromey" . "http://tromey.com/elpa/"))
-  (add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
-  (add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/"))
-
   (setq my-packages (mapcar 'el-get-source-name el-get-sources))
   (el-get 'sync my-packages))
 
