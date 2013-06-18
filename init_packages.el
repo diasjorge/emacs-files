@@ -1,4 +1,15 @@
 ;; packages
+(require 'package)
+
+(setq package-archives
+  '(("ELPA" . "http://tromey.com/elpa/")
+    ("gnu" . "http://elpa.gnu.org/packages/")
+    ("marmalade" . "http://marmalade-repo.org/packages/")
+    ("SC"   . "http://joseito.republika.pl/sunrise-commander/")
+    ("melpa" . "http://melpa.milkbox.net/packages/")))
+
+(package-initialize t)
+
 (add-to-list 'load-path
              (concat (file-name-directory (or load-file-name buffer-file-name)) "el-get/el-get"))
 
@@ -211,10 +222,6 @@
               (require 'js2-refactor)))
 )
 
-(defun package-after-load()
-  (add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/"))
-)
-
 (defun ag-after-load()
   (setq ag-highlight-search t)
 )
@@ -228,9 +235,7 @@
 )
 ;; local sources
 (setq el-get-sources
-      '((:name package
-               :after (progn (package-after-load)))
-        (:name ergoemacs-keybindings
+      '((:name ergoemacs-keybindings
                :checksum "0ee16b3a7096a93c923cb3eea3c72838f015db7f"
                :after (progn (ergoemacs-mode)))
         (:name emacs-goodies-el
@@ -360,7 +365,7 @@
 (defun sync-packages ()
   "Synchronize packages"
   (interactive)
-  (el-get 'sync '(el-get package))
+  (el-get 'sync '("el-get"))
   (setq my-packages (mapcar 'el-get-source-name el-get-sources))
   (el-get 'sync my-packages))
 
