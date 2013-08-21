@@ -227,11 +227,21 @@
 )
 
 (defun coffee-mode-after-load ()
-    (add-hook 'coffee-mode-hook
+  (add-hook 'coffee-mode-hook 'untabify-hook)
+  (add-hook 'coffee-mode-hook
             (lambda ()
               (make-local-variable 'tab-width)
               (setq coffee-tab-width 2)
               (auto-complete-mode)))
+)
+
+(defun flymake-coffee-after-load ()
+  (add-hook 'coffee-mode-hook
+            (lambda ()
+              (let ((config-file (locate-dominating-file (buffer-file-name) ".coffeelintrc")))
+                (make-variable-buffer-local 'flymake-coffee-coffeelint-configuration-file)
+                (setq flymake-coffee-coffeelint-configuration-file (expand-file-name (concat config-file ".coffeelintrc")))
+                )))
 )
 ;; local sources
 (setq el-get-sources
@@ -317,6 +327,8 @@
         (:name clojure-mode)
         (:name coffee-mode
                :after (progn (coffee-mode-after-load)))
+        (:name flymake-coffee
+               :after (progn (flymake-coffee-after-load)))
         (:name jekyll-el
                :after (progn (jekyll-el-after-load)))
         (:name lorem-ipsum)
