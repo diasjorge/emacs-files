@@ -97,7 +97,7 @@
   ;; (add-to-list 'ffip-patterns "*.haml")
   ;; (add-to-list 'ffip-patterns "*.json.*")
   (setq ffip-patterns '("*"))
-  (setq ffip-find-options "-not -regex \".*/\\\..*\" -not -regex \".*vendor/bundle.*\" -not -name \"*.gif\" -not -name \"*.png*\" -not -regex \".*1.0.*\"")
+  (setq ffip-find-options "-not -regex \".*/\\\..*\" -not -regex \".*vendor/bundle.*\" -not -name \"*.gif\" -not -name \"*.png*\" -not -regex \".*1.0.*\" -not -regex \".*source_maps.*\"")
   (setq ffip-limit 30000))
 
 (defun yasnippet-after-load ()
