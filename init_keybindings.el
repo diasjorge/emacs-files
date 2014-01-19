@@ -101,6 +101,13 @@
      (define-key js2-mode-map (kbd "C-\"") 'ruby-tools-to-double-quote-string)
      ))
 
+(eval-after-load "smex"
+  '(progn
+     (global-set-key (kbd "M-a") 'smex)
+     (global-set-key (kbd "M-A") 'smex-major-mode-commands)
+     ;; This is your old M-x.
+     (global-set-key (kbd "C-c M-a") 'execute-extended-command)))
+
 ;;; Disabled keys
 (global-unset-key (kbd "C-w")) ;; prevent accidentally closing buffer
 (global-unset-key (kbd "<insert>"))

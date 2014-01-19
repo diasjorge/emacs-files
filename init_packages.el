@@ -200,12 +200,10 @@
     '(ido-ubiquitous-mode))
 )
 
-(defun ido-speed-hack-after-load ()
-  (require 'ido-speed-hack)
-)
-
-(defun ido-better-flex-after-load ()
-  (ido-better-flex/enable)
+(defun flx-ido-after-load()
+  (flx-ido-mode 1)
+  ;; disable ido faces to see flx highlights
+  (setq ido-use-faces nil)
 )
 
 (defun rebase-mode-after-load ()
@@ -364,14 +362,10 @@
         (:name ido-ubiquitous
                :compile "ido-ubiquitous.el"
                :after (progn (ido-ubiquitous-after-load)))
-        (:name ido-better-flex
+        (:name flx-ido
                :type elpa
-               :after (progn (ido-better-flex-after-load)))
-        (:name ido-speed-hack
-               :type github
-               :pkgname "orfelyus/ido-speed-hack"
-               :compile "ido-speed-hack.el"
-               :after (progn (ido-speed-hack-after-load)))
+               :after (progn) (flx-ido-after-load))
+        (:name smex)
 ))
 
 (defun sync-packages ()
