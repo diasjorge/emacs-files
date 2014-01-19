@@ -241,6 +241,11 @@
                 (setq flymake-coffee-coffeelint-configuration-file (expand-file-name (concat config-file ".coffeelintrc")))
                 )))
 )
+
+(defun rinari-after-load ()
+  (global-rinari-mode)
+)
+
 ;; local sources
 (setq el-get-sources
       '((:name ergoemacs-keybindings
@@ -288,7 +293,9 @@
                :type github
                :pkgname "diasjorge/ruby-test-mode"
                :load "ruby-test-mode.el")
-        (:name rinari)
+        (:name rinari
+               :type elpa
+               :after (progn (rinari-after-load)))
         (:name feature-mode
                :after (progn (feature-mode-after-load)))
         (:name ruby-tools
