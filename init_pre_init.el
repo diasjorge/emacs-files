@@ -13,3 +13,5 @@
     (server-start))
 
 (push "/usr/local/bin" exec-path)
+
+(setq gc-cons-threshold 20000000)
