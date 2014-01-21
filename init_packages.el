@@ -270,6 +270,7 @@
                :type builtin
                :after (progn (ruby-mode-after-load)))
         (:name inf-ruby
+               :type elpa
                :after (progn (inf-ruby-after-load)))
         (:name ruby-compilation)
         (:name ruby-test-mode
@@ -278,7 +279,11 @@
                :load "ruby-test-mode.el")
         (:name rinari
                :type elpa
+               :depends (jump inf-ruby)
                :after (progn (rinari-after-load)))
+        (:name jump
+               :depends (findr inflections)
+               :type elpa)
         (:name feature-mode
                :after (progn (feature-mode-after-load)))
         (:name ruby-tools
