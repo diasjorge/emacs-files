@@ -106,6 +106,12 @@
      ;; This is your old M-x.
      (global-set-key (kbd "C-c M-a") 'execute-extended-command)))
 
+(eval-after-load "magit"
+  '(progn
+     (define-key magit-status-mode-map (kbd "q") 'magit-quit-session)
+     (define-key magit-status-mode-map (kbd "C-c C-a") 'magit-just-amend)))
+
+
 ;;; Disabled keys
 (global-unset-key (kbd "C-w")) ;; prevent accidentally closing buffer
 (global-unset-key (kbd "<insert>"))

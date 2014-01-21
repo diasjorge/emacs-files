@@ -229,6 +229,28 @@
               (setq web-mode-code-indent-offset 2)
               ))
 )
+
+(defun magit-after-load ()
+  ;; C-c C-a to amend without any prompt
+  (defun magit-just-amend ()
+    (interactive)
+    (save-window-excursion
+      (shell-command "git --no-pager commit --amend --reuse-message=HEAD")
+      (magit-refresh)))
+
+  ;; full screen magit-status
+  (defadvice magit-status (around magit-fullscreen activate)
+    (window-configuration-to-register :magit-fullscreen)
+    ad-do-it
+    (delete-other-windows))
+
+  (defun magit-quit-session ()
+    "Restores the previous window configuration and kills the magit buffer"
+    (interactive)
+    (kill-buffer)
+    (jump-to-register :magit-fullscreen))
+)
+
 ;; local sources
 (setq el-get-sources
       '((:name ergoemacs-keybindings
@@ -256,7 +278,8 @@
         (:name yasnippet
                :after (progn (yasnippet-after-load)))
         (:name magit
-               :features magit)
+               :features magit
+               :after (progn (magit-after-load)))
         (:name rebase-mode
                :type builtin
                :after (progn (rebase-mode-after-load)))
