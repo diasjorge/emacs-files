@@ -32,6 +32,7 @@
 (global-set-key (kbd "M-t") 'back-to-indentation)
 
 (global-set-key (kbd "C-c m") 'magit-status)
+(global-set-key (kbd "M-1") 'ffip)
 
 (add-hook 'ido-setup-hook 'custom-ido-extra-keys)
 (defun custom-ido-extra-keys ()
@@ -60,9 +61,6 @@
      (global-set-key (kbd "M-<down>") 'move-text-down)
      ))
 
-(eval-after-load "find-file-in-project"
-  '(progn
-     (global-set-key (kbd "M-1") 'ffip)))
 
 (eval-after-load "ruby-compilation"
   '(progn
