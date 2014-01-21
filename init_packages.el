@@ -161,13 +161,6 @@
   (setq inf-ruby-first-prompt-pattern inf-ruby-prompt-pattern)
 )
 
-(defun ack-and-a-half-after-load ()
-  (defalias 'ack 'ack-and-a-half)
-  (defalias 'ack-same 'ack-and-a-half-same)
-  (defalias 'ack-find-file 'ack-and-a-half-find-file)
-  (defalias 'ack-find-file-same 'ack-and-a-half-find-file-same)
-)
-
 (defun etags-select-after-load ()
   (setq etags-select-highlight-delay 0.5)
 )
@@ -342,10 +335,6 @@
         (:name httpcode
                :type elpa)
         (:name rainbow-mode)
-        (:name ack-and-a-half
-               :type github
-               :pkgname "jhelwig/ack-and-a-half"
-               :after (progn (ack-and-a-half-after-load)))
         (:name ag
                :type elpa
                :after (progn (ag-after-load)))
