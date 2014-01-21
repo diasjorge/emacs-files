@@ -120,23 +120,6 @@
   (add-hook 'html-mode-hook (lambda () (yas/minor-mode-on)))
 )
 
-(defun nxhtml-after-load ()
-  (setq nxhtml-global-minor-mode t
-        mumamo-chunk-coloring 'submode-colored
-        nxhtml-skip-welcome t
-        indent-region-mode t
-        rng-nxml-auto-validate-flag nil
-        nxml-degraded t)
-
-  ;; nxhtml sets up javascript-mode by default
-  (replace-alist-mode auto-mode-alist 'javascript-mode 'js2-mode)
-  (add-to-list 'auto-mode-alist '("\\.html\\.haml$" . haml-mode))
-
-  (remove-alist-mode auto-mode-alist "\\.html\\'")
-  (add-to-list 'auto-mode-alist '("\\.html$" . html-mode))
-
-)
-
 (defun jekyll-el-after-load ()
   (setq jekyll-directory "~/development/mrdias.com/")
 )
@@ -239,6 +222,13 @@
   (global-rinari-mode)
 )
 
+(defun web-mode-after-load ()
+  (add-hook 'web-mode-hook
+            (lambda ()
+              (setq web-mode-markup-indent-offset 2)
+              (setq web-mode-code-indent-offset 2)
+              ))
+)
 ;; local sources
 (setq el-get-sources
       '((:name ergoemacs-keybindings
@@ -301,13 +291,8 @@
                :description "Major mode for editing Haml files"
                :type elpa)
         (:name sass-mode)
-        (:name nxhtml
-               :type github
-               :pkgname "diasjorge/nxhtml"
-               :build
-               (list (concat el-get-emacs " -batch -q -no-site-file -L . -l nxhtmlmaint.el -f nxhtmlmaint-start-byte-compilation"))
-               :load "autostart.el"
-               :after (progn (nxhtml-after-load)))
+        (:name web-mode
+               :after (progn (web-mode-after-load)))
         (:name zencoding-mode
                :after (progn (zencoding-mode-after-load)))
         (:name css-mode)
