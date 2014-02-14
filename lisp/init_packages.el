@@ -79,10 +79,6 @@
   (setq inf-ruby-first-prompt-pattern inf-ruby-prompt-pattern)
 )
 
-(defun etags-select-after-load ()
-  (setq etags-select-highlight-delay 0.5)
-)
-
 (defun csv-mode-after-load ()
    (add-to-list 'auto-mode-alist '("\\.[Cc][Ss][Vv]\\'" . csv-mode))
    (autoload 'csv-mode "csv-mode"
@@ -194,8 +190,7 @@
         (:name emacs-goodies-el)
         (:name etags-select
                :type github
-               :pkgname "diasjorge/etags-select"
-               :after (progn (etags-select-after-load)))
+               :pkgname "diasjorge/etags-select")
         (:name auto-complete
                :type elpa
                :depends (popup fuzzy))
