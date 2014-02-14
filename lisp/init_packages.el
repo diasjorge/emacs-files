@@ -15,12 +15,6 @@
 
 (setq el-get-user-package-directory (concat emacs-directory "lisp/el-get-init-files"))
 
-(defun js2-mode-after-load ()
-  (add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
-  (setq js2-consistent-level-indent-inner-bracket-p t)
-  (setq js2-pretty-multiline-decl-indentation-p t)
-  (add-hook 'js2-mode-hook 'untabify-hook))
-
 (defun textile-mode-after-load ()
   (add-to-list 'auto-mode-alist '("\\.textile\\'" . textile-mode)))
 
@@ -276,8 +270,7 @@
         (:name zencoding-mode
                :after (progn (zencoding-mode-after-load)))
         (:name css-mode)
-        (:name js2-mode
-               :after (progn (js2-mode-after-load)))
+        (:name js2-mode)
         (:name js2-refactor
                :type github
                :pkgname "magnars/js2-refactor.el"
