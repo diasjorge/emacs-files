@@ -15,11 +15,6 @@
 
 (setq el-get-user-package-directory (concat emacs-directory "lisp/el-get-init-files"))
 
-(defun emacs-goodies-el-after-load ()
-  ;; markdown-mode
-  (add-to-list 'auto-mode-alist '("\\.md$" . markdown-mode))
-  (add-to-list 'auto-mode-alist '("\\.markdown$" . markdown-mode)))
-
 (defun zencoding-mode-after-load ()
   (add-hook 'sgml-mode-hook
             '(lambda ()
@@ -196,8 +191,7 @@
       '((:name ergoemacs-keybindings
                :checksum "0ee16b3a7096a93c923cb3eea3c72838f015db7f"
                :after (progn (ergoemacs-mode)))
-        (:name emacs-goodies-el
-               :after (progn (emacs-goodies-el-after-load)))
+        (:name emacs-goodies-el)
         (:name etags-select
                :type github
                :pkgname "diasjorge/etags-select"
