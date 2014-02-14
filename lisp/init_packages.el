@@ -15,11 +15,6 @@
 
 (setq el-get-user-package-directory (concat emacs-directory "lisp/el-get-init-files"))
 
-(defun yaml-mode-after-load ()
-  (autoload 'yaml-mode "yaml-mode" nil t)
-  (add-to-list 'auto-mode-alist '("\\.yml$" . yaml-mode))
-  (add-to-list 'auto-mode-alist '("\\.yaml$" . yaml-mode)))
-
 (defun css-mode-after-load ()
   (autoload 'css-mode "css-mode" nil t)
   (add-hook 'css-mode-hook '(lambda ()
@@ -277,8 +272,7 @@
                :type github
                :pkgname "rejeep/ruby-tools"
                :load "ruby-tools.el")
-        (:name yaml-mode
-               :after (progn (yaml-mode-after-load)))
+        (:name yaml-mode)
         (:name haml-mode
                :description "Major mode for editing Haml files"
                :type elpa)
