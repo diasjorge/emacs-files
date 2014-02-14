@@ -11,7 +11,7 @@
 (package-initialize t)
 
 (add-to-list 'load-path
-             (concat (file-name-directory (or load-file-name buffer-file-name)) "el-get/el-get"))
+             (concat emacs-directory "el-get/el-get"))
 
 (defun ruby-mode-after-load ()
   (autoload 'ruby-mode "ruby-mode" nil t)
@@ -45,6 +45,22 @@
 
   (add-hook 'ruby-mode-hook '(lambda ()
                                (hs-minor-mode 1)))
+
+  ;; Remove after update to emacs 24.4
+  (defadvice ruby-indent-line (after unindent-closing-paren activate)
+    (let ((column (current-column))
+          indent offset)
+      (save-excursion
+        (back-to-indentation)
+        (let ((state (syntax-ppss)))
+          (setq offset (- column (current-column)))
+          (when (and (eq (char-after) ?\))
+                     (not (zerop (car state))))
+            (goto-char (cadr state))
+            (setq indent (current-indentation)))))
+      (when indent
+        (indent-line-to indent)
+        (when (> offset 0) (forward-char offset)))))
 )
 
 (defun yaml-mode-after-load ()
@@ -296,10 +312,7 @@
                :type elpa
                :after (progn (inf-ruby-after-load)))
         (:name ruby-compilation)
-        (:name ruby-test-mode
-               :type github
-               :pkgname "diasjorge/ruby-test-mode"
-               :load "ruby-test-mode.el")
+        (:name ruby-test-mode)
         (:name rinari
                :type elpa
                :depends (jump inf-ruby)

@@ -1,6 +1,8 @@
 ;; Emacs files By Jorge Dias
 
-(add-to-list 'load-path (file-name-directory (or load-file-name buffer-file-name)))
+(setq emacs-directory (file-name-directory (or load-file-name buffer-file-name)))
+
+(add-to-list 'load-path (concat emacs-directory "lisp"))
 
 (load "init_pre_init")
 

@@ -13,5 +13,6 @@
     (server-start))
 
 (push "/usr/local/bin" exec-path)
+(setenv "PATH" (concat (getenv "PATH") ":/usr/local/bin"))
 
 (setq gc-cons-threshold 20000000)

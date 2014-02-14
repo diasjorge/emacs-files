@@ -86,7 +86,7 @@
 ;; I don't debug by default
 (setq debug-on-error nil)
 
-(setq custom-file "~/.emacs.d/customizations.el")
+(setq custom-file (concat emacs-directory "lisp/customizations.el"))
 (load custom-file 'noerror)
 
 ;; colorize comint output
