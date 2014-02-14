@@ -15,12 +15,6 @@
 
 (setq el-get-user-package-directory (concat emacs-directory "lisp/el-get-init-files"))
 
-(defun css-mode-after-load ()
-  (autoload 'css-mode "css-mode" nil t)
-  (add-hook 'css-mode-hook '(lambda ()
-                              (setq css-indent-level 2)
-                              (setq css-indent-offset 2))))
-
 (defun js2-mode-after-load ()
   (add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
   (setq js2-consistent-level-indent-inner-bracket-p t)
