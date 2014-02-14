@@ -15,15 +15,6 @@
 
 (setq el-get-user-package-directory (concat emacs-directory "lisp/el-get-init-files"))
 
-
-(defun auto-complete-after-load ()
-  (load "auto-complete-config")
-  (setq ac-auto-start 4)
-  ;; Distinguish case
-  (setq ac-ignore-case nil)
-  (ac-config-default)
-)
-
 (defun emacs-goodies-el-after-load ()
   ;; markdown-mode
   (add-to-list 'auto-mode-alist '("\\.md$" . markdown-mode))
@@ -213,8 +204,7 @@
                :after (progn (etags-select-after-load)))
         (:name auto-complete
                :type elpa
-               :depends (popup fuzzy)
-               :after (progn (auto-complete-after-load)))
+               :depends (popup fuzzy))
         (:name pos-tip)
         (:name icomplete+)
         (:name solarized-theme
