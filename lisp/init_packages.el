@@ -15,8 +15,6 @@
 
 (setq el-get-user-package-directory (concat emacs-directory "lisp/el-get-init-files"))
 
-(defun textile-mode-after-load ()
-  (add-to-list 'auto-mode-alist '("\\.textile\\'" . textile-mode)))
 
 (defun auto-complete-after-load ()
   (load "auto-complete-config")
@@ -278,8 +276,7 @@
                :after (progn (js2-refactor-after-load)))
         (:name slim-mode
                :type elpa)
-        (:name textile-mode
-               :after (progn (textile-mode-after-load)))
+        (:name textile-mode)
         (:name clojure-mode)
         (:name coffee-mode
                :after (progn (coffee-mode-after-load)))
