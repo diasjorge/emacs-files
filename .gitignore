@@ -17,3 +17,4 @@ elpa/*
 /var/pcache/gh/gh-gist-api/*
 /eshell/history
 /.mc-lists.el
+/.DS_Store
