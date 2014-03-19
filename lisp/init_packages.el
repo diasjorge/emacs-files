@@ -35,26 +35,6 @@
   (setq ffip-find-options "-not -regex \".*/\\\..*\" -not -regex \".*vendor/bundle.*\" -not -name \"*.gif\" -not -name \"*.png*\" -not -regex \".*1.0.*\" -not -regex \".*source_maps.*\"")
   (setq ffip-limit 30000))
 
-(defun yasnippet-after-load ()
-  (require 'dropdown-list)
-  (setq yas/prompt-functions '(yas/dropdown-prompt
-                               yas/ido-prompt
-                               yas/completing-prompt))
-  (let ((snippets-dir (concat (file-name-directory (or load-file-name buffer-file-name)) "snippets/")))
-    (setq yas/snippet-dirs
-          (list (concat snippets-dir "my-snippets")
-                (concat snippets-dir "contrib-snippets")
-                (concat el-get-dir (file-name-as-directory "yasnippet") "snippets")))
-    (yas-global-mode 1))
-
-  ;; Turn off auto new line on yas/minor-mode
-  (add-hook 'yas/minor-mode-on-hook
-            (lambda ()
-              (setq mode-require-final-newline nil)))
-
-  (add-hook 'html-mode-hook (lambda () (yas/minor-mode-on)))
-)
-
 (defun jekyll-el-after-load ()
   (setq jekyll-directory "~/development/mrdias.com/")
 )
@@ -203,8 +183,7 @@
         (:name autopair
                :after (progn (autopair-after-load)))
         (:name dropdown-list)
-        (:name yasnippet
-               :after (progn (yasnippet-after-load)))
+        (:name yasnippet)
         (:name magit
                :features magit
                :after (progn (magit-after-load)))
