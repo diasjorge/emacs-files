@@ -18,3 +18,4 @@ elpa/*
 /eshell/history
 /.mc-lists.el
 /.DS_Store
+ido.last
