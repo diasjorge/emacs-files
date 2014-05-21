@@ -110,16 +110,6 @@
           (kill-buffer (get-file-buffer my-tags-file)))
       (visit-tags-table my-tags-file))))
 
-(defun ruby-fancy-indent()
-  "Indent at two levels nesting"
-  (interactive)
-  (set-variable 'ruby-deep-indent-paren nil t))
-
-(defun ruby-classic-indent()
-  "Indent classic ruby mode"
-  (interactive)
-  (set-variable 'ruby-deep-indent-paren '(?\( ?\[ ?\] t) t))
-
 ;; HAML
 (defun haml-convert-erb-file (rhtmlFile)
   "Convert an erb file to haml and opens a new buffer"
