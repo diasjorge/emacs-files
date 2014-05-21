@@ -15,12 +15,6 @@
 
 (setq el-get-user-package-directory (concat emacs-directory "lisp/el-get-init-files"))
 
-(defun zencoding-mode-after-load ()
-  (add-hook 'sgml-mode-hook
-            '(lambda ()
-               (unless zencoding-mode
-                 (zencoding-mode)))))
-
 (defun find-file-in-project-after-load ()
   (defun ffip-uniqueify (file-cons)
     "This one overrides the original to include the directory name after the file name"
@@ -212,8 +206,7 @@
         (:name sass-mode)
         (:name web-mode
                :after (progn (web-mode-after-load)))
-        (:name zencoding-mode
-               :after (progn (zencoding-mode-after-load)))
+        (:name emmet-mode)
         (:name css-mode)
         (:name js2-mode)
         (:name js2-refactor
