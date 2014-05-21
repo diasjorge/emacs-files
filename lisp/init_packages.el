@@ -93,14 +93,6 @@
   (setq ido-use-faces nil)
 )
 
-(defun rebase-mode-after-load ()
-  ;; Fixes conflict with ergoemacs keybindings
-  (add-hook 'rebase-mode-hook
-            (lambda ()
-             (local-set-key (kbd "M-p") 'rebase-mode-move-line-up)
-             (local-set-key (kbd "M-n") 'rebase-mode-move-line-down)))
-)
-
 (defun js2-refactor-after-load ()
   (add-hook 'js2-mode-hook
             (lambda ()
@@ -187,9 +179,6 @@
         (:name magit
                :features magit
                :after (progn (magit-after-load)))
-        (:name rebase-mode
-               :type builtin
-               :after (progn (rebase-mode-after-load)))
         (:name git-emacs)
         (:name mo-git-blame)
         (:name gist

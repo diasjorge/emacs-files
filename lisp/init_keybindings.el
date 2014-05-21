@@ -111,6 +111,11 @@
      (define-key magit-status-mode-map (kbd "q") 'magit-quit-session)
      (define-key magit-status-mode-map (kbd "C-c C-a") 'magit-just-amend)))
 
+;; Fixes conflict with ergoemacs keybindings
+(add-hook 'git-rebase-mode-hook
+          (lambda ()
+            (local-set-key (kbd "M-p") 'git-rebase-move-line-up)
+            (local-set-key (kbd "M-n") 'git-rebase-move-line-down)))
 
 ;;; Disabled keys
 (global-unset-key (kbd "C-w")) ;; prevent accidentally closing buffer
