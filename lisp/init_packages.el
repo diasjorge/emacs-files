@@ -68,10 +68,6 @@
                           nil 'make-it-local))))
   )
 
-(defun expand-region-after-load ()
-  (autoload 'expand-region "expand-region")
-)
-
 (defun multiple-cursors-after-load ()
   (delete-selection-mode 1)
 )
@@ -85,12 +81,6 @@
   (flx-ido-mode 1)
   ;; disable ido faces to see flx highlights
   (setq ido-use-faces nil)
-)
-
-(defun js2-refactor-after-load ()
-  (add-hook 'js2-mode-hook
-            (lambda ()
-              (require 'js2-refactor)))
 )
 
 (defun ag-after-load()
@@ -213,11 +203,7 @@
         (:name emmet-mode)
         (:name css-mode)
         (:name js2-mode)
-        (:name js2-refactor
-               :type github
-               :pkgname "magnars/js2-refactor.el"
-               :depends (js2-mode dash multiple-cursors s)
-               :after (progn (js2-refactor-after-load)))
+        (:name js2-refactor)
         (:name slim-mode
                :type elpa)
         (:name textile-mode)
@@ -242,9 +228,7 @@
                :pkgname "tobiassvn/bundler.el")
         (:name csv-mode
                :after (progn (csv-mode-after-load)))
-        (:name expand-region
-               :pkgname "diasjorge/expand-region.el"
-               :after (progn (expand-region-after-load)))
+        (:name expand-region)
         (:name jshint-mode
                :type github
                :pkgname "diasjorge/jshint-mode"
