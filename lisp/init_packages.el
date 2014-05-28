@@ -53,11 +53,6 @@
   (setq inf-ruby-first-prompt-pattern inf-ruby-prompt-pattern)
 )
 
-(defun csv-mode-after-load ()
-   (add-to-list 'auto-mode-alist '("\\.[Cc][Ss][Vv]\\'" . csv-mode))
-   (autoload 'csv-mode "csv-mode"
-     "Major mode for editing comma-separated value files." t))
-
 (defun jshint-mode-after-load ()
   (add-hook 'js2-mode-hook
             (lambda ()
@@ -226,8 +221,6 @@
         (:name bundler
                :type github
                :pkgname "tobiassvn/bundler.el")
-        (:name csv-mode
-               :after (progn (csv-mode-after-load)))
         (:name expand-region)
         (:name jshint-mode
                :type github
