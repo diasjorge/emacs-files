@@ -19,3 +19,4 @@ elpa/*
 /.mc-lists.el
 /.DS_Store
 ido.last
+/places
