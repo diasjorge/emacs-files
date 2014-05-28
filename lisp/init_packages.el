@@ -149,8 +149,7 @@
         (:name icomplete+)
         (:name solarized-theme
                :type elpa
-               :prepare (progn (add-to-list 'custom-theme-load-path default-directory))
-               :after (progn (load-theme 'solarized-light t)))
+               :depends (dash))
         (:name autopair
                :after (progn (autopair-after-load)))
         (:name dropdown-list)
