@@ -196,7 +196,8 @@
         (:name web-mode
                :after (progn (web-mode-after-load)))
         (:name emmet-mode)
-        (:name css-mode)
+        (:name css-mode
+               :type builtin)
         (:name js2-mode)
         (:name js2-refactor)
         (:name slim-mode
