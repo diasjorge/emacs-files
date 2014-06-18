@@ -71,7 +71,7 @@
      (define-key feature-mode-map (kbd "C-x t") 'feature-verify-all-scenarios-in-buffer)
      (define-key feature-mode-map (kbd "C-x SPC") 'feature-verify-scenario-at-pos)))
 
-(eval-after-load "expand-region-core"
+(eval-after-load "expand-region"
   '(progn
      (global-set-key (kbd "C-=") 'er/expand-region)))
 
