@@ -57,8 +57,6 @@
 (eval-after-load "custom_functions"
   '(progn
      (global-set-key (kbd "C-t") 'ido-goto-symbol)
-     (global-set-key (kbd "M-<up>") 'move-text-up)
-     (global-set-key (kbd "M-<down>") 'move-text-down)
      ))
 
 

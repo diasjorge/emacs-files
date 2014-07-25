@@ -238,6 +238,7 @@
                :type elpa
                :after (progn) (flx-ido-after-load))
         (:name smex)
+        (:name drag-stuff)
 ))
 
 (defun sync-packages ()
