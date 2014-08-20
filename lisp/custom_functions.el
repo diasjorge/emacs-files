@@ -90,7 +90,7 @@
 
 (defun my-find-tag ()
   (interactive)
-  (let ((tag-file (concat (ffip-project-root) "TAGS")))
+  (let ((tag-file (concat (fiplr-root) "TAGS")))
     (if (file-exists-p tag-file)
       (visit-tags-table tag-file)
       (build-ctags))
@@ -98,7 +98,7 @@
 
 (defun build-ctags()
   (interactive)
-  (let ((root (ffip-project-root)))
+  (let ((root (fiplr-root)))
     (let ((my-tags-file (concat root "TAGS")))
       (message "Regenerating TAGS file: %s" my-tags-file)
       (if (file-exists-p my-tags-file)

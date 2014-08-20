@@ -15,20 +15,6 @@
 
 (setq el-get-user-package-directory (concat emacs-directory "lisp/el-get-init-files"))
 
-(defun find-file-in-project-after-load ()
-  (defun ffip-uniqueify (file-cons)
-    "This one overrides the original to include the directory name after the file name"
-    (setcar file-cons
-            (concat (car file-cons) " "
-                    (cadr (reverse (split-string (cdr file-cons) "/"))))))
-
-  ;; (setq ffip-find-options "-not -regex \".*git.*\"")
-  ;; (add-to-list 'ffip-patterns "*.haml")
-  ;; (add-to-list 'ffip-patterns "*.json.*")
-  (setq ffip-patterns '("*"))
-  (setq ffip-find-options "-not -regex \".*/\\\..*\" -not -regex \".*vendor/bundle.*\" -not -name \"*.gif\" -not -name \"*.png*\" -not -regex \".*1.0.*\" -not -regex \".*source_maps.*\"")
-  (setq ffip-limit 30000))
-
 (defun jekyll-el-after-load ()
   (setq jekyll-directory "~/development/mrdias.com/")
 )
@@ -210,8 +196,7 @@
         (:name jekyll-el
                :after (progn (jekyll-el-after-load)))
         (:name lorem-ipsum)
-        (:name find-file-in-project
-               :after (progn (find-file-in-project-after-load)))
+        (:name fiplr)
         (:name httpcode
                :type elpa)
         (:name rainbow-mode)

@@ -32,7 +32,8 @@
 (global-set-key (kbd "M-t") 'back-to-indentation)
 
 (global-set-key (kbd "C-c m") 'magit-status)
-(global-set-key (kbd "M-1") 'ffip)
+(global-set-key (kbd "M-1") 'fiplr-find-file)
+(global-set-key (kbd "M-2") 'fiplr-find-directory)
 
 (add-hook 'ido-setup-hook 'custom-ido-extra-keys)
 (defun custom-ido-extra-keys ()
@@ -114,6 +115,14 @@
           (lambda ()
             (local-set-key (kbd "M-p") 'git-rebase-move-line-up)
             (local-set-key (kbd "M-n") 'git-rebase-move-line-down)))
+
+;; Fixes conflict with ergoemacs keybindings
+(add-hook 'grizzl-mode-hook
+          (lambda ()
+            (local-set-key (kbd "C-p") 'grizzl-set-selection+1)
+            (local-set-key (kbd "M-i") 'grizzl-set-selection+1)
+            (local-set-key (kbd "C-n") 'grizzl-set-selection-1)
+            (local-set-key (kbd "M-k") 'grizzl-set-selection-1)))
 
 ;;; Disabled keys
 (global-unset-key (kbd "C-w")) ;; prevent accidentally closing buffer
