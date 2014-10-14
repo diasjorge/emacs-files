@@ -23,10 +23,6 @@
   (rvm-autodetect-ruby)
 )
 
-(defun feature-mode-after-load ()
-  (setq feature-use-rvm t)
-)
-
 (defun inf-ruby-after-load ()
   ;; Fix rvm issues
   (setq inf-ruby-prompt-pattern "^\\([a-zA-Z0-9.\-]+ :[0-9]+ >\\|>>\\) ")
@@ -123,8 +119,7 @@
         (:name jump
                :depends (findr inflections)
                :type elpa)
-        (:name feature-mode
-               :after (progn (feature-mode-after-load)))
+        (:name feature-mode)
         (:name ruby-tools
                :type github
                :pkgname "rejeep/ruby-tools"
