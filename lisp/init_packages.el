@@ -128,10 +128,6 @@
         (:name haml-mode
                :description "Major mode for editing Haml files"
                :type elpa)
-        (:name sass-mode
-               :type github
-               :pkgname "nex3/sass-mode"
-               :depends haml-mode)
         (:name sass-mode)
         (:name web-mode
                :after (progn (web-mode-after-load)))
