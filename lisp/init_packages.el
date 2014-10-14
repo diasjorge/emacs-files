@@ -19,10 +19,6 @@
   (setq jekyll-directory "~/development/mrdias.com/")
 )
 
-(defun rvm-after-load ()
-  (rvm-autodetect-ruby)
-)
-
 (defun inf-ruby-after-load ()
   ;; Fix rvm issues
   (setq inf-ruby-prompt-pattern "^\\([a-zA-Z0-9.\-]+ :[0-9]+ >\\|>>\\) ")
@@ -95,8 +91,7 @@
         (:name mo-git-blame)
         (:name gist
 	       :type elpa)
-        (:name rvm
-               :after (progn (rvm-after-load)))
+        (:name rvm)
         (:name ruby-mode
                :type builtin)
         (:name inf-ruby
