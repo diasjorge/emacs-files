@@ -39,16 +39,6 @@
   (setq inf-ruby-first-prompt-pattern inf-ruby-prompt-pattern)
 )
 
-(defun jshint-mode-after-load ()
-  (add-hook 'js2-mode-hook
-            (lambda ()
-              (add-hook 'after-save-hook
-                        (lambda ()
-                          (require 'flymake-jshint)
-                          (flymake-start-syntax-check)
-                          nil 'make-it-local))))
-  )
-
 (defun multiple-cursors-after-load ()
   (delete-selection-mode 1)
 )
@@ -205,10 +195,7 @@
                :after (progn (ag-after-load)))
         (:name bundler)
         (:name expand-region)
-        (:name jshint-mode
-               :type github
-               :pkgname "diasjorge/jshint-mode"
-               :after (progn (jshint-mode-after-load)))
+        (:name jshint-mode)
         (:name multiple-cursors
                :type github
                :pkgname "magnars/multiple-cursors.el"
