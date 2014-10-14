@@ -19,12 +19,6 @@
   (setq jekyll-directory "~/development/mrdias.com/")
 )
 
-(defun inf-ruby-after-load ()
-  ;; Fix rvm issues
-  (setq inf-ruby-prompt-pattern "^\\([a-zA-Z0-9.\-]+ :[0-9]+ >\\|>>\\) ")
-  (setq inf-ruby-first-prompt-pattern inf-ruby-prompt-pattern)
-)
-
 (defun multiple-cursors-after-load ()
   (delete-selection-mode 1)
 )
@@ -95,8 +89,7 @@
         (:name ruby-mode
                :type builtin)
         (:name inf-ruby
-               :type elpa
-               :after (progn (inf-ruby-after-load)))
+               :type elpa)
         (:name ruby-compilation)
         (:name ruby-test-mode)
         (:name rinari
