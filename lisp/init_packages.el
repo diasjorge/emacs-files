@@ -70,14 +70,6 @@
   (global-rinari-mode)
 )
 
-(defun web-mode-after-load ()
-  (add-hook 'web-mode-hook
-            (lambda ()
-              (setq web-mode-markup-indent-offset 2)
-              (setq web-mode-code-indent-offset 2)
-              ))
-)
-
 ;; local sources
 (setq el-get-sources
       '((:name ergoemacs-keybindings
@@ -129,8 +121,7 @@
                :description "Major mode for editing Haml files"
                :type elpa)
         (:name sass-mode)
-        (:name web-mode
-               :after (progn (web-mode-after-load)))
+        (:name web-mode)
         (:name emmet-mode)
         (:name css-mode
                :type builtin)
