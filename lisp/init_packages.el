@@ -19,12 +19,6 @@
   (setq jekyll-directory "~/development/mrdias.com/")
 )
 
-(defun autopair-after-load ()
-  (add-hook 'term-mode-hook
-            '(lambda () (autopair-mode -1)))
-  (unless autopair-global-mode
-    (autopair-global-mode)))
-
 (defun rvm-after-load ()
   (rvm-autodetect-ruby)
 )
@@ -105,8 +99,7 @@
         (:name solarized-theme
                :type elpa
                :depends (dash))
-        (:name autopair
-               :after (progn (autopair-after-load)))
+        (:name autopair)
         (:name dropdown-list)
         (:name yasnippet)
         (:name magit)
