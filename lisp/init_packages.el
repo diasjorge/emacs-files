@@ -203,9 +203,7 @@
         (:name ag
                :type elpa
                :after (progn (ag-after-load)))
-        (:name bundler
-               :type github
-               :pkgname "tobiassvn/bundler.el")
+        (:name bundler)
         (:name expand-region)
         (:name jshint-mode
                :type github
