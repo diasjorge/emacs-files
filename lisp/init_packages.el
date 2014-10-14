@@ -224,6 +224,7 @@
                :after (progn) (flx-ido-after-load))
         (:name smex)
         (:name drag-stuff)
+        (:name erlang-mode)
 ))
 
 (defun sync-packages ()
