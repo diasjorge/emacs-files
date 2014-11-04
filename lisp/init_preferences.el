@@ -133,6 +133,9 @@
 (add-hook 'term-mode-hook 'compilation-shell-minor-mode)
 (add-hook 'shell-mode-hook 'compilation-shell-minor-mode)
 
+;; mute bell
+(setq ring-bell-function 'ignore)
+
 ;; close buffer when killing process
 (defadvice term-sentinel (around my-advice-term-sentinel (proc msg))
   (if (memq (process-status proc) '(signal exit))
