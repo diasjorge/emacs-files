@@ -19,36 +19,6 @@
   (setq jekyll-directory "~/development/mrdias.com/")
 )
 
-(defun autopair-after-load ()
-  (add-hook 'term-mode-hook
-            '(lambda () (autopair-mode -1)))
-  (unless autopair-global-mode
-    (autopair-global-mode)))
-
-(defun rvm-after-load ()
-  (rvm-autodetect-ruby)
-)
-
-(defun feature-mode-after-load ()
-  (setq feature-use-rvm t)
-)
-
-(defun inf-ruby-after-load ()
-  ;; Fix rvm issues
-  (setq inf-ruby-prompt-pattern "^\\([a-zA-Z0-9.\-]+ :[0-9]+ >\\|>>\\) ")
-  (setq inf-ruby-first-prompt-pattern inf-ruby-prompt-pattern)
-)
-
-(defun jshint-mode-after-load ()
-  (add-hook 'js2-mode-hook
-            (lambda ()
-              (add-hook 'after-save-hook
-                        (lambda ()
-                          (require 'flymake-jshint)
-                          (flymake-start-syntax-check)
-                          nil 'make-it-local))))
-  )
-
 (defun multiple-cursors-after-load ()
   (delete-selection-mode 1)
 )
@@ -90,35 +60,6 @@
   (global-rinari-mode)
 )
 
-(defun web-mode-after-load ()
-  (add-hook 'web-mode-hook
-            (lambda ()
-              (setq web-mode-markup-indent-offset 2)
-              (setq web-mode-code-indent-offset 2)
-              ))
-)
-
-(defun magit-after-load ()
-  ;; C-c C-a to amend without any prompt
-  (defun magit-just-amend ()
-    (interactive)
-    (save-window-excursion
-      (shell-command "git --no-pager commit --amend --reuse-message=HEAD")
-      (magit-refresh)))
-
-  ;; full screen magit-status
-  (defadvice magit-status (around magit-fullscreen activate)
-    (window-configuration-to-register :magit-fullscreen)
-    ad-do-it
-    (delete-other-windows))
-
-  (defun magit-quit-session ()
-    "Restores the previous window configuration and kills the magit buffer"
-    (interactive)
-    (kill-buffer)
-    (jump-to-register :magit-fullscreen))
-)
-
 ;; local sources
 (setq el-get-sources
       '((:name ergoemacs-keybindings
@@ -136,24 +77,19 @@
         (:name solarized-theme
                :type elpa
                :depends (dash))
-        (:name autopair
-               :after (progn (autopair-after-load)))
+        (:name autopair)
         (:name dropdown-list)
         (:name yasnippet)
-        (:name magit
-               :features magit
-               :after (progn (magit-after-load)))
+        (:name magit)
         (:name git-emacs)
         (:name mo-git-blame)
         (:name gist
 	       :type elpa)
-        (:name rvm
-               :after (progn (rvm-after-load)))
+        (:name rvm)
         (:name ruby-mode
                :type builtin)
         (:name inf-ruby
-               :type elpa
-               :after (progn (inf-ruby-after-load)))
+               :type elpa)
         (:name ruby-compilation)
         (:name ruby-test-mode)
         (:name rinari
@@ -163,8 +99,7 @@
         (:name jump
                :depends (findr inflections)
                :type elpa)
-        (:name feature-mode
-               :after (progn (feature-mode-after-load)))
+        (:name feature-mode)
         (:name ruby-tools
                :type github
                :pkgname "rejeep/ruby-tools"
@@ -173,13 +108,8 @@
         (:name haml-mode
                :description "Major mode for editing Haml files"
                :type elpa)
-        (:name sass-mode
-               :type github
-               :pkgname "nex3/sass-mode"
-               :depends haml-mode)
         (:name sass-mode)
-        (:name web-mode
-               :after (progn (web-mode-after-load)))
+        (:name web-mode)
         (:name emmet-mode)
         (:name css-mode
                :type builtin)
@@ -203,14 +133,9 @@
         (:name ag
                :type elpa
                :after (progn (ag-after-load)))
-        (:name bundler
-               :type github
-               :pkgname "tobiassvn/bundler.el")
+        (:name bundler)
         (:name expand-region)
-        (:name jshint-mode
-               :type github
-               :pkgname "diasjorge/jshint-mode"
-               :after (progn (jshint-mode-after-load)))
+        (:name jshint-mode)
         (:name multiple-cursors
                :type github
                :pkgname "magnars/multiple-cursors.el"
@@ -224,6 +149,7 @@
                :after (progn) (flx-ido-after-load))
         (:name smex)
         (:name drag-stuff)
+        (:name erlang-mode)
 ))
 
 (defun sync-packages ()
