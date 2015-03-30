@@ -20,3 +20,4 @@ elpa/*
 /.DS_Store
 ido.last
 /places
+/eshell/
