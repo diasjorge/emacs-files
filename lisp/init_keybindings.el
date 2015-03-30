@@ -14,7 +14,7 @@
 (global-set-key (kbd "C-c w") 'wget)
 (global-set-key (kbd "C-c r") 'revert-buffer)
 (global-set-key (kbd "C-c n") 'clean-up-buffer-or-region)
-(global-set-key (kbd "C-c a") 'ack-and-a-half)
+(global-set-key (kbd "C-c a") 'ag)
 
 ;;; Packages
 (eval-after-load "jekyll"
