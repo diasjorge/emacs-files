@@ -15,10 +15,6 @@
 
 (setq el-get-user-package-directory (concat emacs-directory "lisp/el-get-init-files"))
 
-(defun jekyll-el-after-load ()
-  (setq jekyll-directory "~/development/mrdias.com/")
-)
-
 (defun multiple-cursors-after-load ()
   (delete-selection-mode 1)
 )
@@ -123,8 +119,7 @@
                :after (progn (coffee-mode-after-load)))
         (:name flymake-coffee
                :after (progn (flymake-coffee-after-load)))
-        (:name jekyll-el
-               :after (progn (jekyll-el-after-load)))
+        (:name jekyll-el)
         (:name lorem-ipsum)
         (:name fiplr)
         (:name httpcode
