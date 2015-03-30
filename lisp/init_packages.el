@@ -145,6 +145,7 @@
         (:name smex)
         (:name drag-stuff)
         (:name erlang-mode)
+        (:name dockerfile-mode)
 ))
 
 (defun sync-packages ()
