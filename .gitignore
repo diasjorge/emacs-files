@@ -22,3 +22,4 @@ ido.last
 /places
 /eshell/
 /smex-items
+lisp/customizations.el
