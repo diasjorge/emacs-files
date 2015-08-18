@@ -70,9 +70,7 @@
                :depends (popup fuzzy))
         (:name pos-tip)
         (:name icomplete+)
-        (:name solarized-theme
-               :type elpa
-               :depends (dash))
+        (:name solarized-emacs)
         (:name autopair)
         (:name dropdown-list)
         (:name yasnippet)
