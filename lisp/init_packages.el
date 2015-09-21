@@ -15,52 +15,10 @@
 
 (setq el-get-user-package-directory (concat emacs-directory "lisp/el-get-init-files"))
 
-(defun multiple-cursors-after-load ()
-  (delete-selection-mode 1)
-)
-
-(defun ido-ubiquitous-after-load ()
-  (eval-after-load "ido"
-    '(ido-ubiquitous-mode))
-)
-
-(defun flx-ido-after-load()
-  (flx-ido-mode 1)
-  ;; disable ido faces to see flx highlights
-  (setq ido-use-faces nil)
-)
-
-(defun ag-after-load()
-  (setq ag-highlight-search t)
-)
-
-(defun coffee-mode-after-load ()
-  (add-hook 'coffee-mode-hook 'untabify-hook)
-  (add-hook 'coffee-mode-hook
-            (lambda ()
-              (make-local-variable 'tab-width)
-              (setq coffee-tab-width 2)
-              (auto-complete-mode)))
-)
-
-(defun flymake-coffee-after-load ()
-  (add-hook 'coffee-mode-hook
-            (lambda ()
-              (let ((config-file (locate-dominating-file (buffer-file-name) ".coffeelintrc")))
-                (make-variable-buffer-local 'flymake-coffee-coffeelint-configuration-file)
-                (setq flymake-coffee-coffeelint-configuration-file (expand-file-name (concat config-file ".coffeelintrc")))
-                )))
-)
-
-(defun rinari-after-load ()
-  (global-rinari-mode)
-)
-
 ;; local sources
 (setq el-get-sources
       '((:name ergoemacs-keybindings
-               :checksum "0ee16b3a7096a93c923cb3eea3c72838f015db7f"
-               :after (progn (ergoemacs-mode)))
+               :checksum "0ee16b3a7096a93c923cb3eea3c72838f015db7f")
         (:name emacs-goodies-el)
         (:name etags-select
                :type github
@@ -88,8 +46,7 @@
         (:name ruby-test-mode)
         (:name rinari
                :type elpa
-               :depends (jump inf-ruby)
-               :after (progn (rinari-after-load)))
+               :depends (jump inf-ruby))
         (:name jump
                :depends (findr inflections)
                :type elpa)
@@ -113,10 +70,8 @@
                :type elpa)
         (:name textile-mode)
         (:name clojure-mode)
-        (:name coffee-mode
-               :after (progn (coffee-mode-after-load)))
-        (:name flymake-coffee
-               :after (progn (flymake-coffee-after-load)))
+        (:name coffee-mode)
+        (:name flymake-coffee)
         (:name jekyll-el)
         (:name lorem-ipsum)
         (:name fiplr)
@@ -124,26 +79,20 @@
                :type elpa)
         (:name rainbow-mode)
         (:name ag
-               :type elpa
-               :after (progn (ag-after-load)))
+               :type elpa)
         (:name bundler)
         (:name expand-region)
         (:name jshint-mode)
-        (:name multiple-cursors
-               :type github
-               :pkgname "magnars/multiple-cursors.el"
-               :load "multiple-cursors.el"
-               :after (progn (multiple-cursors-after-load)))
-        (:name ido-ubiquitous
-               :compile "ido-ubiquitous.el"
-               :after (progn (ido-ubiquitous-after-load)))
+        (:name multiple-cursors)
+        (:name ido-ubiquitous)
         (:name flx-ido
-               :type elpa
-               :after (progn) (flx-ido-after-load))
+               :depends (flx)
+               :type elpa)
         (:name smex)
         (:name drag-stuff)
         (:name erlang-mode)
         (:name dockerfile-mode)
+        (:name wgrep)
 ))
 
 (defun sync-packages ()

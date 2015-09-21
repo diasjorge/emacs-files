@@ -1,0 +1,1 @@
+(ergoemacs-mode)

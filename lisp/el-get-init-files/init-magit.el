@@ -11,8 +11,11 @@
   ad-do-it
   (delete-other-windows))
 
+;; quit by pressing q
 (defun magit-quit-session ()
   "Restores the previous window configuration and kills the magit buffer"
   (interactive)
   (kill-buffer)
   (jump-to-register :magit-fullscreen))
+
+(setq magit-push-always-verify nil)
