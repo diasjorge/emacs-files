@@ -136,6 +136,9 @@
 ;; mute bell
 (setq ring-bell-function 'ignore)
 
+;; add new line at end of file
+(setq require-final-newline t)
+
 ;; close buffer when killing process
 (defadvice term-sentinel (around my-advice-term-sentinel (proc msg))
   (if (memq (process-status proc) '(signal exit))
