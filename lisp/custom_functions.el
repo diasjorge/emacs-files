@@ -235,7 +235,7 @@
         (unless (looking-at "\\<") (backward-sexp))
         (let ((case-fold-search nil)
               (start (point))
-              (end (save-excursion (forward-sexp) (point))))
+              (end (save-excursion (forward-symbol 1) (point))))
           (if (and (looking-at "[a-z0-9_]+") (= end (match-end 0))) ; snake-case
               (progn
                 (goto-char start)
