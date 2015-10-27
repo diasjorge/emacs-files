@@ -93,6 +93,15 @@
         (:name erlang-mode)
         (:name dockerfile-mode)
         (:name wgrep)
+        (:name python-mode
+               :type builtin)
+        (:name jedi)
+        (:name virtualenvwrapper)
+        (:name fill-column-indicator)
+        (:name ropemacs)
+        (:name flycheck
+               :type elpa)
+        (:name py-autopep8)
 ))
 
 (defun sync-packages ()

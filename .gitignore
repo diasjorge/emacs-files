@@ -23,3 +23,4 @@ ido.last
 /eshell/
 /smex-items
 lisp/customizations.el
+/.python-environments
