@@ -128,6 +128,10 @@
   '(progn
      (define-key python-mode-map (kbd "C-x t") 'nosetests-module)
      (define-key python-mode-map (kbd "C-x SPC") 'nosetests-one)))
+
+(global-set-key [(control ?.)] 'goto-last-change)
+(global-set-key [(control ?,)] 'goto-last-change-reverse)
+
 ;;; Disabled keys
 (global-unset-key (kbd "C-w")) ;; prevent accidentally closing buffer
 (global-unset-key (kbd "<insert>"))

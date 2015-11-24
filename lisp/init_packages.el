@@ -103,6 +103,7 @@
                :type elpa)
         (:name py-autopep8)
         (:name nose)
+        (:name goto-chg)
 ))
 
 (defun sync-packages ()
