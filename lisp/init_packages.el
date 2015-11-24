@@ -103,6 +103,7 @@
                :type elpa)
         (:name py-autopep8)
         (:name nose)
+        (:name nginx-mode)
         (:name goto-chg)
 ))
 
