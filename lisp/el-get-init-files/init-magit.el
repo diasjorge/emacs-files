@@ -12,10 +12,10 @@
   (kill-buffer))
 
 ;; magit full screen
-(setq magit-status-buffer-switch-function
-      (lambda (buffer) ; there might already be an Emacs function which does this
-        (pop-to-buffer buffer)
-        (delete-other-windows)))
+(add-hook 'magit-post-display-buffer-hook '
+          (lambda ()
+            (delete-other-windows)
+            (magit-maybe-set-dedicated)))
 
 ;; Don't ask for pushes
 (setq magit-push-always-verify nil)
