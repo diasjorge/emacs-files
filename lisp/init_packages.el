@@ -102,6 +102,7 @@
         (:name flycheck
                :type elpa)
         (:name py-autopep8)
+        (:name nose)
 ))
 
 (defun sync-packages ()
