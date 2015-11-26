@@ -105,6 +105,8 @@
         (:name nose)
         (:name nginx-mode)
         (:name goto-chg)
+        (:name popup
+               :branch "v0.5.2")
 ))
 
 (defun sync-packages ()
