@@ -107,6 +107,7 @@
         (:name goto-chg)
         (:name popup
                :branch "v0.5.2")
+        (:name jinja2-mode)
 ))
 
 (defun sync-packages ()
