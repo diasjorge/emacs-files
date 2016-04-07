@@ -108,6 +108,8 @@
         (:name popup
                :branch "v0.5.2")
         (:name jinja2-mode)
+        (:name flymake
+               :type builtin)
 ))
 
 (defun sync-packages ()
