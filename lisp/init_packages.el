@@ -110,6 +110,7 @@
         (:name jinja2-mode)
         (:name flymake
                :type builtin)
+        (:name go-mode)
 ))
 
 (defun sync-packages ()
