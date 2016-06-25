@@ -109,6 +109,13 @@
         (:name flymake
                :type builtin)
         (:name go-mode)
+        (:name rust-mode)
+        (:name toml-mode)
+        (:name cargo
+               :type github
+               :pkgname "attichacker/cargo.el"
+               :depends (rust-mode)
+               :prepare (add-hook 'rust-mode-hook #'cargo-minor-mode))
 ))
 
 (defun sync-packages ()
