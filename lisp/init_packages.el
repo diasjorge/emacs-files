@@ -18,7 +18,10 @@
 ;; local sources
 (setq el-get-sources
       '((:name ergoemacs-keybindings
-               :checksum "0ee16b3a7096a93c923cb3eea3c72838f015db7f")
+               :type github
+               :pkgname "diasjorge/ergoemacs-keybindings"
+               :features "ergoemacs-mode"
+               :checkout "7e4014a4a172b0700fa9f04813dae369ef84e641")
         (:name emacs-goodies-el)
         (:name etags-select
                :type github
