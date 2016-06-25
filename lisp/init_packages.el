@@ -33,7 +33,8 @@
         (:name icomplete+)
         (:name solarized-emacs)
         (:name autopair)
-        (:name dropdown-list)
+        (:name dropdown-list
+               :type elpa)
         (:name yasnippet)
         (:name magit)
         (:name git-emacs)
@@ -46,13 +47,9 @@
         (:name inf-ruby
                :type elpa)
         (:name ruby-compilation)
-        (:name ruby-test-mode)
-        (:name rinari
-               :type elpa
-               :depends (jump inf-ruby))
-        (:name jump
-               :depends (findr inflections)
-               :type elpa)
+        (:name ruby-test-mode
+               :depends (pcre2el))
+        (:name rinari)
         (:name feature-mode)
         (:name ruby-tools
                :type github
@@ -108,8 +105,6 @@
         (:name nose)
         (:name nginx-mode)
         (:name goto-chg)
-        (:name popup
-               :branch "v0.5.2")
         (:name jinja2-mode)
         (:name flymake
                :type builtin)
