@@ -116,6 +116,9 @@
                :pkgname "attichacker/cargo.el"
                :depends (rust-mode)
                :prepare (add-hook 'rust-mode-hook #'cargo-minor-mode))
+        (:name tablist
+               :type elpa)
+        (:name pdf-tools)
 ))
 
 (defun sync-packages ()
