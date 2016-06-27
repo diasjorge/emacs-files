@@ -119,6 +119,7 @@
         (:name tablist
                :type elpa)
         (:name pdf-tools)
+        (:name handlebars-mode)
 ))
 
 (defun sync-packages ()
