@@ -46,6 +46,7 @@
 ;; No backup or auto-save
 (setq make-backup-files nil)
 (setq auto-save-default nil)
+(setq create-lockfiles nil)
 
 ;; Save minibuffer history
 (savehist-mode 1)
