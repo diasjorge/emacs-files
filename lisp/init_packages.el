@@ -2,11 +2,11 @@
 (require 'package)
 
 (setq package-archives
-  '(("ELPA" . "http://tromey.com/elpa/")
-    ("gnu" . "http://elpa.gnu.org/packages/")
-    ("marmalade" . "http://marmalade-repo.org/packages/")
-    ("SC"   . "http://joseito.republika.pl/sunrise-commander/")
-    ("melpa" . "http://melpa.milkbox.net/packages/")))
+      '(("ELPA" . "http://tromey.com/elpa/")
+        ("gnu" . "http://elpa.gnu.org/packages/")
+        ("marmalade" . "http://marmalade-repo.org/packages/")
+        ("SC"   . "http://joseito.republika.pl/sunrise-commander/")
+        ("melpa" . "http://melpa.milkbox.net/packages/")))
 
 (package-initialize t)
 
@@ -41,7 +41,7 @@
         (:name git-emacs)
         (:name mo-git-blame)
         (:name gist
-	       :type elpa)
+               :type elpa)
         (:name rvm)
         (:name ruby-mode
                :type builtin)
@@ -101,8 +101,7 @@
         (:name virtualenvwrapper)
         (:name fill-column-indicator)
         (:name ropemacs)
-        (:name flycheck
-               :type elpa)
+        (:name flycheck)
         (:name py-autopep8)
         (:name nose)
         (:name pytest
