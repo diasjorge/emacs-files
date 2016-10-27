@@ -114,6 +114,18 @@
         (:name flymake
                :type builtin)
         (:name go-mode)
+        (:name go-autocomplete)
+        (:name go-eldoc)
+        (:name yasnippet-go
+               :type github
+               :pkgname "dominikh/yasnippet-go"
+               :depends yasnippet
+               :post-init (progn
+                            (let ((snip-dir (expand-file-name (el-get-package-directory "yasnippet-go"))))
+                              (when (boundp 'yas-snippet-dirs)
+                                (add-to-list 'yas-snippet-dirs snip-dir t))
+                              (yas-load-directory snip-dir))))
+        (:name go-errcheck-el)
         (:name rust-mode)
         (:name toml-mode)
         (:name cargo

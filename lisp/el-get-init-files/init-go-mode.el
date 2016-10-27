@@ -1,3 +1,5 @@
+(require 'go-mode-autoloads)
 (add-hook 'before-save-hook 'gofmt-before-save)
 (add-hook 'go-mode-hook (lambda ()
-                          (local-set-key (kbd "M-.") 'godef-jump)))
+                          (local-set-key (kbd "M-.") 'godef-jump)
+                          (setq-local ac-auto-start 0)))
