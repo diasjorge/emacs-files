@@ -104,7 +104,7 @@
       (if (file-exists-p my-tags-file)
           (delete-file my-tags-file))
       (shell-command
-       (format "ctags -e -R --exclude=db --exclude=.git --exclude=tmp --exclude=test --exclude=.#* %s -f %s %s"
+       (format "/usr/local/bin/ctags -e -R --exclude=db --exclude=.git --exclude=tmp --exclude=test --exclude=.#* %s -f %s %s"
                ctags-options my-tags-file root))
       (if (get-file-buffer my-tags-file)
           (kill-buffer (get-file-buffer my-tags-file)))
