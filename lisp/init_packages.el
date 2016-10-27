@@ -67,6 +67,7 @@
                :type builtin)
         (:name js2-mode)
         (:name js2-refactor)
+        (:name json-mode)
         (:name slim-mode
                :type elpa)
         (:name textile-mode)
