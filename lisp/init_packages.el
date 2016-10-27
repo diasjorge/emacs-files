@@ -103,6 +103,9 @@
                :type elpa)
         (:name py-autopep8)
         (:name nose)
+        (:name pytest
+               :type github
+               :pkgname "ionrock/pytest-el")
         (:name nginx-mode)
         (:name goto-chg)
         (:name jinja2-mode)

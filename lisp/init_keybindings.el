@@ -126,7 +126,7 @@
 
 (eval-after-load "python"
   '(progn
-     (define-key python-mode-map (kbd "C-x t") 'nosetests-module)
+     (define-key python-mode-map (kbd "C-x t") 'python-tests-run-all)
      (define-key python-mode-map (kbd "C-x SPC") 'nosetests-one)))
 
 (global-set-key [(control ?.)] 'goto-last-change)

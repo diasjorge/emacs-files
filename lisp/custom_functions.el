@@ -296,3 +296,11 @@
           (set-window-buffer (next-window) next-win-buffer)
           (select-window first-win)
           (if this-win-2nd (other-window 1))))))
+
+(defun python-tests-run-all ()
+  "Run all tests in file"
+  (interactive)
+  (if (and (boundp 'python-testing-framework)
+           (string-equal "py.test" python-testing-framework))
+      (pytest-all)
+      (nosetests-module)))
