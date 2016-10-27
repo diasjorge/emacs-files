@@ -12,3 +12,8 @@ You must clone the repository to ~/.emacs.d or symlink it
     $ emacs
 
 This will load the el-get package manager and install all the packages
+
+# Prerequisites:
+
+- pdf-tools
+  - poppler
