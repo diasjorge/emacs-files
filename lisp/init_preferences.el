@@ -1,7 +1,8 @@
+
 ;; Set font
 (if (functionp 'set-frame-font)
-    (set-frame-font "Dejavu Sans Mono-12")
-  (set-default-font "Dejavu Sans Mono-12"))
+    (set-frame-font "Dejavu Sans Mono-14")
+  (set-default-font "Dejavu Sans Mono-14"))
 
 ;; Share clipboard with other X applications
 (setq x-select-enable-clipboard t)
