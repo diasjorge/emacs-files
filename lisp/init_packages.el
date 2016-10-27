@@ -17,7 +17,8 @@
 
 ;; local sources
 (setq el-get-sources
-      '((:name ergoemacs-keybindings
+      '((:name exec-path-from-shell)
+        (:name ergoemacs-keybindings
                :type github
                :pkgname "diasjorge/ergoemacs-keybindings"
                :features "ergoemacs-mode"
