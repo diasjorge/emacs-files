@@ -1,3 +1,5 @@
+(require 'fiplr)
+
 (setq fiplr-root-markers '(".git" ".svn" "Rakefile"))
 
 (setq fiplr-ignored-globs '((directories (".git" ".svn" ".hg" ".bzr" "tmp" "log"))
