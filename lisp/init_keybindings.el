@@ -91,13 +91,6 @@
     )
 )
 
-(eval-after-load "js2-mode"
-  '(progn
-     ;; Insert file path using autocompletion
-     (define-key js2-mode-map (kbd "C-'") 'ruby-tools-to-single-quote-string)
-     (define-key js2-mode-map (kbd "C-\"") 'ruby-tools-to-double-quote-string)
-     ))
-
 (eval-after-load "smex"
   '(progn
      (global-set-key (kbd "M-a") 'smex)
@@ -128,6 +121,12 @@
   '(progn
      (define-key python-mode-map (kbd "C-x t") 'python-tests-run-all)
      (define-key python-mode-map (kbd "C-x SPC") 'nosetests-one)))
+
+
+(eval-after-load "ruby-tools"
+  '(progn
+     (global-set-key (kbd "C-'") 'ruby-tools-to-single-quote-string)
+     (global-set-key (kbd "C-\"") 'ruby-tools-to-double-quote-string)))
 
 (global-set-key [(control ?.)] 'goto-last-change)
 (global-set-key [(control ?,)] 'goto-last-change-reverse)

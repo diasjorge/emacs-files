@@ -52,10 +52,7 @@
                :depends (pcre2el))
         (:name rinari)
         (:name feature-mode)
-        (:name ruby-tools
-               :type github
-               :pkgname "rejeep/ruby-tools"
-               :load "ruby-tools.el")
+        (:name ruby-tools)
         (:name yaml-mode)
         (:name haml-mode
                :description "Major mode for editing Haml files"
