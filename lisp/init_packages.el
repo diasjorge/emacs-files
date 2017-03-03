@@ -81,6 +81,7 @@
                :type elpa)
         (:name bundler)
         (:name expand-region)
+        (:name change-inner)
         (:name jshint-mode)
         (:name multiple-cursors)
         (:name ido-ubiquitous)

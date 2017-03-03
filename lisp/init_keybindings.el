@@ -57,9 +57,7 @@
 
 (eval-after-load "custom_functions"
   '(progn
-     (global-set-key (kbd "C-t") 'ido-goto-symbol)
-     ))
-
+     (global-set-key (kbd "C-t") 'ido-goto-symbol)))
 
 (eval-after-load "ruby-compilation"
   '(progn
@@ -127,6 +125,9 @@
   '(progn
      (global-set-key (kbd "C-'") 'ruby-tools-to-single-quote-string)
      (global-set-key (kbd "C-\"") 'ruby-tools-to-double-quote-string)))
+
+(global-set-key (kbd "C-c i") 'change-inner)
+(global-set-key (kbd "C-c o") 'change-outer)
 
 (global-set-key [(control ?.)] 'goto-last-change)
 (global-set-key [(control ?,)] 'goto-last-change-reverse)
