@@ -24,3 +24,4 @@ ido.last
 /smex-items
 lisp/customizations.el
 /.python-environments
+/var/pcache/gh-cache
