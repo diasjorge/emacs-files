@@ -40,8 +40,7 @@
         (:name magit)
         (:name git-emacs)
         (:name mo-git-blame)
-        (:name gist
-               :type elpa)
+        (:name gist)
         (:name rvm)
         (:name ruby-mode
                :type builtin)
