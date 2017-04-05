@@ -1,1 +1,1 @@
-(setq jekyll-directory "~/development/mrdias.com/")
+(setq jekyll-directory "~/development/diasjorge.github.io/")

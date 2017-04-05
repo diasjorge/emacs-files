@@ -133,6 +133,8 @@
                :type elpa)
         (:name pdf-tools)
         (:name handlebars-mode)
+        (:name toggle-quotes
+               :type elpa)
 ))
 
 (defun sync-packages ()

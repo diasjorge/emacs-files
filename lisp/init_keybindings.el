@@ -126,6 +126,11 @@
      (global-set-key (kbd "C-'") 'ruby-tools-to-single-quote-string)
      (global-set-key (kbd "C-\"") 'ruby-tools-to-double-quote-string)))
 
+(eval-after-load "toggle-quotes"
+  '(progn
+     (global-set-key (kbd "C-'") 'toggle-quotes)))
+
+
 (global-set-key (kbd "C-c i") 'change-inner)
 (global-set-key (kbd "C-c o") 'change-outer)
 
