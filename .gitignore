@@ -25,3 +25,4 @@ ido.last
 lisp/customizations.el
 /.python-environments
 /var/pcache/gh-cache
+/var/
