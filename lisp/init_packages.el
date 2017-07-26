@@ -34,6 +34,10 @@
                :type elpa)
         (:name yasnippet)
         (:name magit)
+        (:name magithub
+               :type elpa
+               :depends (magit s)
+               :features magithub)
         (:name git-emacs)
         (:name mo-git-blame)
         (:name gist)
