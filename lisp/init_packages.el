@@ -44,12 +44,10 @@
         (:name rvm)
         (:name ruby-mode
                :type builtin)
-        (:name inf-ruby
-               :type elpa)
+        (:name inf-ruby)
         (:name ruby-compilation)
         (:name ruby-test-mode
                :depends (pcre2el))
-        (:name rinari)
         (:name feature-mode)
         (:name ruby-tools)
         (:name yaml-mode)
