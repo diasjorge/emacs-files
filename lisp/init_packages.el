@@ -49,7 +49,6 @@
         (:name ruby-test-mode
                :depends (pcre2el))
         (:name feature-mode)
-        (:name ruby-tools)
         (:name yaml-mode)
         (:name haml-mode
                :description "Major mode for editing Haml files"

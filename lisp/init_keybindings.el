@@ -120,12 +120,6 @@
      (define-key python-mode-map (kbd "C-x t") 'python-tests-run-all)
      (define-key python-mode-map (kbd "C-x SPC") 'nosetests-one)))
 
-
-(eval-after-load "ruby-tools"
-  '(progn
-     (global-set-key (kbd "C-'") 'ruby-tools-to-single-quote-string)
-     (global-set-key (kbd "C-\"") 'ruby-tools-to-double-quote-string)))
-
 (eval-after-load "toggle-quotes"
   '(progn
      (global-set-key (kbd "C-'") 'toggle-quotes)))
