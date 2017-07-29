@@ -45,6 +45,7 @@
         (:name ruby-mode
                :type builtin)
         (:name inf-ruby)
+        (:name robe-mode)
         (:name ruby-compilation)
         (:name ruby-test-mode
                :depends (pcre2el))
