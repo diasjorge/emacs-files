@@ -26,3 +26,5 @@ lisp/customizations.el
 /.python-environments
 /var/pcache/gh-cache
 /var/
+/ido.last~
+/network-security.data
