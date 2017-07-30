@@ -188,6 +188,7 @@
   "Will update the imenu index and then use ido to select a
    symbol to navigate to"
   (interactive)
+  (require 'imenu)
   (imenu--make-index-alist)
   (let ((name-and-pos '())
         (symbol-names '()))
