@@ -122,11 +122,7 @@
         (:name go-errcheck-el)
         (:name rust-mode)
         (:name toml-mode)
-        (:name cargo
-               :type github
-               :pkgname "attichacker/cargo.el"
-               :depends (rust-mode)
-               :prepare (add-hook 'rust-mode-hook #'cargo-minor-mode))
+        (:name cargo)
         (:name tablist
                :type elpa)
         (:name pdf-tools)
