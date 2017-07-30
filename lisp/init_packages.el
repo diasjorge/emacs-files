@@ -23,9 +23,7 @@
         (:name etags-select
                :type github
                :pkgname "diasjorge/etags-select")
-        (:name auto-complete
-               :type elpa
-               :depends (popup fuzzy))
+        (:name auto-complete)
         (:name pos-tip)
         (:name icomplete+)
         (:name solarized-emacs)
