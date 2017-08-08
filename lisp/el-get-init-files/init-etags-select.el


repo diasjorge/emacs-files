@@ -1,2 +1,0 @@
-(setq etags-select-highlight-delay 0.5)
-(message "hjere")b
