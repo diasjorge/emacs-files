@@ -79,7 +79,7 @@
   :quelpa (etags-select :fetcher github :repo "diasjorge/etags-select"))
 
 (use-package expand-region
-  :bind ("C-=" . er/expand-region))
+  :bind* ("C-=" . er/expand-region))
 
 (use-package fiplr
   :config
@@ -97,8 +97,8 @@
 (use-package gist)
 
 (use-package goto-chg
-  :bind (("C-." . goto-last-change)
-         ("C-," . goto-last-change-reverse)))
+  :bind* (("C-." . goto-last-change)
+          ("C-," . goto-last-change-reverse)))
 
 (use-package jekyll
   :quelpa (jekyll :fetcher github :repo "diasjorge/jekyll.el")
@@ -126,8 +126,8 @@
             (lambda ()
               (delete-other-windows)
               (magit-maybe-set-dedicated)))
-  :bind (("C-c m" . magit-status)
-         :map magit-status-mode-map
+  :bind* ("C-c m" . magit-status)
+  :bind (:map magit-status-mode-map
          ("q" . magit-quit-session)
          ("C-c C-a" . magit-just-amend)))
 
@@ -148,15 +148,15 @@
          ("\\.markdown\\'" . markdown-mode)))
 
 (use-package multiple-cursors
-  :bind (("C-c = =" . mc/edit-lines)
-         ("C-c = e" . mc/edit-ends-of-lines)
-         ("C-c = a" . mc/edit-beginnings-of-lines)
-         ("C-]" . mc/mark-next-like-this)
-         ("C-}" . mc/mark-all-like-this)
-         ("C-M-]" . mc/mark-previous-like-this)
-         ("C-{" . mc/mark-all-in-region)
-         ("C-+" . mc/mark-more-like-this-extended)
-         ("M-S-<mouse-1>" . mc/add-cursor-on-click))
+  :bind* (("C-c = =" . mc/edit-lines)
+          ("C-c = e" . mc/edit-ends-of-lines)
+          ("C-c = a" . mc/edit-beginnings-of-lines)
+          ("C-]" . mc/mark-next-like-this)
+          ("C-}" . mc/mark-all-like-this)
+          ("C-M-]" . mc/mark-previous-like-this)
+          ("C-{" . mc/mark-all-in-region)
+          ("C-+" . mc/mark-more-like-this-extended)
+          ("M-S-<mouse-1>" . mc/add-cursor-on-click))
   :config (delete-selection-mode 1))
 
 (use-package pdf-tools)
@@ -165,7 +165,7 @@
   :config (load-theme 'solarized-light t))
 
 (use-package toggle-quotes
-  :bind ("C-'" . toggle-quotes))
+  :bind* ("C-'" . toggle-quotes))
 
 (use-package yasnippet
   :config
