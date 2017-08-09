@@ -4,3 +4,4 @@
 (defvar javascript-mode-syntax-table 'js-mode-syntax-table)
 (menu-bar-mode)
 (setq dired-use-ls-dired nil)
+(setq gnutls-trustfiles '("/usr/local/etc/openssl/cert.pem"))
