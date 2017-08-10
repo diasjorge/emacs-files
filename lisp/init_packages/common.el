@@ -98,12 +98,17 @@
 (use-package magithub
   :config
   (magithub-feature-autoinject t)
-  (defun magithub-use-ghe ()
-    (interactive)
-    (setq ghub-base-url "https://github.schibsted.io/api/v3"))
-  (defun magithub-use-github ()
-    (interactive)
-    (setq ghub-base-url "https://api.github.com")))
+  (defun magithub--url->domain (url)
+    "Tries to parse a remote url into a domain"
+    (cdr (assq 'domain (magithub--parse-url url))))
+  (add-hook 'magit-status-mode-hook '(lambda ()
+                                     (if (magithub-github-repository-p)
+                                         (let* ((remote-url (magit-get "remote" (magithub-source--remote) "url"))
+                                                (domain (magithub--url->domain remote-url)))
+                                           (message domain)
+                                           (unless (string-equal "github.com" domain)
+                                             (setq-local ghub-base-url (concat "https://" domain "/api/v3")))))))
+  )
 
 (use-package markdown-mode
   :commands (markdown-mode gfm-mode)
