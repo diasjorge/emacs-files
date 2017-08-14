@@ -92,23 +92,18 @@
               (magit-maybe-set-dedicated)))
   :bind* ("C-c m" . magit-status)
   :bind (:map magit-status-mode-map
-         ("q" . magit-quit-session)
-         ("C-c C-a" . magit-just-amend)))
+              ("q" . magit-quit-session)
+              ("C-c C-a" . magit-just-amend)))
 
 (use-package magithub
   :config
   (magithub-feature-autoinject t)
-  (defun magithub--url->domain (url)
-    "Tries to parse a remote url into a domain"
-    (cdr (assq 'domain (magithub--parse-url url))))
   (add-hook 'magit-status-mode-hook '(lambda ()
-                                     (if (magithub-github-repository-p)
-                                         (let* ((remote-url (magit-get "remote" (magithub-source--remote) "url"))
-                                                (domain (magithub--url->domain remote-url)))
-                                           (message domain)
-                                           (unless (string-equal "github.com" domain)
-                                             (setq-local ghub-base-url (concat "https://" domain "/api/v3")))))))
-  )
+                                       (if (magithub-github-repository-p)
+                                           (let-alist (magithub--parse-url (magit-get "remote" (magithub-source--remote) "url"))
+                                             (if (string-equal "github.com" .domain)
+                                                 (setq ghub-base-url "https://api.github.com")
+                                               (setq ghub-base-url (concat "https://" .domain "/api/v3"))))))))
 
 (use-package markdown-mode
   :commands (markdown-mode gfm-mode)
