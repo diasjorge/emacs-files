@@ -1,0 +1,21 @@
+(:name pymacs
+       :description "Interface between Emacs Lisp and Python"
+       :type github
+       :pkgname "pinard/Pymacs"
+       :prepare
+       (progn
+         ;; do PYTHONPATH=~/.emacs.d/el-get/pymacs/:$PYTHONPATH
+         (el-get-envpath-prepend "PYTHONPATH" default-directory)
+         (autoload 'pymacs-load "pymacs" nil t)
+         (autoload 'pymacs-eval "pymacs" nil t)
+         (autoload 'pymacs-exec "pymacs" nil t)
+         (autoload 'pymacs-call "pymacs")
+         (autoload 'pymacs-apply "pymacs"))
+       :build (("make"))
+       ;; Assume windows lacks make, emulate what make does, as
+       ;; suggested in manual (although we're emulating "make", not
+       ;; "make install").
+       :build/windows-nt
+       (("python" "pppp" "-C" "ppppconfig.py"
+         "Pymacs.py.in" "pppp.rst.in" "pymacs.el.in" "pymacs.rst.in" "contrib" "tests")
+        ("python" "setup.py" "--quiet" "build")))
