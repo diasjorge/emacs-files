@@ -1,5 +1,0 @@
-(setq ropemacs-enable-shortcuts nil)
-(setq ropemacs-local-prefix "C-c C-p")
-(setq ropemacs-enable-autoimport t)
-(setq ropemacs-confirm-saving 'nil)
-(pymacs-load "ropemacs" "rope-")

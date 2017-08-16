@@ -28,3 +28,5 @@ lisp/customizations.el
 /var/
 /ido.last~
 /network-security.data
+/quelpa
+/magithub/cache
