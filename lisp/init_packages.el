@@ -40,7 +40,7 @@
   :config
   (setq el-get-bundle-byte-compile nil)
   (setq el-get-bundle-sync nil)
-  (add-to-list 'el-get-recipe-path "~/.emacs.d/el-get-recipes"))
+  (add-to-list 'el-get-recipe-path (concat user-emacs-directory "el-get-recipes")))
 
 (load "init_packages/common.el")
 

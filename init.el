@@ -2,9 +2,9 @@
 
 ;; (package-initialize)
 
-(setq emacs-directory (file-name-directory (or load-file-name buffer-file-name)))
+(setq user-emacs-directory (file-name-directory (or load-file-name buffer-file-name)))
 
-(add-to-list 'load-path (concat emacs-directory "lisp"))
+(add-to-list 'load-path (concat user-emacs-directory "lisp"))
 
 (load "init_pre_init")
 

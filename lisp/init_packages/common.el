@@ -137,7 +137,7 @@
   (setq yas-prompt-functions '(yas/dropdown-prompt
                                yas/ido-prompt
                                yas/completing-prompt))
-  (let ((snippets-dir (concat emacs-directory "snippets/")))
+  (let ((snippets-dir (concat user-emacs-directory "snippets/")))
     (add-to-list 'yas-snippet-dirs (concat snippets-dir "my-snippets"))
     (add-to-list 'yas-snippet-dirs (concat snippets-dir "contrib-snippets")))
   (add-hook 'after-save-hook
