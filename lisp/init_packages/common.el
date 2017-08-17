@@ -123,7 +123,8 @@
           ("M-S-<mouse-1>" . mc/add-cursor-on-click))
   :config (delete-selection-mode 1))
 
-(use-package pdf-tools)
+(use-package pdf-tools
+  :config (pdf-tools-install t))
 
 (use-package solarized-theme
   :config (load-theme 'solarized-light t))
