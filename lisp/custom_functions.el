@@ -305,3 +305,17 @@
            (string-equal "py.test" python-testing-framework))
       (pytest-all)
       (nosetests-module)))
+
+;; Slightly modified version of https://sam217pa.github.io/2016/09/01/emacs-iterm-integration/
+(defun iterm-goto-filedir-or-home ()
+  "Go to present working dir and focus iterm"
+  (interactive)
+  (do-applescript
+   (concat
+    " tell application \"iTerm\"\n"
+    "   tell the current session of current window\n"
+    (format "     write text \"cd \\\"%s\\\"\" \n" (expand-file-name (or default-directory "~")))
+    "   end tell\n"
+    " end tell\n"
+    " do shell script \"open -a iTerm\"\n"
+    )))
