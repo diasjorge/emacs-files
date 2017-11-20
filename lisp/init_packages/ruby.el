@@ -54,3 +54,5 @@
   :config (setq ruby-test-default-library "spec"))
 
 (use-package bundler)
+
+(use-package ruby-hash-syntax)
