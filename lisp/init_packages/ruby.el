@@ -1,6 +1,3 @@
-(use-package rvm
-  :config (rvm-autodetect-ruby))
-
 (use-package ruby-mode
   :mode ("\\.rb$"
          "\\.ru$"
