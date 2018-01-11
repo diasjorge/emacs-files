@@ -19,14 +19,14 @@
   (defun activate-corresponding-virtual-env ()
     (interactive)
     (require 'fiplr)
-    (let ((dirname (file-name-nondirectory (fiplr-root))))
+    (let ((dirname (file-name-nondirectory (directory-file-name (fiplr-root)))))
       (if (venv-is-valid dirname)
           (venv-workon dirname))))
-  (add-hook 'python-mode-hook '(lambda ()
-                                 (hack-local-variables)
-                                 (if (boundp 'project-venv-name)
-                                     (venv-workon project-venv-name)
-                                   (activate-corresponding-virtual-env)))))
+    (add-hook 'python-mode-hook '(lambda ()
+                                   (hack-local-variables)
+                                   (if (boundp 'project-venv-name)
+                                       (venv-workon project-venv-name)
+                                     (activate-corresponding-virtual-env)))))
 
 ;; el-get does all the compilation since this is not available in elpa
 (el-get-bundle ropemacs
