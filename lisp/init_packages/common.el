@@ -96,14 +96,9 @@
               ("C-c C-a" . magit-just-amend)))
 
 (use-package magithub
+  :after magit
   :config
-  (magithub-feature-autoinject t)
-  (add-hook 'magit-status-mode-hook '(lambda ()
-                                       (if (magithub-github-repository-p)
-                                           (let-alist (magithub--parse-url (magit-get "remote" (magithub-source--remote) "url"))
-                                             (if (string-equal "github.com" .domain)
-                                                 (setq ghub-base-url "https://api.github.com")
-                                               (setq ghub-base-url (concat "https://" .domain "/api/v3"))))))))
+  (magithub-feature-autoinject t))
 
 (use-package markdown-mode
   :commands (markdown-mode gfm-mode)
