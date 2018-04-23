@@ -68,7 +68,8 @@
   :quelpa (jekyll :fetcher github :repo "diasjorge/jekyll.el")
   :bind ("C-c j e" . jekyll-insert-preview-end)
   :config
-  (setq jekyll-directory "~/development/diasjorge.github.io/"))
+  (require 'jekyll)
+  (setq jekyll-directory "~/development/mrdias.com/"))
 
 (use-package lorem-ipsum)
 
