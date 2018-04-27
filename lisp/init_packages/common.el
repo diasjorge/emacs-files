@@ -64,13 +64,6 @@
   :bind* (("C-." . goto-last-change)
           ("C-," . goto-last-change-reverse)))
 
-(use-package jekyll
-  :quelpa (jekyll :fetcher github :repo "diasjorge/jekyll.el")
-  :bind ("C-c j e" . jekyll-insert-preview-end)
-  :config
-  (require 'jekyll)
-  (setq jekyll-directory "~/development/mrdias.com/"))
-
 (use-package lorem-ipsum)
 
 (use-package magit
@@ -171,6 +164,18 @@
 (use-package nginx-mode)
 (use-package toml-mode)
 (use-package yaml-mode)
+
+;; jekyll support
+
+(use-package jekyll
+  :quelpa (jekyll :fetcher github :repo "diasjorge/jekyll.el")
+  :bind ("C-c j e" . jekyll-insert-preview-end)
+  :config
+  (setq jekyll-directory "~/development/mrdias.com/"))
+
+(require 'jekyll)
+
+(use-package jekyll-modes)
 
 ;; emacs-goodies from debian package
 
