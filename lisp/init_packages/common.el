@@ -92,7 +92,8 @@
 (use-package magithub
   :after magit
   :config
-  (magithub-feature-autoinject t))
+  (magithub-feature-autoinject t)
+  (setq magithub-github-hosts '("github.com" "github.schibsted.io")))
 
 (use-package markdown-mode
   :commands (markdown-mode gfm-mode)
