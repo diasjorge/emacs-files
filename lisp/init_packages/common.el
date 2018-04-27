@@ -175,3 +175,7 @@
 ;; emacs-goodies from debian package
 
 (el-get-bundle emacs-goodies-el)
+
+;; load-env-vars
+
+(require 'load-env-vars)
