@@ -158,6 +158,12 @@
 (use-package flx-ido
   :config (flx-ido-mode 1))
 
+(use-package paradox
+  :config
+  (setq paradox-github-token t)
+  (setq paradox-execute-asynchronously t)
+  (paradox-enable))
+
 ;; various programming languages
 
 (use-package dockerfile-mode)
