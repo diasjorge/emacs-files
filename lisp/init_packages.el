@@ -28,6 +28,10 @@
 
 (require 'quelpa-use-package)
 
+;; Support installing system packages
+(use-package use-package-ensure-system-package
+  :ensure t)
+
 ;; Install packages if not present
 (setq use-package-always-ensure t)
 

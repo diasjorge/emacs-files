@@ -114,7 +114,8 @@
   :config (delete-selection-mode 1))
 
 (use-package pdf-tools
-  :config (pdf-tools-install t))
+  :config (pdf-tools-install t)
+  :ensure-system-package (pdftohtml . poppler))
 
 (use-package solarized-theme
   :config (load-theme 'solarized-light t))
