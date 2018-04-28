@@ -11,10 +11,13 @@
     (local-set-key (kbd "M-.") 'godef-jump)
     (local-set-key (kbd "M-*") 'pop-tag-mark)
     (local-set-key (kbd "M->") 'godoc-at-point))
-  (add-hook 'go-mode-hook 'my-go-mode-hook))
+  (add-hook 'go-mode-hook 'my-go-mode-hook)
+  :ensure-system-package (godef . "go get github.com/ogpeppe/godef"))
 
-(use-package go-guru)
+(use-package go-guru
+  :ensure-system-package (guru . "go get golang.org/x/tools/cmd/guru"))
 
 (use-package go-autocomplete)
 
-(use-package go-errcheck)
+(use-package go-errcheck
+   :ensure-system-package (errcheck . "go get -u github.com/kisielk/errcheck"))
