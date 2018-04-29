@@ -6,11 +6,7 @@
 (use-package jinja2-mode
   :mode "\\.j2\\'")
 
-(use-package nose)
-
 (use-package py-autopep8)
-
-(use-package pytest)
 
 (use-package virtualenvwrapper
   :config
