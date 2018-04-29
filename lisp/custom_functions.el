@@ -298,14 +298,6 @@
           (select-window first-win)
           (if this-win-2nd (other-window 1))))))
 
-(defun python-tests-run-all ()
-  "Run all tests in file"
-  (interactive)
-  (if (and (boundp 'python-testing-framework)
-           (string-equal "py.test" python-testing-framework))
-      (pytest-all)
-      (nosetests-module)))
-
 ;; Slightly modified version of https://sam217pa.github.io/2016/09/01/emacs-iterm-integration/
 (defun iterm-goto-filedir-or-home ()
   "Go to present working dir and focus iterm"

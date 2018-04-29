@@ -28,6 +28,15 @@
                                        (venv-workon project-venv-name)
                                      (activate-corresponding-virtual-env)))))
 
+(use-package elpy
+  :bind (("C-x SPC" . elpy-test)
+         ("C-x t" . elpy-test-project))
+  :config
+  (elpy-enable)
+  (defun elpy-test-project()
+    (interactive)
+    (funcall elpy-test-runner (elpy-project-root) nil nil nil)))
+
 ;; el-get does all the compilation since this is not available in elpa
 (el-get-bundle ropemacs
   (setq ropemacs-enable-shortcuts nil)

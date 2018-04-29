@@ -51,11 +51,6 @@
             (local-set-key (kbd "C-n") 'grizzl-set-selection-1)
             (local-set-key (kbd "M-k") 'grizzl-set-selection-1)))
 
-(eval-after-load "python"
-  '(progn
-     (define-key python-mode-map (kbd "C-x t") 'python-tests-run-all)
-     (define-key python-mode-map (kbd "C-x SPC") 'nosetests-one)))
-
 ;;; Disabled keys
 (global-unset-key (kbd "C-w")) ;; prevent accidentally closing buffer
 (global-unset-key (kbd "<insert>"))
