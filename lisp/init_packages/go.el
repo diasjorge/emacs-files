@@ -12,7 +12,7 @@
     (local-set-key (kbd "M-*") 'pop-tag-mark)
     (local-set-key (kbd "M->") 'godoc-at-point))
   (add-hook 'go-mode-hook 'my-go-mode-hook)
-  :ensure-system-package (godef . "go get github.com/ogpeppe/godef"))
+  :ensure-system-package (godef . "go get github.com/rogpeppe/godef"))
 
 (use-package go-guru
   :ensure-system-package (guru . "go get golang.org/x/tools/cmd/guru"))
