@@ -27,8 +27,9 @@
 (use-package elpy
   :bind (("C-x SPC" . elpy-test)
          ("C-x t" . elpy-test-project))
-  :config
+  :init
   (elpy-enable)
+  :config
   (defun elpy-test-project()
     (interactive)
     (funcall elpy-test-runner (elpy-project-root) nil nil nil)))
