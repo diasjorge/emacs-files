@@ -29,6 +29,8 @@
          ("C-x t" . elpy-test-project))
   :init
   (elpy-enable)
+  :custom
+  (elpy-modules '(elpy-module-eldoc elpy-module-flymake elpy-module-highlight-indentation elpy-module-yasnippet elpy-module-sane-defaults))
   :config
   (defun elpy-test-project()
     (interactive)
