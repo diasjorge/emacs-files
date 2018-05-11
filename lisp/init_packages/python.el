@@ -26,7 +26,8 @@
 
 (use-package elpy
   :bind (("C-x SPC" . elpy-test)
-         ("C-x t" . elpy-test-project))
+         ("C-x t" . elpy-test-file)
+         ("C-x T" . elpy-test-project))
   :init
   (elpy-enable)
   :custom
@@ -34,7 +35,13 @@
   :config
   (defun elpy-test-project()
     (interactive)
-    (funcall elpy-test-runner (elpy-project-root) nil nil nil)))
+    (funcall elpy-test-runner (elpy-project-root) nil nil nil))
+  (defun elpy-test-file()
+    (interactive)
+    (let* ((top (elpy-library-root))
+           (file buffer-file-name)
+           (module (elpy-test--module-name-for-file top file)))
+      (funcall elpy-test-runner top file module nil))))
 
 ;; el-get does all the compilation since this is not available in elpa
 (el-get-bundle ropemacs
