@@ -191,8 +191,7 @@
 
 ;; load-env-vars
 
-(use-package load-env-vars
-  :quelpa (load-env-vars :fetcher github :repo "diasjorge/emacs-load-env-vars"))
+(use-package load-env-vars)
 
 ;; undo-tree
 
