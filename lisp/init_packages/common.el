@@ -188,6 +188,7 @@
 ;; emacs-goodies from debian package
 
 (el-get-bundle emacs-goodies-el)
+(setq auto-mode-alist  (rassq-delete-all 'todoo-mode auto-mode-alist))
 
 ;; load-env-vars
 
