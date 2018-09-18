@@ -6,23 +6,10 @@
 (use-package jinja2-mode
   :mode "\\.j2\\'")
 
-(use-package py-autopep8)
-
 (use-package virtualenvwrapper
   :config
   (venv-initialize-interactive-shells) ;; if you want interactive shell support
-  (venv-initialize-eshell)
-  (defun activate-corresponding-virtual-env ()
-    (interactive)
-    (require 'fiplr)
-    (let ((dirname (file-name-nondirectory (directory-file-name (fiplr-root)))))
-      (if (venv-is-valid dirname)
-          (venv-workon dirname))))
-    (add-hook 'python-mode-hook '(lambda ()
-                                   (hack-local-variables)
-                                   (if (boundp 'project-venv-name)
-                                       (venv-workon project-venv-name)
-                                     (activate-corresponding-virtual-env)))))
+  (venv-initialize-eshell))
 
 (use-package elpy
   :bind (("C-x SPC" . elpy-test)
@@ -50,3 +37,18 @@
   (setq ropemacs-enable-autoimport t)
   (setq ropemacs-confirm-saving 'nil)
   (pymacs-load "ropemacs" "rope-"))
+
+(defun activate-corresponding-virtual-env ()
+  (interactive)
+  (require 'fiplr)
+  (let ((dirname (file-name-nondirectory (directory-file-name (fiplr-root)))))
+    (if (venv-is-valid dirname)
+        (progn
+          (venv-workon dirname)
+          (pyvenv-workon dirname)))))
+
+(add-hook 'python-mode-hook '(lambda ()
+                               (hack-local-variables)
+                               (if (boundp 'project-venv-name)
+                                   (venv-workon project-venv-name)
+                                 (activate-corresponding-virtual-env))))
