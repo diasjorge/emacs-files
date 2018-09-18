@@ -12,6 +12,7 @@
 (global-set-key (kbd "C-l") 'goto-line)
 (global-set-key (kbd "C-_") 'textmate-toggle-camel-case)
 (global-set-key (kbd "C-%") 'query-replace-regexp)
+(global-set-key (kbd "C-y") 'newline-and-indent)
 
 (global-set-key (kbd "C-c b") 'browse-url)
 (global-set-key (kbd "C-c w") 'wget)
