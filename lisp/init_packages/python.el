@@ -50,5 +50,10 @@
 (add-hook 'python-mode-hook '(lambda ()
                                (hack-local-variables)
                                (if (boundp 'project-venv-name)
-                                   (venv-workon project-venv-name)
+                                   (progn
+                                     (venv-workon project-venv-name)
+                                     (pyvenv-workon project-venv-name))
                                  (activate-corresponding-virtual-env))))
+
+(add-hook 'elpy-mode-hook
+          (lambda () (add-hook 'before-save-hook 'elpy-format-code nil 'local)))
