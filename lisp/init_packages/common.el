@@ -196,8 +196,4 @@
 
 ;; undo-tree
 
-(use-package undo-tree
-  :bind (:map ergoemacs-keymap
-              ("M-z" . undo-tree-undo)
-              ("M-Z" . undo-tree-redo))
-  :config (global-undo-tree-mode 1))
+(use-package undo-tree)
