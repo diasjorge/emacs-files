@@ -20,4 +20,4 @@
 (use-package go-autocomplete)
 
 (use-package go-errcheck
-   :ensure-system-package (errcheck . "go get -u github.com/kisielk/errcheck"))
+   :ensure-system-package (errcheck . "go get github.com/kisielk/errcheck"))
