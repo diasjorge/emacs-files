@@ -5,3 +5,6 @@
 (menu-bar-mode)
 (setq dired-use-ls-dired nil)
 (setq gnutls-trustfiles '("/usr/local/etc/openssl/cert.pem"))
+
+;; Maximize when opening
+(set-frame-parameter nil 'fullscreen 'maximized)
