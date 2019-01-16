@@ -1,6 +1,3 @@
-;; Required by dropdown-list at compile time
-(use-package cl-lib)
-
 (use-package exec-path-from-shell
   :config
   (unless (getenv "LANG")
@@ -36,8 +33,6 @@
   (drag-stuff-global-mode)
   (drag-stuff-define-keys)
   (add-to-list 'drag-stuff-except-modes 'git-rebase-mode))
-
-(use-package dropdown-list)
 
 (use-package etags-select
   :quelpa (etags-select :fetcher github :repo "diasjorge/etags-select"))
@@ -182,13 +177,6 @@
   (setq jekyll-directory "~/development/mrdias.com/"))
 
 (require 'jekyll)
-
-(use-package jekyll-modes)
-
-;; emacs-goodies from debian package
-
-(el-get-bundle emacs-goodies-el)
-(setq auto-mode-alist  (rassq-delete-all 'todoo-mode auto-mode-alist))
 
 ;; load-env-vars
 
