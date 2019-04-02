@@ -58,4 +58,6 @@
 
 (load "init_packages/go.el")
 
+(load "init_packages/systems.el")
+
 (load "init_packages/embedded.el")
