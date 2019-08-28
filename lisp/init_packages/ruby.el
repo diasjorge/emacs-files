@@ -33,8 +33,7 @@
 (use-package robe
   :config
   (add-hook 'robe-mode-hook 'ac-robe-setup)
-  (defadvice inf-ruby-console-auto (before activate-rvm-for-robe activate)
-    (rvm-activate-corresponding-ruby))
+  (add-hook 'ruby-mode-hook 'robe-mode)
   :bind (:map robe-mode-map
               ("M-." . robe-jump)
               ("M->" . robe-doc)))
@@ -43,9 +42,6 @@
 
 (use-package ruby-test-mode
   :bind (:map ruby-mode-map
-              ("C-c t" . ruby-test-split)
-              ("C-c T" . ruby-test-toggle-implementation-and-specification)
-              ("C-c t" . ruby-test-split)
               ("C-x t" . ruby-test-run)
               ("C-x SPC" . ruby-test-run-at-point))
   :config (setq ruby-test-default-library "spec"))

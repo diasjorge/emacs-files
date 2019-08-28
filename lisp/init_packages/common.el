@@ -40,12 +40,6 @@
 (use-package expand-region
   :bind* ("C-=" . er/expand-region))
 
-(use-package fiplr
-  :config
-  (setq fiplr-root-markers '(".git" ".svn" "Rakefile"))
-  (setq fiplr-ignored-globs '((directories (".git" ".svn" ".hg" ".bzr" "tmp" "log"))
-                              (files (".#*" "*~" "*.so" "*.jpg" "*.png" "*.gif" "*.pdf" "*.gz" "*.zip" "*.pyc")))))
-
 (use-package flycheck
   :init
   (setq flycheck-flake8rc "setup.cfg")
@@ -159,6 +153,20 @@
   (setq paradox-github-token t)
   (setq paradox-execute-asynchronously t)
   (paradox-enable))
+
+(use-package projectile
+  :config
+  (projectile-mode +1)
+  (define-key projectile-mode-map (kbd "M-p") 'projectile-command-map)
+  (setq projectile-completion-system 'ivy)
+  (setq projectile-globally-ignored-files '(projectile-tags-file-name ".#*" "*~" "*.so" "*.gz" "*.zip" "*.pyc"))
+  )
+
+(use-package ivy
+  :config
+  (setq ivy-re-builders-alist
+        '((t . ivy--regex-fuzzy)))
+  )
 
 ;; various programming languages
 

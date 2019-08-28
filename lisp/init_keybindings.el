@@ -28,8 +28,10 @@
 (global-set-key (kbd "C-j") 'newline-and-indent)
 (global-set-key (kbd "M-t") 'back-to-indentation)
 
-(global-set-key (kbd "M-1") 'fiplr-find-file)
-(global-set-key (kbd "M-2") 'fiplr-find-directory)
+(global-set-key (kbd "M-1") 'projectile-find-file)
+(global-set-key (kbd "M-2") 'projectile-find-dir)
+(global-set-key (kbd "C-c t") 'my-test-split)
+(global-set-key (kbd "C-c T") 'projectile-toggle-between-implementation-and-test)
 
 (defun custom-ido-extra-keys ()
   "Add my keybindings for ido."

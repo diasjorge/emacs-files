@@ -79,36 +79,20 @@
   (interactive)
   (insert "<!-- -**-END-**- -->"))
 
-(defun ruby-test-split ()
+(defun my-test-split ()
   (interactive)
   (if (eql 1 (count-windows))
     (split-window-horizontally))
   (switch-to-buffer-other-window (current-buffer))
-  (ruby-test-toggle-implementation-and-specification))
-
-(defvar ctags-options "" "Options for tags generation")
+  (projectile-toggle-between-implementation-and-test))
 
 (defun my-find-tag ()
   (interactive)
-  (let ((tag-file (concat (fiplr-root) "TAGS")))
+  (let ((tag-file (concat (projectile-project-root) "TAGS")))
     (if (file-exists-p tag-file)
       (visit-tags-table tag-file)
-      (build-ctags))
+      (projectile-regenerate-tags))
     (etags-select-find-tag-at-point)))
-
-(defun build-ctags()
-  (interactive)
-  (let ((root (fiplr-root)))
-    (let ((my-tags-file (concat root "TAGS")))
-      (message "Regenerating TAGS file: %s" my-tags-file)
-      (if (file-exists-p my-tags-file)
-          (delete-file my-tags-file))
-      (shell-command
-       (format "/usr/local/bin/ctags -e -R --exclude=db --exclude=.git --exclude=tmp --exclude=test --exclude=.#* %s -f %s %s"
-               ctags-options my-tags-file root))
-      (if (get-file-buffer my-tags-file)
-          (kill-buffer (get-file-buffer my-tags-file)))
-      (visit-tags-table my-tags-file))))
 
 ;; HAML
 (defun haml-convert-erb-file (rhtmlFile)

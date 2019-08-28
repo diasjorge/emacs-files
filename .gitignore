@@ -30,3 +30,5 @@ lisp/customizations.el
 /network-security.data
 /quelpa
 /magithub/cache
+/projectile*
+/TAGS
