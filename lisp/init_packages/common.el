@@ -88,7 +88,10 @@
   :commands (markdown-mode gfm-mode)
   :mode (("README\\.md\\'" . gfm-mode)
          ("\\.md\\'" . markdown-mode)
-         ("\\.markdown\\'" . markdown-mode)))
+         ("\\.markdown\\'" . markdown-mode))
+  :config
+  (setq markdown-command "marked --gfm")
+  :ensure-system-package (marked . "npm install -g marked"))
 
 (use-package multiple-cursors
   :bind* (("C-c = =" . mc/edit-lines)
