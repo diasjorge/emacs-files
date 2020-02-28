@@ -57,7 +57,6 @@
 
 (use-package magit
   :config
-  (setq magit-push-always-verify nil)
   (setq magit-completing-read-function 'magit-ido-completing-read)
   (defun magit-just-amend ()
     (interactive)
@@ -175,9 +174,7 @@
 
 ;; various programming languages
 
-(use-package dockerfile-mode)
 (use-package handlebars-mode)
-(use-package nginx-mode)
 (use-package toml-mode)
 (use-package yaml-mode)
 
