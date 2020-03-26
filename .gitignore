@@ -32,3 +32,4 @@ lisp/customizations.el
 /magithub/cache
 /projectile*
 /TAGS
+/transient/
