@@ -77,11 +77,14 @@
               ("q" . magit-quit-session)
               ("C-c C-a" . magit-just-amend)))
 
-(use-package magithub
+(use-package forge
   :after magit
   :config
-  (magithub-feature-autoinject t)
-  (setq magithub-github-hosts '("github.com" "github.schibsted.io")))
+  (transient-append-suffix 'forge-dispatch '(0 2)
+    ["Browse"
+     ("b r" "repository" forge-browse-remote)
+     ("b i" "issues" forge-browse-issues)
+     ("b p" "pull requests" forge-browse-pullreqs)]))
 
 (use-package markdown-mode
   :commands (markdown-mode gfm-mode)
