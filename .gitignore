@@ -33,3 +33,4 @@ lisp/customizations.el
 /projectile*
 /TAGS
 /transient/
+/forge-database.sqlite
