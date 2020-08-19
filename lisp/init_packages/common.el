@@ -135,6 +135,9 @@
   (yas-global-mode 1)
   :mode ("\\.yasnippet" . snippet-mode))
 
+(use-package yasnippet-snippets
+  :requires (yasnippet))
+
 (use-package wgrep-ag
   :config
   (setq wgrep-auto-save-buffer t)
