@@ -1,6 +1,0 @@
-#name : rule ...
-# key: rule
-# --
-rule ${1:rule_name}
-  ${2:rule_logic}
-end
