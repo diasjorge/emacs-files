@@ -198,3 +198,8 @@
 ;; undo-tree
 
 (use-package undo-tree)
+
+(use-package direnv
+ :config
+ (setq direnv-always-show-summary nil)
+ (direnv-mode))
