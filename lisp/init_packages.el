@@ -13,6 +13,8 @@
 (eval-when-compile
   (require 'use-package))
 
+(setq use-package-compute-statistics t)
+
 ;; Don't update melpa on boot
 (setq quelpa-update-melpa-p nil)
 
