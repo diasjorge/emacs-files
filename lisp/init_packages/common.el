@@ -207,3 +207,6 @@
  (setq direnv--executable (s-trim (shell-command-to-string "asdf which direnv")))
  (setq direnv-always-show-summary nil)
  (direnv-mode))
+
+(use-package emojify
+  :hook (after-init . global-emojify-mode))
