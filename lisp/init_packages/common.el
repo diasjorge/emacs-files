@@ -21,13 +21,6 @@
   (setq ac-auto-start 4)
   (ac-config-default))
 
-(use-package autopair
-  :init
-  (add-hook 'term-mode-hook
-            '(lambda () (autopair-mode -1)))
-  (unless autopair-global-mode
-    (autopair-global-mode)))
-
 (use-package drag-stuff
   :config
   (drag-stuff-global-mode)

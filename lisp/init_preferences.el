@@ -230,3 +230,5 @@
 (setq split-window-preferred-function 'split-window-sensibly-horizontal-first)
 
 (setq split-width-threshold 300)
+
+(electric-pair-mode)
