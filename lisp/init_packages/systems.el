@@ -10,8 +10,9 @@
 (use-package terraform-mode
   :config
   (add-hook 'terraform-mode-hook 'terraform-format-on-save-mode)
+  (add-hook 'terraform-mode-hook 'auto-complete-mode)
   (add-to-list 'auto-mode-alist
-             '("terragrunt.hcl" . terraform-mode)))
+             '("\\.hcl" . terraform-mode)))
 
 (use-package dockerfile-mode
   :config
