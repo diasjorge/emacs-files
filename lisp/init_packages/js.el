@@ -6,6 +6,8 @@
                               (setq-local js2-pretty-multiline-decl-indentation-p t)))
   (add-hook 'js2-mode-hook 'untabify-hook))
 
-(use-package js2-refactor)
+(use-package js2-refactor
+  :hook (j2-mode-hook . js2-refactor-mode)
+  )
 
 (use-package json-mode)
