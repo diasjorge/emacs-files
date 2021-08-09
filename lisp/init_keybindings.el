@@ -18,7 +18,8 @@
 (global-set-key (kbd "C-c w") 'wget)
 (global-set-key (kbd "C-c r") 'revert-buffer)
 (global-set-key (kbd "C-c n") 'clean-up-buffer-or-region)
-(global-set-key (kbd "C-c a") 'ag)
+(global-set-key (kbd "C-c a") 'ag-project-regexp)
+(global-set-key (kbd "C-c A") 'ag-regexp)
 
 ;;; Packages
 (global-set-key (kbd "M-[") 'align-string)
