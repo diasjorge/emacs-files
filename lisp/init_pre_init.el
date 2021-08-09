@@ -16,3 +16,9 @@
 (setenv "PATH" (concat (getenv "PATH") ":/usr/local/bin"))
 
 (setq gc-cons-threshold 20000000)
+
+;; start the initial frame maximized
+(add-to-list 'initial-frame-alist '(fullscreen . maximized))
+
+;; start every frame maximized
+(add-to-list 'default-frame-alist '(fullscreen . maximized))
