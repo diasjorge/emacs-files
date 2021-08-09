@@ -101,9 +101,10 @@
   :config (delete-selection-mode 1))
 
 (use-package pdf-tools
+  :magic ("%PDF" . pdf-view-mode)
   :config
-  (setenv "PKG_CONFIG_PATH" (concat (shell-command-to-string "printf %s \"$(brew --prefix libffi)\"") "/lib/pkgconfig/"))
-  (pdf-tools-install t)
+  (setenv "PKG_CONFIG_PATH" "/usr/local/opt/libffi/lib/pkgconfig/")
+  (pdf-tools-install :no-query)
   :ensure-system-package (pdftohtml . poppler))
 
 (use-package solarized-theme
