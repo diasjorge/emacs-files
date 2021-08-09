@@ -295,3 +295,15 @@
     " end tell\n"
     " do shell script \"open -a iTerm\"\n"
     )))
+
+(defun projectile-switch-project-magit (&optional arg)
+  "Switch to a project we have visited before. Opening magit"
+  (interactive "P")
+  (let ((projects (projectile-relevant-known-projects)))
+    (if projects
+        (projectile-completing-read
+         "Switch to project: " projects
+         :action (lambda (project)
+                   (let ((projectile-switch-project-action 'magit-status))
+                     (projectile-switch-project-by-name project arg))))
+      (user-error "There are no known projects"))))

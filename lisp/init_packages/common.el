@@ -161,6 +161,7 @@
   :config
   (projectile-mode +1)
   (define-key projectile-mode-map (kbd "M-p") 'projectile-command-map)
+  (define-key projectile-command-map (kbd "M") 'projectile-switch-project-magit)
   (setq projectile-completion-system 'ivy)
   (setq projectile-globally-ignored-files '(projectile-tags-file-name ".#*" "*~" "*.so" "*.gz" "*.zip" "*.pyc"))
   )
