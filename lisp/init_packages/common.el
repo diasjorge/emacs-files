@@ -1,3 +1,5 @@
+(use-package delight)
+
 (use-package exec-path-from-shell
   :config
   (unless (getenv "LANG")
@@ -8,7 +10,9 @@
 
 (use-package ergoemacs-mode
   :quelpa (ergoemacs-mode :fetcher github :repo "diasjorge/ergoemacs-keybindings" :commit "7e4014a4a172b0700fa9f04813dae369ef84e641")
-  :config (ergoemacs-mode))
+  :config (ergoemacs-mode)
+  :delight
+  )
 
 (use-package ag
   :config (setq ag-highlight-search t))
@@ -31,12 +35,12 @@
   (company-tooltip-selection ((t (:inherit ac-selection-face))))
   )
 
-
 (use-package drag-stuff
   :config
   (drag-stuff-global-mode)
   (drag-stuff-define-keys)
-  (add-to-list 'drag-stuff-except-modes 'git-rebase-mode))
+  (add-to-list 'drag-stuff-except-modes 'git-rebase-mode)
+  :delight)
 
 (use-package etags-select
   :quelpa (etags-select :fetcher github :repo "diasjorge/etags-select"))
@@ -216,3 +220,9 @@
 
 (use-package emojify
   :hook (after-init . global-emojify-mode))
+
+(use-package emacs
+  :delight
+  (subword-mode)
+  (hs-minor-mode)
+  )
