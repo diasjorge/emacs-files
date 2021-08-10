@@ -221,6 +221,11 @@
 (use-package emojify
   :hook (after-init . global-emojify-mode))
 
+(use-package rainbow-mode
+  :config
+  (add-hook 'prog-mode-hook #'rainbow-mode)
+  :delight)
+
 (use-package emacs
   :delight
   (subword-mode)
