@@ -102,7 +102,6 @@
 
 ;; move thru camelCaseWords
 (subword-mode 1) ; 1 for on, 0 for off
-(global-subword-mode 1) ; 1 for on, 0 for off
 
 ;; Cursor blink
 (blink-cursor-mode t)
