@@ -13,13 +13,24 @@
 (use-package ag
   :config (setq ag-highlight-search t))
 
-(use-package auto-complete
+
+(use-package company
+  :bind (:map company-active-map
+              ("<tab>" . company-complete-common-or-cycle)
+              ("<backtab>" . company-select-previous))
   :config
-  (add-to-list 'ac-dictionary-directories
-               (expand-file-name "dict" default-directory))
-  (setq ac-ignore-case nil)
-  (setq ac-auto-start 4)
-  (ac-config-default))
+  (setq company-frontends
+      '(company-pseudo-tooltip-unless-just-one-frontend
+        company-preview-frontend
+        company-echo-metadata-frontend))
+  (setq company-require-match 'never)
+  (setq company-auto-commit t)
+  :hook (after-init . global-company-mode)
+  :custom-face
+  (company-tooltip ((t (:inherit ac-candidate-face))))
+  (company-tooltip-selection ((t (:inherit ac-selection-face))))
+  )
+
 
 (use-package drag-stuff
   :config
