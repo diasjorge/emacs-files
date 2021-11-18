@@ -1,7 +1,4 @@
-;; Share clipboard with other X applications
-(setq x-select-enable-clipboard t)
-(if (functionp 'x-cut-buffer-or-selection-value)
-    (setq interprogram-paste-function 'x-cut-buffer-or-selection-value))
+(setq confirm-kill-emacs 'y-or-n-p)
 
 ;; Set coding system to UTF-8
 (prefer-coding-system 'utf-8)
@@ -10,19 +7,10 @@
 (fset 'yes-or-no-p 'y-or-n-p)
 
 ;; C-v & M-v return to original position
-(setq scroll-preserve-screen-position 1)
+(setq scroll-preserve-screen-position t)
 
 ;; keep scrolling in compilation result buffer
-(setq compilation-scroll-output t)
-
-;; remove ^M characters from commint
-(add-hook 'comint-output-filter-functions
-          'comint-strip-ctrl-m)
-
-;; Enable disabled features
-(put 'upcase-region 'disabled nil)
-(put 'downcase-region 'disabled nil)
-(put 'capitalize-region 'disabled nil)
+(setq-default compilation-scroll-output t)
 
 ;; Frame title bar formatting to show full path of file
 (setq-default
@@ -46,9 +34,6 @@
 ;; Save minibuffer history
 (savehist-mode 1)
 
-;; Make lines not dissapear into the right margin while in org-mode
-(add-hook 'org-mode-hook 'soft-wrap-lines)
-
 ;; turn on save place so that when opening a file, the cursor will be at the last position.
 (require 'saveplace)
 (setq-default save-place t)
@@ -57,7 +42,7 @@
 (setq delete-by-moving-to-trash t)
 
 ;; don't show startup message
-(setq inhibit-startup-message t)
+(setq inhibit-startup-screen t)
 
 ;; show line and column numbers
 (line-number-mode t)
@@ -68,13 +53,11 @@
 (setq font-lock-maximum-decoration t)
 
 ;; set default tramp mode
-(setq tramp-default-method "ssh")
+(setq-default tramp-default-method "ssh")
 (set-default 'tramp-default-proxies-alist '((".*" "/ssh:%h:")))
 
 ;; Paren mode globally
 (show-paren-mode 1)
-;; (setq show-paren-style 'expression)
-(add-hook 'ido-mode-hook #'(progn (show-paren-mode nil)))
 
 ;; I hate tabs!
 (setq-default indent-tabs-mode nil)
@@ -82,23 +65,17 @@
 ;; I don't debug by default
 (setq debug-on-error nil)
 
-(setq custom-file (concat user-emacs-directory "lisp/customizations.el"))
-(load custom-file 'noerror)
-
 ;; colorize comint output
-(setq ansi-color-for-comint-mode t)
+(setq-default ansi-color-for-comint-mode t)
 
 ;; Set column width to 80
-(setq fill-column 80)
+(setq-default fill-column 80)
 
 ;; delete trailing whitespace before save
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 
 ;; no overwrite mode
 (put 'overwrite-mode 'disabled t)
-
-;; beep and ignore disabled commands
-(setq disabled-command-hook 'beep)
 
 ;; move thru camelCaseWords
 (subword-mode 1) ; 1 for on, 0 for off
@@ -154,7 +131,7 @@
   (set-buffer-process-coding-system 'utf-8-unix 'utf-8-unix))
 (add-hook 'term-exec-hook 'my-term-use-utf8)
 
-;; uniquify buffere names
+;; uniquify buffer names
 (require 'uniquify)
 (setq uniquify-buffer-name-style 'post-forward)
 
@@ -165,12 +142,12 @@
 ;; go to the first/last line of a dired buffer
 (defun dired-back-to-top ()
   (interactive)
-  (beginning-of-buffer)
+  (goto-char (point-min))
   (dired-next-line 4))
 
 (defun dired-jump-to-bottom ()
   (interactive)
-  (end-of-buffer)
+  (goto-char (point-max))
   (dired-next-line -1))
 
 (eval-after-load "dired-mode"
@@ -231,3 +208,6 @@
 (setq split-width-threshold 300)
 
 (electric-pair-mode)
+
+(setq custom-file (concat user-emacs-directory "lisp/customizations.el"))
+(load custom-file 'noerror)

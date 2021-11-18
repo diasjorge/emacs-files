@@ -11,6 +11,8 @@
     (comment-or-uncomment-region (line-beginning-position) (line-end-position))
     (comment-dwim arg)))
 
+(defvar newline-and-indent)
+
 ;; Behave like vi's o command
 (defun open-next-line (arg)
   "Move to the next line and then opens a line.
@@ -43,8 +45,8 @@
 
 (defun untabify-hook()
   (add-hook 'before-save-hook #'(lambda ()
-                                (untabify-buffer)
-                                (delete-trailing-whitespace))
+                                  (untabify-buffer)
+                                  (delete-trailing-whitespace))
             t t))
 
 (defun indent-magically (beg end spaces)
@@ -82,7 +84,7 @@
 (defun my-test-split ()
   (interactive)
   (if (eql 1 (count-windows))
-    (split-window-horizontally))
+      (split-window-horizontally))
   (switch-to-buffer-other-window (current-buffer))
   (projectile-toggle-between-implementation-and-test))
 
@@ -90,7 +92,7 @@
   (interactive)
   (let ((tag-file (concat (projectile-project-root) "TAGS")))
     (if (file-exists-p tag-file)
-      (visit-tags-table tag-file)
+        (visit-tags-table tag-file)
       (projectile-regenerate-tags))
     (etags-select-find-tag-at-point)))
 
@@ -100,38 +102,38 @@
   (interactive "fSelect erb file: \n")
   (let ((hamlFile (replace-regexp-in-string ".erb" ".haml" rhtmlFile)))
     (let ((comando (concat "html2haml -e "
-                         rhtmlFile
-                         " "
-                         hamlFile)))
-    (shell-command comando)
-    (find-file hamlFile))))
+                           rhtmlFile
+                           " "
+                           hamlFile)))
+      (shell-command comando)
+      (find-file hamlFile))))
 
 (defun haml-convert-region (beg end)
   "Convert selected region to haml"
   (interactive "r")
   (let ((comando "html2haml -e -s"))
-  (shell-command-on-region beg end comando (buffer-name) t)))
+    (shell-command-on-region beg end comando (buffer-name) t)))
 
 (defun haml-to-html-region (beg end)
   "Convert selected region to html"
   (interactive "r")
   (let ((comando "haml -s"))
-  (shell-command-on-region beg end comando (buffer-name) t)))
+    (shell-command-on-region beg end comando (buffer-name) t)))
 
 (defun haml-convert-buffer ()
   "Convert selected buffer to haml"
   (interactive)
   (let ((nuevoarchivo
-	 (replace-regexp-in-string "r?html\\(.erb\\)?$" "haml"
-				   (buffer-file-name))))
-     (haml-convert-region (point-min) (point-max))
-     (write-file nuevoarchivo)))
+         (replace-regexp-in-string "r?html\\(.erb\\)?$" "haml"
+                                   (buffer-file-name))))
+    (haml-convert-region (point-min) (point-max))
+    (write-file nuevoarchivo)))
 
 (defun sass-convert-region (beg end)
   "Convert selected region to sass"
   (interactive "r")
   (let ((comando "sass-convert -s"))
-  (shell-command-on-region beg end comando (buffer-name) t)))
+    (shell-command-on-region beg end comando (buffer-name) t)))
 
 (defun rename-this-buffer-and-file ()
   "Renames current buffer and file it is visiting."
@@ -168,6 +170,8 @@
           (kill-buffer))
       (error "Buffer '%s' is not visiting a file!" name))))
 
+(defvar imenu--index-alist)
+
 (defun ido-goto-symbol ()
   "Will update the imenu index and then use ido to select a
    symbol to navigate to"
@@ -176,25 +180,25 @@
   (imenu--make-index-alist)
   (let ((name-and-pos '())
         (symbol-names '()))
-    (flet ((addsymbols (symbol-list)
-                       (when (listp symbol-list)
-                         (dolist (symbol symbol-list)
-                           (let ((name nil) (position nil))
-                             (cond
-                              ((and (listp symbol) (imenu--subalist-p symbol))
-                               (addsymbols symbol))
+    (cl-labels ((addsymbols (symbol-list)
+                            (when (listp symbol-list)
+                              (dolist (symbol symbol-list)
+                                (let ((name nil) (position nil))
+                                  (cond
+                                   ((and (listp symbol) (imenu--subalist-p symbol))
+                                    (addsymbols symbol))
 
-                              ((listp symbol)
-                               (setq name (car symbol))
-                               (setq position (cdr symbol)))
+                                   ((listp symbol)
+                                    (setq name (car symbol))
+                                    (setq position (cdr symbol)))
 
-                              ((stringp symbol)
-                               (setq name symbol)
-                               (setq position (get-text-property 1 'org-imenu-marker symbol))))
+                                   ((stringp symbol)
+                                    (setq name symbol)
+                                    (setq position (get-text-property 1 'org-imenu-marker symbol))))
 
-                             (unless (or (null position) (null name))
-                               (add-to-list 'symbol-names name)
-                               (add-to-list 'name-and-pos (cons name position))))))))
+                                  (unless (or (null position) (null name))
+                                    (add-to-list 'symbol-names name)
+                                    (add-to-list 'name-and-pos (cons name position))))))))
       (addsymbols imenu--index-alist))
     (let* ((selected-symbol (ido-completing-read "Symbol? " symbol-names))
            (position (cdr (assoc selected-symbol name-and-pos))))
@@ -204,13 +208,7 @@
   "Replace mode from list"
   (dolist (aitem alist)
     (if (eq (cdr aitem) oldmode)
-    (setcdr aitem newmode))))
-
-(defun remove-alist-mode (alist extension)
-  "Remove mode from list"
-  (setq alist
-        (remove-if (lambda (e)
-                     (string= extension (car e))) alist)))
+        (setcdr aitem newmode))))
 
 (defun textmate-toggle-camel-case ()
   "Toggle current sexp between camelCase and snake_case, like TextMate C-_."
