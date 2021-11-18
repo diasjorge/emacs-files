@@ -28,7 +28,7 @@
         company-preview-frontend
         company-echo-metadata-frontend))
   (setq company-require-match 'never)
-  (setq company-auto-commit t)
+  (setq company-minimum-prefix-length 3)
   :hook (after-init . global-company-mode)
   :custom-face
   (company-tooltip ((t (:inherit ac-candidate-face))))
@@ -41,6 +41,10 @@
   (drag-stuff-define-keys)
   (add-to-list 'drag-stuff-except-modes 'git-rebase-mode)
   :delight)
+
+(use-package etags
+  :config
+  (setq tags-add-tables nil))
 
 (use-package etags-select
   :quelpa (etags-select :fetcher github :repo "diasjorge/etags-select"))
@@ -231,3 +235,5 @@
   (subword-mode)
   (hs-minor-mode)
   )
+
+(use-package dotenv-mode)
