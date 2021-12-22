@@ -1,7 +1,5 @@
 ;; Emacs files By Jorge Dias
 
-;; (package-initialize)
-
 (setq user-emacs-directory (file-name-directory (or load-file-name buffer-file-name)))
 
 (add-to-list 'load-path (concat user-emacs-directory "lisp"))

@@ -15,8 +15,9 @@
   :bind (("C-x SPC" . elpy-test)
          ("C-x t" . elpy-test-file)
          ("C-x T" . elpy-test-project))
+  :defer t
   :init
-  (elpy-enable)
+  (advice-add 'python-mode :before 'elpy-enable)
   :custom
   (elpy-modules '(elpy-module-eldoc elpy-module-flymake elpy-module-highlight-indentation elpy-module-yasnippet elpy-module-sane-defaults))
   :config
@@ -29,14 +30,6 @@
            (file buffer-file-name)
            (module (elpy-test--module-name-for-file top file)))
       (funcall elpy-test-runner top file module nil))))
-
-;; el-get does all the compilation since this is not available in elpa
-(el-get-bundle ropemacs
-  (setq ropemacs-enable-shortcuts nil)
-  (setq ropemacs-local-prefix "C-c C-p")
-  (setq ropemacs-enable-autoimport t)
-  (setq ropemacs-confirm-saving 'nil)
-  (pymacs-load "ropemacs" "rope-"))
 
 (defun activate-corresponding-virtual-env ()
   (interactive)
