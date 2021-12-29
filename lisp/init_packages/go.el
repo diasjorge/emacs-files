@@ -12,12 +12,12 @@
     (local-set-key (kbd "M-*") 'pop-tag-mark)
     (local-set-key (kbd "M->") 'godoc-at-point))
   (add-hook 'go-mode-hook 'my-go-mode-hook)
-  :ensure-system-package (godef . "go get github.com/rogpeppe/godef"))
+  :ensure-system-package (godef . "go install github.com/rogpeppe/godef@latest"))
 
 (use-package go-guru
-  :ensure-system-package (guru . "go get golang.org/x/tools/cmd/guru"))
+  :ensure-system-package (guru . "go install golang.org/x/tools/cmd/guru@latest"))
 
 (use-package go-autocomplete)
 
 (use-package go-errcheck
-   :ensure-system-package (errcheck . "go get github.com/kisielk/errcheck"))
+   :ensure-system-package (errcheck . "go install github.com/kisielk/errcheck@latest"))
