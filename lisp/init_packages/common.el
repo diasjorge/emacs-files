@@ -239,3 +239,21 @@
   )
 
 (use-package dotenv-mode)
+
+;; http://whattheemacsd.com//setup-dired.el-02.html
+;; go to the first/last line of a dired buffer
+(use-package dired
+  :ensure nil
+  :config
+  (defun dired-back-to-top ()
+    (interactive)
+    (goto-char (point-min))
+    (dired-next-line 4))
+  (defun dired-jump-to-bottom ()
+    (interactive)
+    (goto-char (point-max))
+    (dired-next-line -1))
+  (define-key dired-mode-map
+    (vector 'remap 'beginning-of-buffer) 'dired-back-to-top)
+  (define-key dired-mode-map
+    (vector 'remap 'end-of-buffer) 'dired-jump-to-bottom))
