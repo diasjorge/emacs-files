@@ -117,6 +117,8 @@
          ("C-{" . mc/mark-all-in-region)
          ("C-+" . mc/mark-more-like-this-extended)
          ("M-S-<mouse-1>" . mc/add-cursor-on-click))
+  :bind* (:map mc/keymap
+               ("M-v" . yank))
   :config (delete-selection-mode 1))
 
 (use-package pdf-tools
