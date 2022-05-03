@@ -17,6 +17,9 @@
 
 (setq gc-cons-threshold 64000000)
 
+;; don't leave gap around maximized frame
+(setq frame-resize-pixelwise t)
+
 ;; start the initial frame maximized
 (add-to-list 'initial-frame-alist '(fullscreen . maximized))
 

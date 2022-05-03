@@ -83,9 +83,6 @@
 ;; Cursor blink
 (blink-cursor-mode t)
 
-;; Adjust window fringe
-(set-fringe-style -1)
-
 ;; ido-mode
 (setq ido-enable-flex-matching t)
 (ido-mode t)

@@ -44,7 +44,8 @@
 
 (use-package etags
   :config
-  (setq tags-add-tables nil))
+  (setq tags-add-tables nil)
+  (setq tags-revert-without-query 1))
 
 (use-package etags-select
   :quelpa (etags-select :fetcher github :repo "diasjorge/etags-select"))
@@ -257,3 +258,5 @@
     (vector 'remap 'beginning-of-buffer) 'dired-back-to-top)
   (define-key dired-mode-map
     (vector 'remap 'end-of-buffer) 'dired-jump-to-bottom))
+
+(use-package browse-kill-ring)
