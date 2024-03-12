@@ -226,6 +226,8 @@
   (direnv-mode))
 
 (use-package emojify
+  :config
+  (add-to-list 'emojify-inhibit-major-modes 'web-mode)
   :hook (after-init . global-emojify-mode))
 
 (use-package rainbow-mode
