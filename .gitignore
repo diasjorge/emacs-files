@@ -36,3 +36,4 @@ lisp/customizations.el
 /forge-database.sqlite
 /emojis/
 /.cache/
+/elpy/
