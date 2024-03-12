@@ -305,3 +305,7 @@
                    (let ((projectile-switch-project-action 'magit-status))
                      (projectile-switch-project-by-name project arg))))
       (user-error "There are no known projects"))))
+
+(defun sops-current-buffer ()
+  (interactive)
+  (compilation-start (concat "sops " (buffer-file-name))))
