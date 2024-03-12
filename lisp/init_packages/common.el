@@ -187,7 +187,7 @@
   (define-key projectile-command-map (kbd "M") 'projectile-switch-project-magit)
   (setq projectile-completion-system 'ivy)
   (setq projectile-globally-ignored-files '(projectile-tags-file-name ".#*" "*~" "*.so" "*.gz" "*.zip" "*.pyc"))
-  )
+  (setq projectile-create-missing-test-files t))
 
 (use-package ivy
   :config
