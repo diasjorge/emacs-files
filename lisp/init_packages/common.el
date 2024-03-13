@@ -10,9 +10,17 @@
 
 (use-package ergoemacs-mode
   :quelpa (ergoemacs-mode :fetcher github :repo "diasjorge/ergoemacs-keybindings" :commit "7e4014a4a172b0700fa9f04813dae369ef84e641")
-  :config (ergoemacs-mode)
-  :delight
-  )
+  :config
+  (ergoemacs-mode)
+  (defun create-new-buffer-in-fundamental-mode ()
+    "Create a new buffer in fundamental mode."
+    (interactive)
+    (let ((buf (generate-new-buffer "NewBuffer")))
+      (switch-to-buffer buf)
+      (fundamental-mode)
+      (setq buffer-offer-save t)))
+  (ergoemacs-global-set-key (kbd "C-n") 'create-new-buffer-in-fundamental-mode)
+  :delight)
 
 (use-package ag
   :config (setq ag-highlight-search t))
