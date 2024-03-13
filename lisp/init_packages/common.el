@@ -117,8 +117,7 @@
   :ensure-system-package (marked . "npm install -g marked"))
 
 (use-package multiple-cursors
-  :bind ((:map mc/keymap ("M-v" . yank))
-         ("C-c = =" . mc/edit-lines)
+  :bind (("C-c = =" . mc/edit-lines)
          ("C-c = e" . mc/edit-ends-of-lines)
          ("C-c = a" . mc/edit-beginnings-of-lines)
          ("C-]" . mc/mark-next-like-this)
@@ -126,8 +125,10 @@
          ("C-M-]" . mc/mark-previous-like-this)
          ("C-{" . mc/mark-all-in-region)
          ("C-+" . mc/mark-more-like-this-extended)
-         ("M-S-<mouse-1>" . mc/add-cursor-on-click))
-  :config (delete-selection-mode 1))
+         ("M-S-<mouse-1>" . mc/add-cursor-on-click)
+         ([remap mc/cycle-backward] . yank))
+  :config
+  (delete-selection-mode 1))
 
 (use-package pdf-tools
   :magic ("%PDF" . pdf-view-mode)
