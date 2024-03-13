@@ -266,3 +266,16 @@
     (vector 'remap 'end-of-buffer) 'dired-jump-to-bottom))
 
 (use-package browse-kill-ring)
+
+(use-package copilot
+  :quelpa (copilot :fetcher github
+                   :repo "copilot-emacs/copilot.el"
+                   :branch "main"
+                   :files ("dist" "*.el"))
+  :hook (prog-mode . copilot-mode)
+  :bind (:map copilot-completion-map
+              ("M-C-<right>" . copilot-next-completion)
+              ("M-C-<left>" . copilot-previous-completion)
+              ("M-C-<up>" . copilot-accept-completion-by-word)
+              ("M-C-<down>" . copilot-accept-completion-by-line)
+              ("M-RET" . copilot-accept-completion)))
