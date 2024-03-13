@@ -37,3 +37,4 @@ lisp/customizations.el
 /emojis/
 /.cache/
 /elpy/
+*/flycheck_*.el
