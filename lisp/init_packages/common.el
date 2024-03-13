@@ -31,17 +31,13 @@
               ("<tab>" . company-complete-common-or-cycle)
               ("<backtab>" . company-select-previous))
   :config
-  (setq company-frontends
-      '(company-pseudo-tooltip-unless-just-one-frontend
-        company-preview-frontend
-        company-echo-metadata-frontend))
   (setq company-require-match 'never)
   (setq company-minimum-prefix-length 3)
   :hook (after-init . global-company-mode)
-  :custom-face
-  (company-tooltip ((t (:inherit ac-candidate-face))))
-  (company-tooltip-selection ((t (:inherit ac-selection-face))))
   )
+
+(use-package company-box
+  :hook (company-mode . company-box-mode))
 
 (use-package drag-stuff
   :config
