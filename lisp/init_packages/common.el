@@ -152,7 +152,7 @@
               (when (eql major-mode 'snippet-mode)
                 (yas-reload-all))))
   (setq yas-indent-line 'fixed)
-  (yas-global-mode 1)
+  :hook (after-init . yas-global-mode)
   :mode ("\\.yasnippet" . snippet-mode))
 
 (use-package yasnippet-snippets
