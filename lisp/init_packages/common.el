@@ -25,7 +25,6 @@
 (use-package ag
   :config (setq ag-highlight-search t))
 
-
 (use-package company
   :bind (:map company-active-map
               ("<tab>" . company-complete-common-or-cycle)
@@ -261,9 +260,9 @@
     (goto-char (point-max))
     (dired-next-line -1))
   (define-key dired-mode-map
-    (vector 'remap 'beginning-of-buffer) 'dired-back-to-top)
+              (vector 'remap 'beginning-of-buffer) 'dired-back-to-top)
   (define-key dired-mode-map
-    (vector 'remap 'end-of-buffer) 'dired-jump-to-bottom))
+              (vector 'remap 'end-of-buffer) 'dired-jump-to-bottom))
 
 (use-package browse-kill-ring)
 
