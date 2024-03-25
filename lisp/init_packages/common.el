@@ -95,12 +95,7 @@
 
 (use-package forge
   :after magit
-  :config
-  (transient-append-suffix 'forge-dispatch '(0 2)
-    ["Browse"
-     ("b r" "repository" forge-browse-remote)
-     ("b i" "issues" forge-browse-issues)
-     ("b p" "pull requests" forge-browse-pullreqs)]))
+  :config)
 
 (use-package markdown-mode
   :commands (markdown-mode gfm-mode)
