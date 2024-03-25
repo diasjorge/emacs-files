@@ -267,6 +267,8 @@
                    :repo "copilot-emacs/copilot.el"
                    :branch "main"
                    :files ("dist" "*.el"))
+  :config
+  (add-to-list 'copilot-indentation-alist '(emacs-lisp-mode 4))
   :hook (prog-mode . copilot-mode)
   :bind (:map copilot-completion-map
               ("M-C-<right>" . copilot-next-completion)
