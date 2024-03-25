@@ -20,6 +20,7 @@
       (fundamental-mode)
       (setq buffer-offer-save t)))
   (ergoemacs-global-set-key (kbd "C-n") 'create-new-buffer-in-fundamental-mode)
+  :pin manual
   :delight)
 
 (use-package ag
