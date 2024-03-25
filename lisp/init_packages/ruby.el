@@ -49,3 +49,9 @@
 (use-package bundler)
 
 (use-package ruby-hash-syntax)
+
+(use-package projectile-rails
+  :config
+  (projectile-rails-global-mode)
+  :bind (:map projectile-rails-mode-map
+              ("C-c c" . projectile-rails-command-map)))
