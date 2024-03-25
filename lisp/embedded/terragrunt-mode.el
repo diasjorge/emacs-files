@@ -1,7 +1,7 @@
 ;; This buffer is for text that is not saved, and for Lisp evaluation.
 ;; To create a file, visit it with C-o and enter text in its buffer.
 
-(defcustom terragrunt-keymap-prefix "C-c C-."
+(defcustom terragrunt-keymap-prefix "C-c C-t"
   "The prefix for terragrunt-mode key bindings."
   :type 'string
   :group 'dotfiles)
@@ -15,38 +15,46 @@
 
 (define-minor-mode terragrunt-mode
   "Toggles global terragrunt-mode."
-  nil
-  :global t
-  :group 'dotfiles
   :lighter " terragrunt"
-  :keymap
-  (list (cons (terragrunt--key "p") #'terragrunt-plan)
-        (cons (terragrunt--key "a") #'terragrunt-apply))
-
-  (if terragrunt-mode
-      (add-hook 'terraform-mode-hook #'terragrunt--terraform-mode-hook)
-    (remove-hook 'terraform-mode-hook #'terragrunt--terraform-mode-hook)))
+  :keymap (let ((map (make-sparse-keymap)))
+            (define-key map (terragrunt--key "a") 'terragrunt-apply)
+            (define-key map (terragrunt--key "d") 'terragrunt-destroy)
+            (define-key map (terragrunt--key "i") 'terragrunt-init)
+            (define-key map (terragrunt--key "p") 'terragrunt-plan)
+            (define-key map (terragrunt--key "u") 'terragrunt-unlock)
+            map))
 
 (defun terragrunt-get-dir ()
   (file-name-directory (buffer-file-name)))
 
-(defun terragrunt-plan (args)
-  (interactive "P")
+(defun terragrunt-plan ()
+  (interactive)
   (terragrunt-run "plan"))
 
-(defun terragrunt-apply (args)
-  (interactive "P")
+(defun terragrunt-apply ()
+  (interactive)
   (terragrunt-run "apply"))
 
 (defun terragrunt-unlock (id)
   (interactive "sUnlock ID: ")
   (terragrunt-run (concat "force-unlock " id)))
 
-(defun terragrunt-init (args)
-  (interactive "P")
+(defun terragrunt-init ()
+  (interactive)
   (terragrunt-run "init"))
 
+(defun terragrunt-destroy ()
+  (interactive)
+  (terragrunt-run "destroy"))
+
 (defun terragrunt-run (cmd)
-  (compilation-start (concat "terragrunt " cmd) t))
+  "Run a terragrunt command in a unique compilation buffer."
+  (let* ((timestamp (format-time-string "%Y%m%d-%H%M%S"))
+         (buffer-name (format "*terragrunt-%s-%s*" cmd timestamp))
+         (compilation-buffer-name-function (lambda (_) buffer-name)))
+    (compilation-start (concat "terragrunt " cmd) 'compilation-mode)
+    ;; Set up a filter to apply ANSI color processing after the compilation starts
+    (with-current-buffer buffer-name
+      (add-hook 'compilation-filter-hook 'ansi-color-compilation-filter nil t))))
 
 (provide 'terragrunt-mode)
