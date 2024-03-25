@@ -2,3 +2,5 @@
 
 (require 'align-string)
 (require 'terragrunt-mode)
+
+(add-hook 'terraform-mode-hook 'terragrunt-mode)
