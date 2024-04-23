@@ -1,7 +1,7 @@
 ;; This buffer is for text that is not saved, and for Lisp evaluation.
 ;; To create a file, visit it with C-o and enter text in its buffer.
 
-(defcustom terragrunt-keymap-prefix "C-c C-t"
+(defcustom terragrunt-keymap-prefix "C-c e"
   "The prefix for terragrunt-mode key bindings."
   :type 'string
   :group 'dotfiles)
@@ -47,14 +47,14 @@
   (interactive)
   (terragrunt-run "destroy"))
 
+;; (defun terragrunt-run (cmd)
+;;   (compilation-start (concat "terragrunt " cmd) t))
+
 (defun terragrunt-run (cmd)
   "Run a terragrunt command in a unique compilation buffer."
   (let* ((timestamp (format-time-string "%Y%m%d-%H%M%S"))
          (buffer-name (format "*terragrunt-%s-%s*" cmd timestamp))
          (compilation-buffer-name-function (lambda (_) buffer-name)))
-    (compilation-start (concat "terragrunt " cmd) 'compilation-mode)
-    ;; Set up a filter to apply ANSI color processing after the compilation starts
-    (with-current-buffer buffer-name
-      (add-hook 'compilation-filter-hook 'ansi-color-compilation-filter nil t))))
+    (compilation-start (concat "terragrunt " cmd) t)))
 
 (provide 'terragrunt-mode)
