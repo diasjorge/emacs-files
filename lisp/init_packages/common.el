@@ -220,7 +220,6 @@
 
 (use-package direnv
   :config
-  (setq direnv--executable (s-trim (shell-command-to-string "asdf which direnv")))
   (setq direnv-always-show-summary nil)
   (direnv-mode))
 
