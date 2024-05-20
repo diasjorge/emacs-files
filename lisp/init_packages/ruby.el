@@ -51,6 +51,7 @@
 (use-package ruby-hash-syntax)
 
 (use-package projectile-rails
+  :after projectile
   :config
   (projectile-rails-global-mode)
   :bind (:map projectile-rails-mode-map

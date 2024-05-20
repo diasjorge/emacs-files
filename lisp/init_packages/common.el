@@ -74,7 +74,6 @@
 
 (use-package magit
   :config
-  (setq magit-completing-read-function 'magit-ido-completing-read)
   (defun magit-just-amend ()
     (interactive)
     (save-window-excursion
@@ -137,7 +136,6 @@
 (use-package yasnippet
   :config
   (setq yas-prompt-functions '(yas/dropdown-prompt
-                               yas/ido-prompt
                                yas/completing-prompt))
   (let ((snippets-dir (concat user-emacs-directory "snippets/")))
     (add-to-list 'yas-snippet-dirs (concat snippets-dir "my-snippets"))
@@ -158,21 +156,12 @@
   (setq wgrep-auto-save-buffer t)
   (setq wgrep-enable-key "r"))
 
-;; ido enhancements
-
-(use-package ido-completing-read+
-  :config (ido-ubiquitous-mode 1))
-
 (use-package smex
   :bind (:map ergoemacs-keymap
               ("M-a" . smex)
               ("M-A" . smex-major-mode-commands)
               ("C-c M-a" . execute-extended-command))
   :config (smex-initialize))
-
-(use-package flx-ido
-  :config (flx-ido-mode 1))
-
 (use-package paradox
   :config
   (setq paradox-github-token t)
@@ -188,12 +177,6 @@
   (setq projectile-globally-ignored-files '(projectile-tags-file-name ".#*" "*~" "*.so" "*.gz" "*.zip" "*.pyc"))
   (setq projectile-create-missing-test-files t))
 
-(use-package ivy
-  :config
-  (setq ivy-re-builders-alist
-        '((t . ivy--regex-fuzzy)))
-  )
-
 ;; various programming languages
 
 (use-package handlebars-mode)
@@ -202,13 +185,13 @@
 
 ;; jekyll support
 
-(use-package jekyll
-  :quelpa (jekyll :fetcher github :repo "diasjorge/jekyll.el")
-  :bind ("C-c j e" . jekyll-insert-preview-end)
-  :config
-  (setq jekyll-directory "~/development/mrdias.com/"))
+;; (use-package jekyll
+;;   :quelpa (jekyll :fetcher github :repo "diasjorge/jekyll.el")
+;;   :bind ("C-c j e" . jekyll-insert-preview-end)
+;;   :config
+;;   (setq jekyll-directory "~/development/mrdias.com/"))
 
-(require 'jekyll)
+;; (require 'jekyll)
 
 ;; load-env-vars
 
@@ -275,3 +258,46 @@
               ("M-C-<up>" . copilot-accept-completion-by-word)
               ("M-C-<down>" . copilot-accept-completion-by-line)
               ("M-RET" . copilot-accept-completion)))
+
+(use-package comint
+  :ensure nil ; compile is part of Emacs, no need to download
+  :config
+  (defun my-kill-current-buffer ()
+    "Kills the compilation window and buffer."
+    (interactive)
+    (kill-buffer (current-buffer)))
+  :bind (:map comint-mode-map
+              ("C-c q" . my-kill-current-buffer)))
+
+(use-package ivy
+  :diminish ivy-mode
+  :demand ; Ensure this is loaded so the bindings for counsel work
+  :bind (("C-x b" . ivy-switch-buffer))
+  :config
+  (setq ivy-use-virtual-buffers t)
+  (setq ivy-count-format "(%d/%d) ")
+  (setq ivy-re-builders-alist
+      '((execute-extended-command . ivy--regex-plus)
+        (read-file-name-internal . ivy--regex-plus)
+        (t . ivy--regex-fuzzy)))
+  (ivy-mode 1))
+
+(use-package counsel
+  :after (ivy ergoemacs-mode)
+  :bind (("C-c g" . counsel-git)
+         ("C-c j" . counsel-git-grep)
+         ("C-c k" . counsel-ag)
+         ("C-x l" . counsel-locate)
+         ("C-S-o" . counsel-rhythmbox)
+         (:map ergoemacs-keymap
+               ("C-o" . counsel-find-file))
+         (:map counsel-describe-map
+               ("SPC" . ivy-alt-done))
+         (:map counsel-find-file-map
+               ("SPC" . ivy-alt-done)))
+  :config
+  (counsel-mode 1))
+
+(use-package flx  ; Optional: for better fuzzy matching
+  :config
+  (setq ivy-flx-limit 10000))  ; Tune this based on your system's performance

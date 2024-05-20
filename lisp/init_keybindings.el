@@ -34,13 +34,6 @@
 (global-set-key (kbd "C-c t") 'my-test-split)
 (global-set-key (kbd "C-c T") 'projectile-toggle-between-implementation-and-test)
 
-(defun custom-ido-extra-keys ()
-  "Add my keybindings for ido."
-  (define-key ido-completion-map "\C-n" 'ido-next-match)
-  (define-key ido-completion-map "\C-p" 'ido-prev-match)
-  (define-key ido-completion-map " "    'ido-exit-minibuffer))
-(add-hook 'ido-setup-hook 'custom-ido-extra-keys)
-
 ;; Fixes conflict with ergoemacs keybindings
 (add-hook 'git-rebase-mode-hook
           (lambda ()
