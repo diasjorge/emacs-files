@@ -60,7 +60,16 @@
 (use-package flycheck
   :init
   (setq flycheck-flake8rc "setup.cfg")
+  (add-to-list 'safe-local-variable-values '(flycheck-ruby-standard-executable . "bundle exec standardrb"))
+  (add-to-list 'safe-local-variable-values '(flycheck-checker . ruby-standard))
   (global-flycheck-mode))
+
+(use-package format-all
+  :commands format-all-mode
+  :hook (prog-mode . format-all-mode)
+  :config
+  (setq-default format-all-formatters
+                '(("Ruby" standardrb))))
 
 (use-package httpcode)
 
