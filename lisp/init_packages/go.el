@@ -14,13 +14,10 @@
   (add-hook 'go-mode-hook 'my-go-mode-hook)
   :ensure-system-package (godef . "go install github.com/rogpeppe/godef@latest"))
 
-(use-package go-imports
-  :ensure-system-package (goimports . "golang.org/x/tools/cmd/goimports@latest"))
+(use-package go-imports)
 
-(use-package go-guru
-  :ensure-system-package (guru . "go install golang.org/x/tools/cmd/guru@latest"))
+(use-package go-guru)
 
 (use-package go-autocomplete)
 
-(use-package go-errcheck
-   :ensure-system-package (errcheck . "go install github.com/kisielk/errcheck@latest"))
+(use-package go-errcheck)
