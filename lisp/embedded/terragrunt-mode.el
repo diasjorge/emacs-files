@@ -22,6 +22,7 @@
             (define-key map (terragrunt--key "i") 'terragrunt-init)
             (define-key map (terragrunt--key "p") 'terragrunt-plan)
             (define-key map (terragrunt--key "u") 'terragrunt-unlock)
+            (define-key map (terragrunt--key "o") 'terragrunt-output)
             map))
 
 (defun terragrunt-get-dir ()
@@ -46,6 +47,10 @@
 (defun terragrunt-destroy ()
   (interactive)
   (terragrunt-run "destroy"))
+
+(defun terragrunt-output ()
+  (interactive)
+  (terragrunt-run "output"))
 
 ;; (defun terragrunt-run (cmd)
 ;;   (compilation-start (concat "terragrunt " cmd) t))
