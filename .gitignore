@@ -38,3 +38,4 @@ lisp/customizations.el
 /.cache/
 /elpy/
 */flycheck_*.el
+/recentf
