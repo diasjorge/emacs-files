@@ -39,3 +39,4 @@ lisp/customizations.el
 /elpy/
 */flycheck_*.el
 /recentf
+/request/
