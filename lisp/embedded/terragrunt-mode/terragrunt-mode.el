@@ -39,7 +39,7 @@
 (defcustom terragrunt-keymap-prefix "C-c e"
   "The prefix for `terragrunt-mode' key bindings."
   :type 'string
-  :group 'dotfiles)
+  :group 'tools)
 
 (defun terragrunt--key (key)
   "Return a key binding for `terragrunt-mode' using the given KEY."
