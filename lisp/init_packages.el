@@ -57,7 +57,7 @@
 
 (load "init_packages/python.el")
 
-(load "init_packages/go.el")
+;; (load "init_packages/go.el")
 
 (load "init_packages/systems.el")
 
