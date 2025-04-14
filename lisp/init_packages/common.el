@@ -255,21 +255,6 @@
 
 (use-package browse-kill-ring)
 
-(use-package copilot
-  :quelpa (copilot :fetcher github
-                   :repo "copilot-emacs/copilot.el"
-                   :branch "main"
-                   :files ("dist" "*.el"))
-  :config
-  (add-to-list 'copilot-indentation-alist '(emacs-lisp-mode 4))
-  :hook (prog-mode . copilot-mode)
-  :bind (:map copilot-completion-map
-              ("M-C-<right>" . copilot-next-completion)
-              ("M-C-<left>" . copilot-previous-completion)
-              ("M-C-<up>" . copilot-accept-completion-by-word)
-              ("M-C-<down>" . copilot-accept-completion-by-line)
-              ("M-RET" . copilot-accept-completion)))
-
 (use-package comint
   :ensure nil ; compile is part of Emacs, no need to download
   :config

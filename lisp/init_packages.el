@@ -47,6 +47,8 @@
 
 (load "init_packages/common.el")
 
+(load "init_packages/prog.el")
+
 (load "init_packages/ruby.el")
 
 (load "init_packages/web.el")
