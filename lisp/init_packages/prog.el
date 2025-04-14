@@ -11,3 +11,5 @@
               ("M-C-<" . copilot-previous-completion)
               ("M-C-<return>" . copilot-accept-completion-by-line)
               ("M-<return>" . copilot-accept-completion)))
+
+(use-package copilot-chat)
