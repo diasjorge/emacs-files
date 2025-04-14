@@ -215,11 +215,6 @@
 
 (use-package undo-tree)
 
-(use-package direnv
-  :config
-  (setq direnv-always-show-summary nil)
-  (direnv-mode))
-
 (use-package emojify
   :config
   (add-to-list 'emojify-inhibit-major-modes 'web-mode)
@@ -315,3 +310,7 @@
 (use-package flx  ; Optional: for better fuzzy matching
   :config
   (setq ivy-flx-limit 10000))  ; Tune this based on your system's performance
+
+(use-package mise
+  :diminish mise-mode
+  :hook (after-init . global-mise-mode))
