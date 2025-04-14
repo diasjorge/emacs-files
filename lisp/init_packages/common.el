@@ -1,3 +1,5 @@
+(use-package diminish)
+
 (use-package delight)
 
 (use-package exec-path-from-shell
