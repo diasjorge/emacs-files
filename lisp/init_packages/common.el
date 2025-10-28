@@ -120,7 +120,7 @@
   :mode ("README\\.md\\'" . gfm-mode)
   :init (setq markdown-command "multimarkdown")
   :bind (:map markdown-mode-map
-         ("C-c C-e" . markdown-do)))
+              ("C-c C-e" . markdown-do)))
 
 (use-package multiple-cursors
   :bind (("C-c = =" . mc/edit-lines)
