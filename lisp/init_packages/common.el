@@ -296,3 +296,5 @@
 (use-package mise
   :diminish mise-mode
   :hook (after-init . global-mise-mode))
+
+(use-package csv-mode)
