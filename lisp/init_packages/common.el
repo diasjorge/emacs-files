@@ -201,13 +201,8 @@
 
 ;; jekyll support
 
-;; (use-package jekyll
-;;   :quelpa (jekyll :fetcher github :repo "diasjorge/jekyll.el")
-;;   :bind ("C-c j e" . jekyll-insert-preview-end)
-;;   :config
-;;   (setq jekyll-directory "~/development/mrdias.com/"))
-
-;; (require 'jekyll)
+(use-package easy-jekyll
+  :bind ("C-c C-e" . easy-jekyll))
 
 ;; load-env-vars
 
