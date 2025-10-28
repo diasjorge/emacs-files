@@ -235,6 +235,9 @@
 (use-package dired
   :ensure nil
   :config
+  (setq dired-guess-shell-alist-user
+        '(("\\.mp3\\'" "vlc")
+          ("\\.flac\\'" "vlc")))
   (defun dired-back-to-top ()
     (interactive)
     (goto-char (point-min))
