@@ -40,3 +40,7 @@ lisp/customizations.el
 */flycheck_*.el
 /recentf
 /request/
+/.lsp-session-v1
+/tree-sitter/
+/projects
+/persist/
