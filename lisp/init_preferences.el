@@ -184,3 +184,6 @@
 
 (setq custom-file (concat user-emacs-directory "lisp/customizations.el"))
 (load custom-file 'noerror)
+
+;; Don't warn when opening large files
+(setq large-file-warning-threshold nil)
