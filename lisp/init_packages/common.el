@@ -25,6 +25,12 @@
   :pin manual
   :delight)
 
+(use-package auto-dark
+  :init (auto-dark-mode)
+  :custom
+  (auto-dark-allow-osascript t)
+  (auto-dark-themes '((solarized-dark) (solarized-light))))
+
 (use-package ag
   :config (setq ag-highlight-search t))
 
@@ -111,6 +117,12 @@
          ("q" . magit-quit-session)
          ("C-c C-a" . magit-just-amend)))
 
+(use-package magit-delta
+  :hook (magit-mode . magit-delta-mode)
+  :ensure-system-package (delta)
+  :config
+  (setq magit-delta-use-magit-delta-default-theme t))
+
 (use-package forge
   :after magit
   :config)
@@ -178,11 +190,6 @@
               ("M-A" . smex-major-mode-commands)
               ("C-c M-a" . execute-extended-command))
   :config (smex-initialize))
-(use-package paradox
-  :config
-  (setq paradox-github-token t)
-  (setq paradox-execute-asynchronously t)
-  (paradox-enable))
 
 (use-package projectile
   :config
