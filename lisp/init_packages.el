@@ -15,6 +15,11 @@
 
 (setq use-package-compute-statistics t)
 
+(use-package use-package-ensure-system-package)
+
+(use-package system-packages
+  :ensure t)
+
 ;; Don't update melpa on boot
 (setq quelpa-update-melpa-p nil)
 
