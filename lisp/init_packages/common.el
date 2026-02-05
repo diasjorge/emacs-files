@@ -120,8 +120,9 @@
 (use-package magit-delta
   :hook (magit-mode . magit-delta-mode)
   :ensure-system-package (delta)
-  :config
-  (setq magit-delta-use-magit-delta-default-theme t))
+  :custom
+  (magit-delta-default-dark-theme "Solarized (dark)")
+  (magit-delta-default-light-theme "Solarized (light)"))
 
 (use-package forge
   :after magit
