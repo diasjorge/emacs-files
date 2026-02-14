@@ -72,19 +72,6 @@
   (add-to-list 'safe-local-variable-values '(flycheck-checker . ruby-standard))
   (global-flycheck-mode))
 
-(use-package format-all
-  :commands format-all-mode
-  :config
-  (defvar-local my/disable-format-all nil
-    "If non-nil, `format-all-mode` will be disabled in this project.")
-  (defun my/toggle-format-all-mode ()
-    "Enable or disable `format-all-mode` based on `my/disable-format-all`."
-    (if my/disable-format-all
-        (format-all-mode -1)
-      (format-all-mode 1)))
-  (add-hook 'prog-mode-hook 'my/toggle-format-all-mode)
-  (setq-default format-all-formatters
-                '(("Ruby" standardrb))))
 
 (use-package httpcode)
 
