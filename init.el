@@ -4,7 +4,7 @@
 
 (add-to-list 'load-path (concat user-emacs-directory "lisp"))
 
-(load "init_pre_init")
+(unless (server-running-p) (server-start))
 
 (when (string-equal system-type "darwin")
   (load "init_mac"))
