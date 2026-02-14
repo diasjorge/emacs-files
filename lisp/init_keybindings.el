@@ -5,8 +5,6 @@
 (global-set-key (kbd "M-]") 'indent-magically)
 (global-set-key (kbd "M-<") 'toggle-hiding)
 (global-set-key (kbd "M-#") 'toggle-window-split)
-(global-set-key (kbd "M-.") 'my-find-tag)
-(global-set-key (kbd "M-,") 'etags-select-find-tag)
 
 (global-set-key (kbd "C-t") 'ido-goto-symbol)
 (global-set-key (kbd "C-l") 'goto-line)
