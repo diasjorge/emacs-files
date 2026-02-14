@@ -279,9 +279,9 @@
   (setq ivy-use-virtual-buffers t)
   (setq ivy-count-format "(%d/%d) ")
   (setq ivy-re-builders-alist
-        '((execute-extended-command . ivy--regex-plus)
-          (read-file-name-internal . ivy--regex-plus)
+        '((swiper . ivy--regex-plus)
           (t . ivy--regex-fuzzy)))
+  (setq ivy-initial-inputs-alist nil)
   (ivy-mode 1))
 
 (use-package counsel
