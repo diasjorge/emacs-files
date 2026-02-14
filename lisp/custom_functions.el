@@ -1,16 +1,3 @@
-;; Original idea from
-;; http://www.opensubscriber.com/message/emacs-devel@gnu.org/10971693.html
-(defun comment-dwim-line (&optional arg)
-  "Replacement for the comment-dwim command.
-        If no region is selected and current line is not blank and we are not at the end of the line,
-        then comment current line.
-        Replaces default behaviour of comment-dwim, when it inserts comment at the end of the line."
-  (interactive "*P")
-  (comment-normalize-vars)
-  (unless (region-active-p)
-    (comment-or-uncomment-region (line-beginning-position) (line-end-position))
-    (comment-dwim arg)))
-
 (defvar newline-and-indent)
 
 ;; Behave like vi's o command
@@ -49,12 +36,6 @@
                                   (delete-trailing-whitespace))
             t t))
 
-(defun indent-magically (beg end spaces)
-  "Indent region of code"
-  (interactive "r\nnEnter number of spaces: \n")
-  (beginning-of-line)
-  (indent-code-rigidly beg end spaces))
-
 (defun jekyll-insert-preview-end ()
   "Insert the comment to mark the end of the post preview"
   (interactive)
@@ -66,30 +47,6 @@
       (split-window-horizontally))
   (switch-to-buffer-other-window (current-buffer))
   (projectile-toggle-between-implementation-and-test))
-
-(defun rename-this-buffer-and-file ()
-  "Renames current buffer and file it is visiting."
-  (interactive)
-  (let ((name (buffer-name))
-        (filename (buffer-file-name)))
-    (if (not (and filename (file-exists-p filename)))
-        (error "Buffer '%s' is not visiting a file!" name)
-      (let ((new-name (read-file-name "New name: " (file-name-directory filename))))
-
-        (make-directory (file-name-directory new-name) t)
-
-        (if (file-directory-p new-name)
-            (setq new-name (concat new-name (file-name-nondirectory filename)))
-          )
-
-        (cond ((get-buffer new-name)
-               (error "A buffer named '%s' already exists!" new-name))
-              (t
-               (rename-file filename new-name 1)
-               (rename-buffer new-name)
-               (set-visited-file-name new-name)
-               (set-buffer-modified-p nil)
-               (message "File '%s' successfully renamed to '%s'" name (file-name-nondirectory new-name))))))))
 
 (defun delete-this-buffer-and-file ()
   "Deletes current buffer and file it is visiting."
@@ -172,20 +129,6 @@
           (set-window-buffer (next-window) next-win-buffer)
           (select-window first-win)
           (if this-win-2nd (other-window 1))))))
-
-;; Slightly modified version of https://sam217pa.github.io/2016/09/01/emacs-iterm-integration/
-(defun iterm-goto-filedir-or-home ()
-  "Go to present working dir and focus iterm"
-  (interactive)
-  (do-applescript
-   (concat
-    " tell application \"iTerm\"\n"
-    "   tell the current session of current window\n"
-    (format "     write text \"cd \\\"%s\\\"\" \n" (expand-file-name (or default-directory "~")))
-    "   end tell\n"
-    " end tell\n"
-    " do shell script \"open -a iTerm\"\n"
-    )))
 
 (defun projectile-switch-project-magit (&optional arg)
   "Switch to a project we have visited before. Opening magit"
