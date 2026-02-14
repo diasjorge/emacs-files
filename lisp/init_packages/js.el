@@ -8,12 +8,13 @@
   :init
   (setq js-indent-level 2)
   (setq js-indent-first-init "dynamic")
-  :hook ((js-ts-mode-hook . untabify-hook)))
+  :hook
+  ((js-ts-mode . untabify-hook)))
 
 (use-package typescript-ts-mode
   :ensure nil
   :mode (("\\.tsx\\'" . tsx-ts-mode)
          ("\\.ts\\'"  . typescript-ts-mode))
-  :config
-  (add-hook 'typescript-mode-hook 'untabify-hook)
-  )
+  :hook
+  ((typescript-ts-mode . untabify-hook)
+   (tsx-ts-mode . untabify-hook)))
