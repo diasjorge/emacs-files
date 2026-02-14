@@ -11,7 +11,8 @@
         (exec-path-from-shell-initialize)))))
 
 (use-package ergoemacs-mode
-  :quelpa (ergoemacs-mode :fetcher github :repo "diasjorge/ergoemacs-keybindings" :commit "7e4014a4a172b0700fa9f04813dae369ef84e641")
+  :vc (:url "https://github.com/diasjorge/ergoemacs-keybindings"
+            :rev "7e4014a4a172b0700fa9f04813dae369ef84e641")
   :config
   (ergoemacs-mode)
   (defun create-new-buffer-in-fundamental-mode ()
@@ -22,7 +23,6 @@
       (fundamental-mode)
       (setq buffer-offer-save t)))
   (ergoemacs-global-set-key (kbd "C-n") 'create-new-buffer-in-fundamental-mode)
-  :pin manual
   :delight)
 
 (use-package auto-dark
@@ -60,7 +60,7 @@
   (setq tags-revert-without-query 1))
 
 (use-package etags-select
-  :quelpa (etags-select :fetcher github :repo "diasjorge/etags-select"))
+  :vc (:url "https://github.com/diasjorge/etags-select" :rev :newest))
 
 (use-package expand-region
   :bind ("C-=" . er/expand-region))

@@ -20,35 +20,7 @@
 (use-package system-packages
   :ensure t)
 
-;; Don't update melpa on boot
-(setq quelpa-update-melpa-p nil)
-
-(unless (package-installed-p 'quelpa)
-    (with-temp-buffer
-      (url-insert-file-contents "https://github.com/quelpa/quelpa/raw/master/quelpa.el")
-      (eval-buffer)
-      (quelpa-self-upgrade)))
-
-(quelpa
- '(quelpa-use-package
-   :fetcher github
-   :repo "quelpa/quelpa-use-package"))
-
-(require 'quelpa-use-package)
-
-;; Install packages if not present
 (setq use-package-always-ensure t)
-
-;; use-package-always-ensure to install from elpa but other packages from quelpa
-(quelpa-use-package-activate-advice)
-
-;; bootstrap el-get for packages not available in elpa or quelpa
-
-(use-package el-get
-  :config
-  (setq el-get-bundle-byte-compile nil)
-  (setq el-get-bundle-sync nil)
-  (add-to-list 'el-get-recipe-path (concat user-emacs-directory "el-get-recipes")))
 
 (load "init_packages/common.el")
 
