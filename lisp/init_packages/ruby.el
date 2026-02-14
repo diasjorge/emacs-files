@@ -36,14 +36,6 @@
   (setq inf-ruby-prompt-pattern "^\\([a-zA-Z0-9.\-]+ :[0-9]+ >\\|>>\\) ")
   (setq inf-ruby-first-prompt-pattern inf-ruby-prompt-pattern))
 
-(use-package robe
-  :config
-  (add-hook 'robe-mode-hook 'ac-robe-setup)
-  (add-hook 'ruby-mode-hook 'robe-mode)
-  :bind (:map robe-mode-map
-              ("M-." . robe-jump)
-              ("M->" . robe-doc)))
-
 (use-package ruby-compilation)
 
 (use-package ruby-test-mode
