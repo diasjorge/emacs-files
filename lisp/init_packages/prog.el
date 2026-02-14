@@ -126,7 +126,6 @@
 ;; (use-package lsp-completion
 ;;   :no-require
 ;;   :hook ((lsp-mode . lsp-completion-mode)))
-
 (use-package lsp-ui
   :ensure t
   :commands
@@ -145,3 +144,17 @@
   :custom
   (combobulate-key-prefix "C-c o")
   :hook ((prog-mode . combobulate-mode)))
+
+(use-package prettier-js
+  :init
+  (defun maybe-use-prettier ()
+    "Enable `prettier-js-mode' if an rc file is located."
+    (if (or
+         (locate-dominating-file default-directory ".prettierrc")
+         (locate-dominating-file default-directory "prettier.config.js"))
+        (prettier-js-mode +1)))
+  :hook
+  ((js-ts-mode . maybe-use-prettier)
+   (typescript-ts-mode . maybe-use-prettier)
+   (tsx-ts-mode . maybe-use-prettier)
+   (json-ts-mode . maybe-use-prettier)))
