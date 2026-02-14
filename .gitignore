@@ -45,3 +45,4 @@ lisp/customizations.el
 /projects
 /persist/
 /eln-cache/
+/.claude/settings.local.json
