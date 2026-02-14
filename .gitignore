@@ -44,3 +44,4 @@ lisp/customizations.el
 /tree-sitter/
 /projects
 /persist/
+/eln-cache/
