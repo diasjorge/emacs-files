@@ -67,14 +67,6 @@
   (switch-to-buffer-other-window (current-buffer))
   (projectile-toggle-between-implementation-and-test))
 
-(defun my-find-tag ()
-  (interactive)
-  (let ((tag-file (concat (projectile-project-root) "TAGS")))
-    (if (file-exists-p tag-file)
-        (visit-tags-table tag-file)
-      (projectile-regenerate-tags))
-    (etags-select-find-tag-at-point)))
-
 (defun rename-this-buffer-and-file ()
   "Renames current buffer and file it is visiting."
   (interactive)

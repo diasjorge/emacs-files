@@ -54,14 +54,6 @@
   (add-to-list 'drag-stuff-except-modes 'git-rebase-mode)
   :delight)
 
-(use-package etags
-  :config
-  (setq tags-add-tables nil)
-  (setq tags-revert-without-query 1))
-
-(use-package etags-select
-  :vc (:url "https://github.com/diasjorge/etags-select" :rev :newest))
-
 (use-package expand-region
   :bind ("C-=" . er/expand-region))
 
