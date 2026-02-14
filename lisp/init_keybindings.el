@@ -3,7 +3,6 @@
 (global-set-key (kbd "M-y") 'open-next-line)
 (global-set-key (kbd "M-Y") 'open-previous-line)
 (global-set-key (kbd "M-]") 'indent-magically)
-(global-set-key (kbd "M-<") 'toggle-hiding)
 (global-set-key (kbd "M-#") 'toggle-window-split)
 
 (global-set-key (kbd "C-t") 'counsel-imenu)

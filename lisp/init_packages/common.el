@@ -219,9 +219,7 @@
 
 (use-package emacs
   :delight
-  (subword-mode)
-  (hs-minor-mode)
-  )
+  (subword-mode))
 
 (use-package dotenv-mode)
 

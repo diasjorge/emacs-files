@@ -13,17 +13,23 @@
          "Rakefile"
          "Guardfile")
   :interpreter "ruby"
+  :init
+  (defvar-local ruby-use-standardrb nil)
+  (put 'ruby-use-standardrb 'safe-local-variable #'booleanp)
+  (defun maybe-use-standardrb ()
+    "Format buffer with standardrb on save when ruby-use-standardrb is set."
+    (hack-local-variables)
+    (when (and ruby-use-standardrb (executable-find "standardrb"))
+      (add-hook 'before-save-hook
+                (lambda ()
+                  (shell-command-to-string
+                   (format "standardrb --fix %s" (shell-quote-argument (buffer-file-name))))
+                  (revert-buffer t t t))
+                nil t)))
   :config
   (setq ruby-insert-encoding-magic-comment nil)
-  (add-hook 'ruby-mode-hook '(lambda ()
-                               (setq c-tab-always-indent nil)))
-  ;; Support for hs-mode
-  (add-to-list 'hs-special-modes-alist
-               '(ruby-mode
-                 "\\(def\\|do\\|{\\)" "\\(end\\|end\\|}\\)" "#"
-                 (lambda (arg) (ruby-end-of-block)) nil))
-  (add-hook 'ruby-mode-hook '(lambda ()
-                               (hs-minor-mode 1))))
+  :hook
+  ((ruby-mode . maybe-use-standardrb)))
 
 (use-package inf-ruby
   :config
