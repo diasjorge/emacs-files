@@ -82,11 +82,8 @@
     "Restores the previous window configuration and kills the magit buffer"
     (interactive)
     (kill-buffer))
-  ;; magit full screen
-  (add-hook 'magit-post-display-buffer-hook '
-            (lambda ()
-              (delete-other-windows)
-              (magit-maybe-set-dedicated)))
+  :custom
+  (magit-display-buffer-function #'magit-display-buffer-fullframe-status-v1)
   :bind (("C-c m" . magit-status)
          :map magit-status-mode-map
          ("q" . magit-quit-session)
