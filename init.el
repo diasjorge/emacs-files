@@ -4,6 +4,7 @@
 
 (add-to-list 'load-path (concat user-emacs-directory "lisp"))
 
+(require 'server)
 (unless (server-running-p) (server-start))
 
 (when (string-equal system-type "darwin")
