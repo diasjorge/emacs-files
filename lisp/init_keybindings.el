@@ -6,7 +6,7 @@
 (global-set-key (kbd "M-<") 'toggle-hiding)
 (global-set-key (kbd "M-#") 'toggle-window-split)
 
-(global-set-key (kbd "C-t") 'ido-goto-symbol)
+(global-set-key (kbd "C-t") 'counsel-imenu)
 (global-set-key (kbd "C-l") 'goto-line)
 (global-set-key (kbd "C-_") 'textmate-toggle-camel-case)
 (global-set-key (kbd "C-%") 'query-replace-regexp)
@@ -37,14 +37,6 @@
           (lambda ()
             (local-set-key (kbd "M-p") 'git-rebase-move-line-up)
             (local-set-key (kbd "M-n") 'git-rebase-move-line-down)))
-
-;; Fixes conflict with ergoemacs keybindings
-(add-hook 'grizzl-mode-hook
-          (lambda ()
-            (local-set-key (kbd "C-p") 'grizzl-set-selection+1)
-            (local-set-key (kbd "M-i") 'grizzl-set-selection+1)
-            (local-set-key (kbd "C-n") 'grizzl-set-selection-1)
-            (local-set-key (kbd "M-k") 'grizzl-set-selection-1)))
 
 ;;; Disabled keys
 (global-unset-key (kbd "C-w")) ;; prevent accidentally closing buffer

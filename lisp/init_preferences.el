@@ -3,8 +3,7 @@
 ;; Set coding system to UTF-8
 (prefer-coding-system 'utf-8)
 
-;; Type y/n instead of yes/no
-(fset 'yes-or-no-p 'y-or-n-p)
+(setq use-short-answers t)
 
 ;; C-v & M-v return to original position
 (setq scroll-preserve-screen-position t)
@@ -34,9 +33,7 @@
 ;; Save minibuffer history
 (savehist-mode 1)
 
-;; turn on save place so that when opening a file, the cursor will be at the last position.
-(require 'saveplace)
-(setq-default save-place t)
+(save-place-mode 1)
 
 ;; Delete to trash
 (setq delete-by-moving-to-trash t)
@@ -83,11 +80,6 @@
 ;; Cursor blink
 (blink-cursor-mode t)
 
-; icomplete
-;; preview command completion when writing in Minibuffer
-;; this is part of emacs
-(icomplete-mode 1)
-
 ;; display pressed keys faster
 (setq echo-keystrokes 0.02)
 
@@ -103,20 +95,20 @@
 ;; add new line at end of file
 (setq require-final-newline t)
 
-;; close buffer when killing process
-(defadvice term-sentinel (around my-advice-term-sentinel (proc msg))
+(defun my-term-sentinel-advice (orig-fn proc msg)
+  "Kill buffer when term process exits."
   (if (memq (process-status proc) '(signal exit))
       (let ((buffer (process-buffer proc)))
-        ad-do-it
+        (funcall orig-fn proc msg)
         (kill-buffer buffer))
-    ad-do-it))
-(ad-activate 'term-sentinel)
+    (funcall orig-fn proc msg)))
+(advice-add 'term-sentinel :around #'my-term-sentinel-advice)
 
-;; alway use bash
 (defvar my-term-shell "/bin/bash")
-(defadvice ansi-term (before force-bash)
-  (interactive (list my-term-shell)))
-(ad-activate 'ansi-term)
+(defun my-ansi-term-advice (orig-fn &rest args)
+  "Always use bash for ansi-term."
+  (apply orig-fn (list my-term-shell)))
+(advice-add 'ansi-term :around #'my-ansi-term-advice)
 
 ;; use utf8
 (defun my-term-use-utf8 ()
