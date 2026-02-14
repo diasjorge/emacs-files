@@ -65,10 +65,6 @@
   (global-flycheck-mode))
 
 
-(use-package httpcode)
-
-(use-package gist)
-
 (use-package goto-chg
   :bind (("C-." . goto-last-change)
          ("C-," . goto-last-change-reverse)))
@@ -194,10 +190,6 @@
 ;; load-env-vars
 
 (use-package load-env-vars)
-
-;; undo-tree
-
-(use-package undo-tree)
 
 (use-package emojify
   :config
