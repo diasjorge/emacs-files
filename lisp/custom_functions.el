@@ -75,45 +75,6 @@
       (projectile-regenerate-tags))
     (etags-select-find-tag-at-point)))
 
-;; HAML
-(defun haml-convert-erb-file (rhtmlFile)
-  "Convert an erb file to haml and opens a new buffer"
-  (interactive "fSelect erb file: \n")
-  (let ((hamlFile (replace-regexp-in-string ".erb" ".haml" rhtmlFile)))
-    (let ((comando (concat "html2haml -e "
-                           rhtmlFile
-                           " "
-                           hamlFile)))
-      (shell-command comando)
-      (find-file hamlFile))))
-
-(defun haml-convert-region (beg end)
-  "Convert selected region to haml"
-  (interactive "r")
-  (let ((comando "html2haml -e -s"))
-    (shell-command-on-region beg end comando (buffer-name) t)))
-
-(defun haml-to-html-region (beg end)
-  "Convert selected region to html"
-  (interactive "r")
-  (let ((comando "haml -s"))
-    (shell-command-on-region beg end comando (buffer-name) t)))
-
-(defun haml-convert-buffer ()
-  "Convert selected buffer to haml"
-  (interactive)
-  (let ((nuevoarchivo
-         (replace-regexp-in-string "r?html\\(.erb\\)?$" "haml"
-                                   (buffer-file-name))))
-    (haml-convert-region (point-min) (point-max))
-    (write-file nuevoarchivo)))
-
-(defun sass-convert-region (beg end)
-  "Convert selected region to sass"
-  (interactive "r")
-  (let ((comando "sass-convert -s"))
-    (shell-command-on-region beg end comando (buffer-name) t)))
-
 (defun rename-this-buffer-and-file ()
   "Renames current buffer and file it is visiting."
   (interactive)
