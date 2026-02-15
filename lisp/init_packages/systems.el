@@ -1,9 +1,11 @@
-(use-package systemd)
+(use-package systemd
+  :defer t)
 
-(use-package groovy-mode)
+(use-package groovy-mode
+  :defer t)
 
 (use-package poly-ansible
-  :config (poly-ansible-mode))
+  :hook (yaml-mode . poly-ansible-mode))
 
 (use-package terraform-mode
   :config
@@ -22,4 +24,5 @@
   :hook (dockerfile-mode . (lambda ()
                              (setq tab-width 4))))
 
-(use-package nginx-mode)
+(use-package nginx-mode
+  :defer t)
