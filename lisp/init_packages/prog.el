@@ -11,7 +11,8 @@
               ("M-C-<return>" . copilot-accept-completion-by-line)
               ("M-<return>" . copilot-accept-completion)))
 
-(use-package copilot-chat)
+(use-package copilot-chat
+  :commands (copilot-chat-display copilot-chat-explain copilot-chat-review))
 
 (use-package treesit
   :ensure nil
