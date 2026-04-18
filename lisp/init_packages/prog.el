@@ -28,13 +28,15 @@
                (javascript . ("https://github.com/tree-sitter/tree-sitter-javascript" "v0.21.2" "src"))
                (json . ("https://github.com/tree-sitter/tree-sitter-json" "v0.20.2"))
                (python . ("https://github.com/tree-sitter/tree-sitter-python" "v0.20.4"))
-               (go "https://github.com/tree-sitter/tree-sitter-go" "v0.20.0")
+               (go . ("https://github.com/tree-sitter/tree-sitter-go" "v0.20.0"))
+               (gomod . ("https://github.com/camdencheek/tree-sitter-go-mod"))
                (markdown "https://github.com/ikatyang/tree-sitter-markdown")
                (make "https://github.com/alemuller/tree-sitter-make")
                (elisp "https://github.com/Wilfred/tree-sitter-elisp")
                (cmake "https://github.com/uyha/tree-sitter-cmake")
                (c . ("https://github.com/tree-sitter/tree-sitter-c" "v0.20.8"))
                (cpp "https://github.com/tree-sitter/tree-sitter-cpp")
+               (rust "https://github.com/tree-sitter/tree-sitter-rust")
                (toml "https://github.com/tree-sitter/tree-sitter-toml")
                (tsx . ("https://github.com/tree-sitter/tree-sitter-typescript" "v0.20.3" "tsx/src"))
                (typescript . ("https://github.com/tree-sitter/tree-sitter-typescript" "v0.20.3" "typescript/src"))
@@ -49,6 +51,10 @@
 
   :config
   (os/setup-install-grammars))
+
+(use-package rust-ts-mode
+  :ensure nil
+  :mode "\\.rs\\'")
 
 
 (use-package lsp-mode
